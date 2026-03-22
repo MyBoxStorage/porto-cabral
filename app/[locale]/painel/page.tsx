@@ -20,7 +20,7 @@ type Stats = {
   by_status: { status: string; total: number }[]
   recent_reservations: Reservation[]
 }
-type DishItem   = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string }
+type DishItem   = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string; image_url?:string }
 type PillarItem = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string }
 
 /* ══ DESIGN TOKENS ═══════════════════════════════════════════════ */
@@ -29,7 +29,6 @@ const NAVY2  = '#0d2040'
 const GOLD   = '#D4A843'
 const GOLD2  = '#FECE65'
 const CREAM  = '#fef9f1'
-const CREAM2 = '#f2ede5'
 
 const STATUS_CFG: Record<string,{label:string;dot:string;bg:string;text:string}> = {
   pending:   {label:'Pendente',  dot:'#f59e0b',bg:'#fffbeb',text:'#92400e'},
@@ -40,7 +39,7 @@ const STATUS_CFG: Record<string,{label:string;dot:string;bg:string;text:string}>
 }
 
 const TABS = [
-  {id:'dashboard',icon:'◈',label:'Dashboard'},
+  {id:'dashboard',label:'Dashboard'},
   {id:'reservas', icon:'◷',label:'Reservas'},
   {id:'clientes', icon:'◉',label:'Clientes'},
   {id:'conteudo', icon:'◎',label:'Conteúdo'},
@@ -91,13 +90,6 @@ const goldBtn: React.CSSProperties = {
   backgroundSize:'200% auto',color:NAVY,transition:'all .2s',
   display:'inline-flex',alignItems:'center',gap:7,textDecoration:'none',
 }
-const navyBtn: React.CSSProperties = {
-  padding:'9px 20px',borderRadius:8,cursor:'pointer',
-  fontFamily:"'Josefin Sans',sans-serif",fontWeight:700,fontSize:11,
-  letterSpacing:'.12em',textTransform:'uppercase',
-  background:NAVY,color:GOLD,border:`1px solid rgba(212,168,67,0.3)`,
-  display:'inline-flex',alignItems:'center',gap:7,textDecoration:'none',
-}
 const ghostBtn: React.CSSProperties = {
   padding:'9px 20px',borderRadius:8,cursor:'pointer',
   fontFamily:"'Josefin Sans',sans-serif",fontWeight:600,fontSize:11,
@@ -130,7 +122,7 @@ function Badge({status}:{status:string}) {
   )
 }
 
-function StatCard({label,value,sub,color,icon}:{label:string;value:number|string;sub?:string;color?:string;icon?:string}) {
+function StatCard({label,value,sub,color}:{label:string;value:number|string;sub?:string;color?:string}) {
   return (
     <div className="pc-card" style={{
       background:`linear-gradient(135deg,${NAVY} 0%,${NAVY2} 100%)`,
@@ -176,7 +168,7 @@ function SectionHeader({title,onSave,saving,dirty}:{title:string;onSave:()=>void
         <h3 style={{fontFamily:"'Playfair Display',serif",fontSize:20,fontStyle:'italic',color:NAVY,margin:0}}>{title}</h3>
       </div>
       <button onClick={onSave} disabled={saving||!dirty} className={dirty&&!saving?'pc-shimmer':''}
-        style={{...goldBtn,opacity:saving||!dirty?.45:1,animation:dirty&&!saving?'shimmer 2.5s linear infinite':'none',
+        style={{...goldBtn,opacity:(saving||!dirty)?0.45:1,animation:dirty&&!saving?'shimmer 2.5s linear infinite':'none',
           background:dirty&&!saving?undefined:NAVY,color:dirty&&!saving?NAVY:'rgba(212,168,67,0.4)',
           backgroundSize:'200% auto'}}>
         {saving?'Salvando…':'✦ Salvar'}
@@ -780,7 +772,7 @@ function TabCardapio() {
       {/* barra de ações */}
       <div style={{display:'flex',justifyContent:'flex-end',marginBottom:'1.5rem'}}>
         <button onClick={save} disabled={saving||!dirty} className={dirty&&!saving?'pc-shimmer':''}
-          style={{...goldBtn,opacity:saving||!dirty?.4:1,
+          style={{...goldBtn,opacity:(saving||!dirty)?0.4:1,
             background:dirty&&!saving?undefined:NAVY,color:dirty&&!saving?NAVY:'rgba(212,168,67,0.4)',
             backgroundSize:'200% auto',animation:dirty&&!saving?'shimmer 2.5s linear infinite':'none'}}>
           {saving?'Salvando…':'✦ Salvar Cardápio'}

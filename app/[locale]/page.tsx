@@ -40,7 +40,6 @@ type DishesData  = { section_title_pt:string; section_title_en:string; section_t
 type PillarsData = { title_pt:string; title_en:string; title_es:string; eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; items: PillarItem[] }
 type HistoryData = { title_pt:string; title_en:string; title_es:string; p1_pt:string; p1_en:string; p1_es:string; p2_pt:string; p2_en:string; p2_es:string; quote_pt:string; quote_en:string; quote_es:string; quote_author_pt:string; quote_author_en:string; quote_author_es:string }
 type LocationData= { title_pt:string; title_en:string; title_es:string; eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; desc_pt:string; desc_en:string; desc_es:string; maps_url:string }
-type SiteInfo    = { phone:string; whatsapp:string; address:string; hours_lunch:string; hours_dinner:string; instagram:string; instagram_url:string; maps_url:string; email_contact:string; founded_year:string }
 
 const DISHES_FB: DishesData = { section_title_pt:'Iguarias do Mar', section_title_en:'Treasures of the Sea', section_title_es:'Delicias del Mar', items:[
   {title_pt:'Capitão Cabral',title_en:'Capitão Cabral',title_es:'Capitão Cabral',desc_pt:'Polvo à moda da casa, arroz cremoso de limão siciliano e batata sauté.',desc_en:'Octopus in our signature style, creamy lemon risotto and sautéed potatoes.',desc_es:'Pulpo al estilo de la casa, arroz cremoso de limón y papas salteadas.',image_url:''},
