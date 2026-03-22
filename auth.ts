@@ -12,7 +12,7 @@ const useSupabaseAdapter = Boolean(supabaseUrl && supabaseServiceKey)
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.PC_NEXTAUTH_SECRET,
   ...(useSupabaseAdapter
     ? {
         adapter: SupabaseAdapter({

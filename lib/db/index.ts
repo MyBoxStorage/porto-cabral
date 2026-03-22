@@ -9,9 +9,9 @@ let _client: ReturnType<typeof postgres> | null = null
 let _db: Db | null = null
 
 export function getDb(): Db {
-  const connectionString = process.env.DATABASE_URI
+  const connectionString = process.env.PC_DATABASE_URL
   if (!connectionString) {
-    throw new Error('DATABASE_URI is not configured')
+    throw new Error('PC_DATABASE_URL is not configured')
   }
   if (!_db) {
     _client = postgres(connectionString, { max: 1, prepare: false })

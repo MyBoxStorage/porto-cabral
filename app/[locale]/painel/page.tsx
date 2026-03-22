@@ -574,6 +574,63 @@ function EditHero() {
   )
 }
 
+/* ─── Image Uploader ──────────────── */
+function ImageUploader({value,onChange,label}:{value:string;onChange:(url:string)=>void;label:string}) {
+  const [uploading,setUploading] = useState(false)
+  const [err,setErr] = useState('')
+
+  async function handleFile(e:React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if(!file) return
+    setUploading(true); setErr('')
+    const reader = new FileReader()
+    reader.onload = async () => {
+      try {
+        const res = await fetch('/api/admin/upload',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({data:reader.result,filename:file.name}),
+        })
+        const json = await res.json()
+        if(!res.ok) throw new Error(json.error)
+        onChange(json.url)
+      } catch(ex:unknown) {
+        setErr(ex instanceof Error ? ex.message : 'Erro no upload')
+      } finally { setUploading(false) }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  return (
+    <div>
+      <label style={labelSt}>{label}</label>
+      <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
+        {value ? (
+          <div style={{position:'relative',width:80,height:80,borderRadius:8,overflow:'hidden',flexShrink:0,border:'1px solid rgba(212,168,67,0.3)'}}>
+            <img src={value} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+            <button onClick={()=>onChange('')}
+              style={{position:'absolute',top:2,right:2,background:'rgba(0,0,0,0.7)',border:'none',color:'#fff',borderRadius:4,width:20,height:20,cursor:'pointer',fontSize:11,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              ✕
+            </button>
+          </div>
+        ) : (
+          <div style={{width:80,height:80,borderRadius:8,border:'2px dashed rgba(212,168,67,0.2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+            <span style={{color:'rgba(212,168,67,0.3)',fontSize:24}}>+</span>
+          </div>
+        )}
+        <div style={{flex:1,minWidth:160}}>
+          <label style={{display:'block',padding:'8px 14px',borderRadius:8,border:'1px solid rgba(212,168,67,0.25)',background:'rgba(212,168,67,0.08)',color:GOLD,fontFamily:"'Josefin Sans',sans-serif",fontSize:10,fontWeight:700,letterSpacing:'.1em',cursor:'pointer',textAlign:'center',textTransform:'uppercase'}}>
+            {uploading?'⏳ Enviando…':'↑ Fazer Upload'}
+            <input type="file" accept="image/*" style={{display:'none'}} onChange={handleFile} disabled={uploading}/>
+          </label>
+          {value && <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(212,168,67,0.4)',marginTop:4,letterSpacing:'.04em',wordBreak:'break-all'}}>{value.split('/').pop()}</p>}
+          {err && <p style={{color:'#fca5a5',fontSize:10,marginTop:4}}>{err}</p>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ─── Dishes ───────────────────────── */
 type DishesContent = {section_title_pt:string;section_title_en:string;section_title_es:string;items:DishItem[]}
 function EditDishes() {
@@ -591,11 +648,19 @@ function EditDishes() {
       {data.items?.map((item,i)=>(
         <div key={i} style={{border:'1px solid rgba(212,168,67,0.12)',borderRadius:10,padding:'1rem',marginBottom:12,background:'rgba(255,255,255,0.03)'}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'.75rem'}}>
-            <span style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD}}>Prato {i+1}</span>
+            <span style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD}}>Prato {i+1} — {(item as Record<string,unknown>)[`title_pt`] as string}</span>
             <button onClick={()=>update(p=>({...p,items:p.items.filter((_,j)=>j!==i)}))}
               style={{padding:'4px 12px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:10,fontWeight:700,cursor:'pointer',fontFamily:"'Josefin Sans',sans-serif",letterSpacing:'.06em'}}>
               ✕ Remover
             </button>
+          </div>
+          {/* Upload de foto */}
+          <div style={{marginBottom:'1rem'}}>
+            <ImageUploader
+              label="Foto do Prato (aparece no card da home)"
+              value={item.image_url??''}
+              onChange={url=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,image_url:url}:it)}))}
+            />
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
             <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`title_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`title_${lang}`]:e.target.value}:it)}))}/></div>

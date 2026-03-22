@@ -34,7 +34,7 @@ const VIDEOS = [
 const PILLAR_ICONS = [IconOnda, IconHorizonte, IconTridente]
 
 // Fallbacks tipados
-type DishItem    = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string }
+type DishItem    = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string; image_url?:string }
 type PillarItem  = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string }
 type DishesData  = { section_title_pt:string; section_title_en:string; section_title_es:string; items: DishItem[] }
 type PillarsData = { title_pt:string; title_en:string; title_es:string; eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; items: PillarItem[] }
@@ -43,12 +43,12 @@ type LocationData= { title_pt:string; title_en:string; title_es:string; eyebrow_
 type SiteInfo    = { phone:string; whatsapp:string; address:string; hours_lunch:string; hours_dinner:string; instagram:string; instagram_url:string; maps_url:string; email_contact:string; founded_year:string }
 
 const DISHES_FB: DishesData = { section_title_pt:'Iguarias do Mar', section_title_en:'Treasures of the Sea', section_title_es:'Delicias del Mar', items:[
-  {title_pt:'Capitão Cabral',title_en:'Capitão Cabral',title_es:'Capitão Cabral',desc_pt:'Polvo à moda da casa, arroz cremoso de limão siciliano e batata sauté.',desc_en:'Octopus in our signature style.',desc_es:'Pulpo al estilo de la casa.'},
-  {title_pt:'Lagosta Grelhada',title_en:'Grilled Lobster',title_es:'Langosta a la Plancha',desc_pt:'Lagosta inteira na manteiga, batatas gratinadas e molho de camarão.',desc_en:'Whole lobster in butter.',desc_es:'Langosta entera en mantequilla.'},
-  {title_pt:'Camarão Porto',title_en:'Porto Shrimp',title_es:'Camarones Porto',desc_pt:'Camarões gigantes flambados no conhaque com queijo brie.',desc_en:'Giant shrimp flambéed in cognac.',desc_es:'Camarones gigantes flambeados.'},
-  {title_pt:'Tesouros do Mar',title_en:'Sea Treasures',title_es:'Tesoros del Mar',desc_pt:'Lagosta, camarão, congrio ou salmão, bolinhos e ostras gratinadas.',desc_en:'Lobster, shrimp, cusk or salmon.',desc_es:'Langosta, camarones, abadejo o salmón.'},
-  {title_pt:'Salmão ao Molhe',title_en:'Salmon au Molhe',title_es:'Salmón al Molhe',desc_pt:'Filé grelhado ao molho de maracujá com aspargos frescos.',desc_en:'Grilled fillet in passion fruit sauce.',desc_es:'Filete a la plancha en salsa de maracuyá.'},
-  {title_pt:'Ostras Frescas',title_en:'Fresh Oysters',title_es:'Ostras Frescas',desc_pt:'Selecionadas à mão, servidas com vinagrete clássico.',desc_en:'Hand-selected with classic vinaigrette.',desc_es:'Seleccionadas a mano con vinagreta clásica.'},
+  {title_pt:'Capitão Cabral',title_en:'Capitão Cabral',title_es:'Capitão Cabral',desc_pt:'Polvo à moda da casa, arroz cremoso de limão siciliano e batata sauté.',desc_en:'Octopus in our signature style, creamy lemon risotto and sautéed potatoes.',desc_es:'Pulpo al estilo de la casa, arroz cremoso de limón y papas salteadas.',image_url:''},
+  {title_pt:'Paella do Porto',title_en:'Porto Paella',title_es:'Paella del Porto',desc_pt:'Prato típico com arroz, marisco, lula, polvo e camarão.',desc_en:'Traditional dish with rice, seafood, squid, octopus and shrimp.',desc_es:'Plato típico con arroz, marisco, calamar, pulpo y camarones.',image_url:''},
+  {title_pt:'King Crab',title_en:'King Crab',title_es:'King Crab',desc_pt:'King crab inteiro com molhos especiais. Chef indica.',desc_en:'Whole king crab with special sauces. Chef recommends.',desc_es:'King crab entero con salsas especiales. El chef recomienda.',image_url:''},
+  {title_pt:'Tábua de Frios',title_en:'Charcuterie Board',title_es:'Tabla de Embutidos',desc_pt:'Parma, presunto, salaminho, queijos, frutas, pães e geleia de pimenta.',desc_en:'Prosciutto, ham, salami, cheeses, fruits, breads and pepper jelly.',desc_es:'Jamón, embutidos, quesos, frutas, panes y mermelada de pimienta.',image_url:''},
+  {title_pt:'Tartare de Atum e Salmão',title_en:'Tuna & Salmon Tartare',title_es:'Tartare de Atún y Salmón',desc_pt:'Base de abacate, cream cheese, crispy de alho-poró e chips de batata doce.',desc_en:'Avocado base, cream cheese, crispy leek and sweet potato chips.',desc_es:'Base de aguacate, queso crema, crujiente de puerro y chips de batata.',image_url:''},
+  {title_pt:'Camarão à Romana',title_en:'Roman-style Shrimp',title_es:'Camarones a la Romana',desc_pt:'Empanados com queijo parmesão. Uma entrada clássica do Porto.',desc_en:'Breaded with parmesan cheese. A classic Porto starter.',desc_es:'Empanados con queso parmesano. Una entrada clásica del Porto.',image_url:''},
 ]}
 const PILLARS_FB: PillarsData = { title_pt:'Três razões para vir', title_en:'Three reasons to visit', title_es:'Tres razones para venir', eyebrow_pt:'A Experiência Completa', eyebrow_en:'The Complete Experience', eyebrow_es:'La Experiencia Completa', items:[
   {title_pt:'Sobre o Mar',title_en:'Over the Sea',title_es:'Sobre el Mar',desc_pt:'Sinta a brisa do oceano e o balanço suave sobre as águas da Barra Sul.',desc_en:'Feel the ocean breeze over the waters.',desc_es:'Siente la brisa del océano.'},
@@ -155,9 +155,17 @@ export default function HomePage() {
               <div key={i}
                 className="card-lift group relative overflow-hidden rounded-xl bg-[#0d2040]"
                 style={{ aspectRatio: '4/5' }}>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#001428] via-[#001428]/40 to-transparent z-10" />
-                <div className="absolute inset-0 opacity-10"
-                  style={{ backgroundImage: 'radial-gradient(rgba(212,168,67,0.6) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
+                {/* Foto de fundo quando disponível */}
+                {dish.image_url ? (
+                  <img src={dish.image_url} alt={d(dish as Record<string,unknown>, 'title')}
+                    className="absolute inset-0 w-full h-full object-cover object-center"
+                    style={{ filter: 'brightness(0.55)' }}/>
+                ) : (
+                  <div className="absolute inset-0 opacity-10"
+                    style={{ backgroundImage: 'radial-gradient(rgba(212,168,67,0.6) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
+                )}
+                {/* Gradiente overlay sempre presente */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#001428] via-[#001428]/30 to-transparent z-10" />
                 <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-[#D4A843]/50 to-transparent z-20
                   scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-center" />
                 <div className="absolute inset-0 z-20 flex flex-col justify-end p-8">
