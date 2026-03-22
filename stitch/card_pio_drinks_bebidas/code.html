@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Josefin+Sans:wght@300;400;600&amp;family=Inter:wght@300;400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-low": "#f8f3eb",
+              "secondary": "#795900",
+              "primary-container": "#1a3a6b",
+              "on-tertiary-fixed": "#1d1c17",
+              "inverse-primary": "#abc7ff",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-container": "#89a5dd",
+              "surface-tint": "#415e91",
+              "inverse-on-surface": "#f5f0e8",
+              "on-surface-variant": "#43474f",
+              "surface-container-highest": "#e7e2da",
+              "on-surface": "#1d1c17",
+              "surface-container-high": "#ece8e0",
+              "on-primary-fixed-variant": "#284678",
+              "on-primary-fixed": "#001b3f",
+              "on-tertiary-container": "#a8a59e",
+              "surface-dim": "#ded9d2",
+              "secondary-fixed": "#ffdf9f",
+              "on-tertiary": "#ffffff",
+              "on-background": "#1d1c17",
+              "tertiary": "#272520",
+              "primary": "#002451",
+              "outline-variant": "#c4c6d0",
+              "on-tertiary-fixed-variant": "#494741",
+              "on-secondary-fixed": "#261a00",
+              "on-primary": "#ffffff",
+              "error": "#ba1a1a",
+              "surface-variant": "#e7e2da",
+              "on-secondary": "#ffffff",
+              "primary-fixed-dim": "#abc7ff",
+              "secondary-container": "#fece65",
+              "surface-container": "#f2ede5",
+              "background": "#fef9f1",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed-variant": "#5b4300",
+              "secondary-fixed-dim": "#eec058",
+              "on-error": "#ffffff",
+              "surface-bright": "#fef9f1",
+              "surface": "#fef9f1",
+              "outline": "#747780",
+              "error-container": "#ffdad6",
+              "tertiary-container": "#3d3b35",
+              "on-secondary-container": "#755700",
+              "inverse-surface": "#32302b",
+              "tertiary-fixed-dim": "#cac6be",
+              "tertiary-fixed": "#e7e2da",
+              "primary-fixed": "#d7e2ff"
+            },
+            fontFamily: {
+              "headline": ["Playfair Display", "serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Josefin Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.paper-texture {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDrA-y0HQxzGdFSGcPfgKu1aHQYsHrF-VF33RN36ATh7dtE6s_tdzy_U0tNHHClgciqXsEPG9Rf9dP59t8VFJZv5mhVNASH8Ux2b-aBGbHZOxgMoPNoKdikvVNJcI6CPbwYSQJHAYBW83sf0u_TtroBirFYuCTE-jNMPDauz60A4AAZHuZBOfEZ6V3TR0lk4GBecXbCN1EHPiYf5DJynXXPck2P3Q9df1HvGjQlk5dowku2isfHp5TFr2BIwHuKvJ1xQw6HQvAkI-lc)
+    }
+.book-binding {
+    background: linear-gradient(90deg, #001b3f 0%, #1a3a6b 50%, #001b3f 100%);
+    box-shadow: inset -5px 0 15px rgba(0, 0, 0, 0.4), inset 5px 0 15px rgba(0, 0, 0, 0.4)
+    }
+.page-curl-left {
+    box-shadow: -10px 0 30px -10px rgba(0, 0, 0, 0.1)
+    }
+.page-curl-right {
+    box-shadow: 10px 0 30px -10px rgba(0, 0, 0, 0.1)
+    }</style>
+</head>
+<body class="bg-surface-dim font-body text-on-surface min-h-screen flex flex-col items-center">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border-b border-white/20 dark:border-slate-800/20 shadow-sm backdrop-saturate-150">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<span class="text-2xl font-bold tracking-tighter text-[#1A3A6B] dark:text-[#F5F0E8] font-headline">Porto Cabral BC</span>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-[#1A3A6B] dark:text-[#F5F0E8] opacity-80 hover:opacity-100 transition-opacity font-headline tracking-wide uppercase text-sm" href="#">Experience</a>
+<a class="text-[#D4A843] font-bold border-b-2 border-[#D4A843] pb-1 font-headline tracking-wide uppercase text-sm" href="#">Menu</a>
+<a class="text-[#1A3A6B] dark:text-[#F5F0E8] opacity-80 hover:opacity-100 transition-opacity font-headline tracking-wide uppercase text-sm" href="#">Reservations</a>
+<a class="text-[#1A3A6B] dark:text-[#F5F0E8] opacity-80 hover:opacity-100 transition-opacity font-headline tracking-wide uppercase text-sm" href="#">Gallery</a>
+<a class="text-[#1A3A6B] dark:text-[#F5F0E8] opacity-80 hover:opacity-100 transition-opacity font-headline tracking-wide uppercase text-sm" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#1A3A6B] cursor-pointer">language</span>
+<button class="md:hidden material-symbols-outlined text-[#1A3A6B]">menu</button>
+</div>
+</div>
+</nav>
+<!-- Main Content: The Flipbook Interior -->
+<main class="mt-32 mb-20 w-full max-w-6xl px-4 flex justify-center items-center overflow-visible">
+<div class="relative w-full aspect-[16/10] bg-primary-container rounded-lg shadow-2xl p-4 flex gap-1">
+<!-- Left Page: Soft Drinks & Beers -->
+<div class="flex-1 bg-surface-container-low rounded-l-md paper-texture p-12 relative overflow-hidden page-curl-left flex flex-col justify-between">
+<!-- Decorative Ornament -->
+<div class="absolute -top-10 -left-10 opacity-10">
+<span class="material-symbols-outlined text-[12rem] text-secondary">sailing</span>
+</div>
+<div class="relative z-10">
+<header class="mb-12 border-b border-secondary/20 pb-4">
+<h2 class="font-headline text-3xl text-primary italic mb-1">Refrescos e Maltes</h2>
+<p class="font-label uppercase tracking-widest text-xs text-secondary font-semibold">Bebidas &amp; Drinks Selection</p>
+</header>
+<section class="mb-12">
+<h3 class="font-label text-lg font-bold text-primary-container uppercase tracking-tight mb-6 flex items-center gap-2">
+<span class="w-8 h-[1px] bg-secondary/40"></span>
+                            Soft Drinks
+                        </h3>
+<ul class="space-y-4">
+<li class="flex justify-between items-end gap-4">
+<span class="font-body text-on-surface font-medium">Água Mineral <span class="text-xs opacity-60 ml-1">(Com ou Sem Gás)</span></span>
+<div class="flex-grow border-b border-dotted border-on-surface/20 mb-1"></div>
+<span class="font-label text-secondary font-bold">R$ 9</span>
+</li>
+<li class="flex justify-between items-end gap-4">
+<span class="font-body text-on-surface font-medium">San Pellegrino <span class="text-xs opacity-60 ml-1">500ml</span></span>
+<div class="flex-grow border-b border-dotted border-on-surface/20 mb-1"></div>
+<span class="font-label text-secondary font-bold">R$ 28</span>
+</li>
+<li class="flex justify-between items-end gap-4">
+<span class="font-body text-on-surface font-medium">Suco de Uva Integral</span>
+<div class="flex-grow border-b border-dotted border-on-surface/20 mb-1"></div>
+<span class="font-label text-secondary font-bold">R$ 14</span>
+</li>
+<li class="flex justify-between items-end gap-4">
+<span class="font-body text-on-surface font-medium">Soda Italiana <span class="text-xs opacity-60 ml-1">(Maçã Verde ou Cranberry)</span></span>
+<div class="flex-grow border-b border-dotted border-on-surface/20 mb-1"></div>
+<span class="font-label text-secondary font-bold">R$ 18</span>
+</li>
+</ul>
+</section>
+<section>
+<h3 class="font-label text-lg font-bold text-primary-container uppercase tracking-tight mb-6 flex items-center gap-2">
+<span class="w-8 h-[1px] bg-secondary/40"></span>
+                            Cervejas
+                        </h3>
+<ul class="space-y-4">
+<li class="flex justify-between items-end gap-4">
+<span class="font-body text-on-surface font-medium">Chopp Porto Cabral <span class="text-xs opacity-60 ml-1">Draft 300ml</span></span>
+<div class="flex-grow border-b border-dotted border-on-surface/20 mb-1"></div>
+<span class="font-label text-secondary font-bold">R$ 16</span>
+</li>
+<li class="flex justify-between items-end gap-4">
+<span class="font-body text-on-surface font-medium">Heineken <span class="text-xs opacity-60 ml-1">Long Neck</span></span>
+<div class="flex-grow border-b border-dotted border-on-surface/20 mb-1"></div>
+<span class="font-label text-secondary font-bold">R$ 14</span>
+</li>
+<li class="flex justify-between items-end gap-4">
+<span class="font-body text-on-surface font-medium">Corona <span class="text-xs opacity-60 ml-1">Extra</span></span>
+<div class="flex-grow border-b border-dotted border-on-surface/20 mb-1"></div>
+<span class="font-label text-secondary font-bold">R$ 16</span>
+</li>
+</ul>
+</section>
+</div>
+<footer class="mt-auto pt-8 flex items-center justify-between text-[10px] uppercase tracking-tighter text-secondary/60 font-label">
+<span>Folha 12</span>
+<span class="italic text-[8px]">The Maritime Curator Experience</span>
+</footer>
+</div>
+<!-- Binding/Spine -->
+<div class="w-6 book-binding h-full z-20"></div>
+<!-- Right Page: Signature Drinks -->
+<div class="flex-1 bg-surface-container-low rounded-r-md paper-texture p-12 relative overflow-hidden page-curl-right flex flex-col justify-between">
+<!-- Decorative Waves -->
+<div class="absolute bottom-0 right-0 opacity-20 transform translate-x-1/4 translate-y-1/4">
+<span class="material-symbols-outlined text-[20rem] text-secondary">waves</span>
+</div>
+<div class="relative z-10">
+<header class="mb-12 text-right border-b border-secondary/20 pb-4">
+<h2 class="font-headline text-3xl text-primary italic mb-1">Drinks Autorais</h2>
+<p class="font-label uppercase tracking-widest text-xs text-secondary font-semibold">Porto Cabral Exclusive Mixology</p>
+</header>
+<div class="grid grid-cols-1 gap-10">
+<!-- Blue Ocean -->
+<div class="group">
+<div class="flex justify-between items-baseline mb-2">
+<h4 class="font-label text-xl font-bold text-primary group-hover:text-secondary transition-colors">Blue Ocean</h4>
+<span class="font-label text-secondary font-bold text-lg">R$ 48</span>
+</div>
+<p class="text-xs text-on-surface-variant font-body leading-relaxed max-w-[85%]">Gin artesanal, curaçao blue, suco de limão siciliano, tônica premium e espuma de gengibre. Uma imersão nas profundezas do Atlântico.</p>
+</div>
+<!-- Love on Board -->
+<div class="group">
+<div class="flex justify-between items-baseline mb-2">
+<h4 class="font-label text-xl font-bold text-primary group-hover:text-secondary transition-colors">Love on Board</h4>
+<span class="font-label text-secondary font-bold text-lg">R$ 28</span>
+</div>
+<p class="text-xs text-on-surface-variant font-body leading-relaxed max-w-[85%]">Vodka infusionada com frutas vermelhas, xarope de hibisco, espumante brut e pétalas de rosa. A doçura do pôr do sol no convés.</p>
+</div>
+<!-- Relax -->
+<div class="group">
+<div class="flex justify-between items-baseline mb-2">
+<h4 class="font-label text-xl font-bold text-primary group-hover:text-secondary transition-colors">Relax</h4>
+<span class="font-label text-secondary font-bold text-lg">R$ 38</span>
+</div>
+<p class="text-xs text-on-surface-variant font-body leading-relaxed max-w-[85%]">Rum envelhecido, água de coco fresca, hortelã macerada e um toque de licor de pêssego. Criado para os momentos de calmaria.</p>
+</div>
+<!-- Porto Dubai -->
+<div class="group relative">
+<!-- Gold Highlight for Luxury Drink -->
+<div class="absolute -inset-2 bg-secondary/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative flex justify-between items-baseline mb-2">
+<h4 class="font-label text-xl font-bold text-primary flex items-center gap-2 group-hover:text-secondary transition-colors">
+                                    Porto Dubai
+                                    <span class="material-symbols-outlined text-sm text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+</h4>
+<span class="font-label text-secondary font-bold text-lg">R$ 69</span>
+</div>
+<p class="relative text-xs text-on-surface-variant font-body leading-relaxed max-w-[85%]">Whisky Gold Reserve, vermute rosso, bitters de chocolate e finalização com folhas de ouro 24k comestíveis. A joia do Porto.</p>
+</div>
+</div>
+</div>
+<footer class="mt-auto pt-8 flex items-center justify-between text-[10px] uppercase tracking-tighter text-secondary/60 font-label">
+<span class="italic text-[8px]">Beba com moderação</span>
+<span>Folha 13</span>
+</footer>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full relative overflow-hidden bg-[#1A3A6B] dark:bg-[#002451] mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-12 py-16 gap-8">
+<span class="text-[#F5F0E8] font-headline italic text-lg">Porto Cabral BC</span>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-[#F5F0E8] opacity-60 hover:text-[#D4A843] transition-all font-body text-xs tracking-widest uppercase" href="#">Privacy Policy</a>
+<a class="text-[#F5F0E8] opacity-60 hover:text-[#D4A843] transition-all font-body text-xs tracking-widest uppercase" href="#">Terms of Service</a>
+<a class="text-[#F5F0E8] opacity-60 hover:text-[#D4A843] transition-all font-body text-xs tracking-widest uppercase" href="#">Press Kit</a>
+<a class="text-[#F5F0E8] opacity-60 hover:text-[#D4A843] transition-all font-body text-xs tracking-widest uppercase" href="#">Careers</a>
+</div>
+<p class="text-[#F5F0E8] opacity-60 font-body text-xs tracking-widest uppercase">
+                © 2024 Porto Cabral BC. The Maritime Curator Experience.
+            </p>
+</div>
+</footer>
+</body></html>

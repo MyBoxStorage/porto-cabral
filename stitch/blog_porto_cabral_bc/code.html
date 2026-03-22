@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Blog | Porto Cabral BC</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@300;400;600&amp;family=Josefin+Sans:wght@300;400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error": "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#eec058",
+              "surface-tint": "#415e91",
+              "on-primary-fixed": "#001b3f",
+              "outline": "#747780",
+              "on-error-container": "#93000a",
+              "surface": "#fef9f1",
+              "primary": "#002451",
+              "primary-fixed": "#d7e2ff",
+              "tertiary-fixed-dim": "#cac6be",
+              "surface-container": "#f2ede5",
+              "secondary": "#795900",
+              "on-surface-variant": "#43474f",
+              "on-tertiary-container": "#a8a59e",
+              "inverse-surface": "#32302b",
+              "surface-bright": "#fef9f1",
+              "surface-container-high": "#ece8e0",
+              "on-secondary-container": "#755700",
+              "tertiary-fixed": "#e7e2da",
+              "on-primary-fixed-variant": "#284678",
+              "on-primary": "#ffffff",
+              "tertiary": "#272520",
+              "background": "#fef9f1",
+              "on-tertiary-fixed-variant": "#494741",
+              "surface-container-highest": "#e7e2da",
+              "on-primary-container": "#89a5dd",
+              "inverse-on-surface": "#f5f0e8",
+              "tertiary-container": "#3d3b35",
+              "on-error": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#abc7ff",
+              "primary-container": "#1a3a6b",
+              "secondary-fixed": "#ffdf9f",
+              "surface-variant": "#e7e2da",
+              "error-container": "#ffdad6",
+              "on-surface": "#1d1c17",
+              "on-background": "#1d1c17",
+              "inverse-primary": "#abc7ff",
+              "surface-container-low": "#f8f3eb",
+              "on-secondary-fixed": "#261a00",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#ded9d2",
+              "secondary-container": "#fece65",
+              "on-tertiary-fixed": "#1d1c17",
+              "outline-variant": "#c4c6d0",
+              "on-secondary-fixed-variant": "#5b4300"
+            },
+            fontFamily: {
+              "headline": ["Playfair Display", "serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Josefin Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-shadow {
+            box-shadow: 0 20px 50px rgba(29, 28, 23, 0.05);
+        }
+        .glass-nav {
+            background: rgba(26, 58, 107, 0.85);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-background antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 border-b border-white/20 glass-nav shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+<div class="flex justify-between items-center px-6 md:px-12 py-4 w-full">
+<div class="text-2xl font-bold text-white flex items-center gap-2 font-headline tracking-wide">
+                Porto Cabral BC
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-white/80 hover:text-white transition-colors font-headline tracking-wide uppercase text-sm" href="#">Home</a>
+<a class="text-white/80 hover:text-white transition-colors font-headline tracking-wide uppercase text-sm" href="#">Menu</a>
+<a class="text-white/80 hover:text-white transition-colors font-headline tracking-wide uppercase text-sm" href="#">Experiences</a>
+<a class="text-white/80 hover:text-white transition-colors font-headline tracking-wide uppercase text-sm" href="#">About</a>
+<a class="text-[#D4A843] border-b-2 border-[#D4A843] pb-1 font-headline tracking-wide uppercase text-sm" href="#">Blog</a>
+<a class="text-white/80 hover:text-white transition-colors font-headline tracking-wide uppercase text-sm" href="#">Client Area</a>
+</div>
+<div class="flex items-center gap-4 text-[#D4A843]">
+<button class="material-symbols-outlined p-2 hover:bg-white/10 rounded-full transition-all duration-300">language</button>
+<button class="md:hidden material-symbols-outlined p-2">menu</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative h-[614px] flex items-center justify-center overflow-hidden bg-primary pt-16">
+<div class="absolute inset-0 opacity-40">
+<img alt="" class="w-full h-full object-cover" data-alt="Luxurious nautical sunset over the harbor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzx9TBHlt4ydMGXmyBGInHG26AQeoDwohfkLW4X-Grts6ctZ3etwlwuDXjEfifaagco6w1sE-Xu0AxUJVIYYRyiryGtKLgSPOVxSv0RZnHcHqpKeQK89LQJTXH8fZu7vTUJBUWveu-syXd7tjZZReaG2nWGp14WT9-IK9oWAohT29fskZt5ug_T7Shld_iIzRMqMKQYzpwOv167HsJMa11Gd1hegFxzruRHeOugh2sz3eSNNHMqNwXauZi8v3bmIsyisa4IUzTEzj_"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-b from-primary/60 to-surface"></div>
+<div class="relative z-10 text-center px-4">
+<h1 class="font-headline text-5xl md:text-7xl text-white mb-4 tracking-tight">The Captain's Log</h1>
+<p class="font-label text-[#D4A843] text-lg md:text-xl tracking-[0.2em] uppercase">Curated Tales of the Sea &amp; Gastronomy</p>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 md:px-12 -mt-20 relative z-20 mb-24">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Sidebar (Desktop Left) -->
+<aside class="lg:col-span-3 space-y-12">
+<!-- Search -->
+<div class="bg-surface-container-lowest p-8 rounded-lg editorial-shadow">
+<h3 class="font-label text-primary text-xs tracking-widest uppercase mb-6">Search Journal</h3>
+<div class="relative">
+<input class="w-full bg-surface border-none border-b border-outline-variant focus:ring-0 focus:border-secondary transition-colors py-3 pl-0 pr-10 text-sm" placeholder="Keywords..." type="text"/>
+<span class="material-symbols-outlined absolute right-0 top-3 text-outline">search</span>
+</div>
+</div>
+<!-- Categories -->
+<div class="bg-surface-container-lowest p-8 rounded-lg editorial-shadow">
+<h3 class="font-label text-primary text-xs tracking-widest uppercase mb-6">Archive Categories</h3>
+<ul class="space-y-4">
+<li>
+<a class="group flex items-center justify-between text-on-surface-variant hover:text-secondary transition-colors" href="#">
+<span class="text-sm font-medium">Gastronomy</span>
+<span class="text-[10px] bg-surface-container px-2 py-1 rounded-full group-hover:bg-secondary-container transition-colors">12</span>
+</a>
+</li>
+<li>
+<a class="group flex items-center justify-between text-on-surface-variant hover:text-secondary transition-colors" href="#">
+<span class="text-sm font-medium">Nautical Lifestyle</span>
+<span class="text-[10px] bg-surface-container px-2 py-1 rounded-full group-hover:bg-secondary-container transition-colors">08</span>
+</a>
+</li>
+<li>
+<a class="group flex items-center justify-between text-on-surface-variant hover:text-secondary transition-colors" href="#">
+<span class="text-sm font-medium">Exclusive Events</span>
+<span class="text-[10px] bg-surface-container px-2 py-1 rounded-full group-hover:bg-secondary-container transition-colors">05</span>
+</a>
+</li>
+<li>
+<a class="group flex items-center justify-between text-on-surface-variant hover:text-secondary transition-colors" href="#">
+<span class="text-sm font-medium">Wine &amp; Spirits</span>
+<span class="text-[10px] bg-surface-container px-2 py-1 rounded-full group-hover:bg-secondary-container transition-colors">14</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- Featured Post Sidebar -->
+<div class="hidden lg:block">
+<h3 class="font-label text-primary text-xs tracking-widest uppercase mb-6">The Selection</h3>
+<div class="group cursor-pointer">
+<div class="aspect-[4/3] overflow-hidden rounded-lg mb-4">
+<img alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="High-end cocktail with nautical decor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT6SAp9en-5wBdxIdCiKPNQEroyF_gMD5NA2M5-uGcuEHDHhLw4GSIltQq2tFMmotuWWde6tGrORlt21ka0uhJWxF42NsQkEkN5prjHrU2Q0I1iMKAcmMNnIV5owZNEHVLfDqciI7dtbi2FRqrMcAcU1-1dCKB4Pcjfk39rwpHjTRXE77b6uvWguyc0TwCOx6_tlEbDc47sR3ZSM4YfeO7baaSJ2wII3GHtb6qpxDJE_FMj6F6_k5asp4ieNmH8ZVl_6Y9E8WFDgMb"/>
+</div>
+<p class="text-[10px] text-secondary font-label uppercase tracking-widest mb-2">Editor's Pick</p>
+<h4 class="font-headline text-lg leading-snug group-hover:text-primary-container transition-colors">The Art of the Perfect Maritime Martini</h4>
+</div>
+</div>
+</aside>
+<!-- Blog Feed -->
+<div class="lg:col-span-9">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
+<!-- Blog Card 1 -->
+<article class="group">
+<div class="relative overflow-hidden aspect-[16/10] rounded-lg mb-6">
+<img alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Freshly prepared seafood platter on white table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjhjmImlup_-XvhZc_AOoHLHSc2ZUCu6WudFxX4Aa-tV1bZo_01gBjwgZ9X1_o-nApEOAKB8ztNZz5qVR45IgBU7URhap08mecElxwg09c0Ke2Vev8fZIJjhVDNyk9ZuQ5xH5-Y8Hx1K9rAJoJNpb5kMk8sVM6q869jj6pCP4DA9i96G7uYT8h0Lc51oz9LseYpNakSxLh3cni1c4-rUE_cpYPgbHSykEyfwUt4ADfdfaJoYS31r4IZGDy6n2OX3Na2BUP0ancP5Gb"/>
+<div class="absolute top-4 left-4">
+<span class="bg-primary text-[#D4A843] px-3 py-1 text-[10px] font-label tracking-widest uppercase shadow-lg">Gastronomy</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 text-[10px] font-label text-outline tracking-widest uppercase">
+<span>June 14, 2024</span>
+<span class="w-8 h-[1px] bg-outline-variant"></span>
+<span>6 min read</span>
+</div>
+<h2 class="font-headline text-3xl text-primary leading-tight hover:text-secondary transition-colors cursor-pointer">Harvesting the Deep: Our Sustainable Sourcing Journey</h2>
+<p class="text-on-surface-variant font-body leading-relaxed text-sm">Discover how our partnership with local Balneário Camboriú fishermen brings the ocean's freshest treasures to your table while preserving marine ecosystems.</p>
+<a class="inline-flex items-center gap-2 text-secondary font-label text-xs tracking-widest uppercase group-hover:gap-4 transition-all" href="#">
+                                Read Journal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Blog Card 2 -->
+<article class="group">
+<div class="relative overflow-hidden aspect-[16/10] rounded-lg mb-6">
+<img alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Luxury yacht sailing in deep blue water" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP_KNCFKIc5Yh8qV3MVIssQpgyaC78OrwToCs2-Lqt9BESvz7m6UuRFD2b2mZRBb8yFjQn5ApE5pSVbokvo0Gd6dGcw37mb50iK8A6b05NZ2lAUdndn44yc7DUxmtXxxKzzEOFfmqmwUSw6XQkswWgLXCdlmnkbYaZ5ISwi89u71PAe73kvv4ffWxYI2mxglyMych17OVqE4Pd2poYx9PgEBXXguYgVYeEL7JkV6Jgjp0MBvtcoMGpCr3dIX171bOIWOMoT0hEi4K-"/>
+<div class="absolute top-4 left-4">
+<span class="bg-primary text-[#D4A843] px-3 py-1 text-[10px] font-label tracking-widest uppercase shadow-lg">Nautical Lifestyle</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 text-[10px] font-label text-outline tracking-widest uppercase">
+<span>June 08, 2024</span>
+<span class="w-8 h-[1px] bg-outline-variant"></span>
+<span>4 min read</span>
+</div>
+<h2 class="font-headline text-3xl text-primary leading-tight hover:text-secondary transition-colors cursor-pointer">Summer Anchorage: The Best Hidden Coves in BC</h2>
+<p class="text-on-surface-variant font-body leading-relaxed text-sm">A guide to the most serene mooring spots along the coast, perfect for a private sunset dinner aboard your vessel before returning to our port.</p>
+<a class="inline-flex items-center gap-2 text-secondary font-label text-xs tracking-widest uppercase group-hover:gap-4 transition-all" href="#">
+                                Read Journal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Blog Card 3 -->
+<article class="group">
+<div class="relative overflow-hidden aspect-[16/10] rounded-lg mb-6">
+<img alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Close up of high-end wine being poured" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwG-P4KDwAr2vIEanMm8Q3NjWapY7xawvkVphtlO--Aa4HeNuv2YBuPoy-bb5TonWjsPYIArUS0W2gwjIM2NiV8c8TozcqnjZe2OgTnBDJyfhYEMhixTIULyRnvnHyFtclPt87X9LWqkhwnIF05DENw19q9Y9NhfgOOnT6TBt4u8yLrNApcWdTfpefSHhFvilE2CTbcah-_Zsla8anj5YRLOFRvg4JTAQMUhq8bltcMkWO7K3Oo95_Evmoh-NKki-L5yq7tVUI73mh"/>
+<div class="absolute top-4 left-4">
+<span class="bg-primary text-[#D4A843] px-3 py-1 text-[10px] font-label tracking-widest uppercase shadow-lg">Wine &amp; Spirits</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 text-[10px] font-label text-outline tracking-widest uppercase">
+<span>May 29, 2024</span>
+<span class="w-8 h-[1px] bg-outline-variant"></span>
+<span>8 min read</span>
+</div>
+<h2 class="font-headline text-3xl text-primary leading-tight hover:text-secondary transition-colors cursor-pointer">A Vintage Voyage: Pairing Coastal Whites</h2>
+<p class="text-on-surface-variant font-body leading-relaxed text-sm">Our Sommelier explores the complex relationship between mineral-rich white wines and the delicate flavors of Atlantic crustaceans.</p>
+<a class="inline-flex items-center gap-2 text-secondary font-label text-xs tracking-widest uppercase group-hover:gap-4 transition-all" href="#">
+                                Read Journal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Blog Card 4 -->
+<article class="group">
+<div class="relative overflow-hidden aspect-[16/10] rounded-lg mb-6">
+<img alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Elegant evening event at a harbor restaurant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHcVljqqHU266YKv2YZWxtvCKtkhlzCEOAUdv4mUtreF5DpmpEZFKn-yG6VXzLVmCNHC72e2ccCwb_t3U_z8Kv3sx0m0xFsXS7tBoa4H5wn_Gw9OASyyzMN1J2r59oYq159GoCmZ_d6anMTyj8TqytCtfTKfZRzRcp6pWXwKxIt3MiYzGssST9MBrGa70fEkQeUDmsMUUslxQ5RX3V-DCUvNetFDRkHGNcIoQvEo3rHr9p8sGPckvhtD5GDMOE78eN9cJDB33itcqR"/>
+<div class="absolute top-4 left-4">
+<span class="bg-primary text-[#D4A843] px-3 py-1 text-[10px] font-label tracking-widest uppercase shadow-lg">Exclusive Events</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 text-[10px] font-label text-outline tracking-widest uppercase">
+<span>May 15, 2024</span>
+<span class="w-8 h-[1px] bg-outline-variant"></span>
+<span>5 min read</span>
+</div>
+<h2 class="font-headline text-3xl text-primary leading-tight hover:text-secondary transition-colors cursor-pointer">Reflections on the Annual Blue Moon Gala</h2>
+<p class="text-on-surface-variant font-body leading-relaxed text-sm">A night of unparalleled elegance and maritime magic. Revisit the highlights of our most celebrated evening of the year.</p>
+<a class="inline-flex items-center gap-2 text-secondary font-label text-xs tracking-widest uppercase group-hover:gap-4 transition-all" href="#">
+                                Read Journal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</article>
+</div>
+<!-- Pagination -->
+<div class="mt-20 flex items-center justify-center gap-4">
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-outline hover:border-secondary hover:text-secondary transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-primary text-[#D4A843] flex items-center justify-center font-label text-sm">1</button>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-outline hover:border-secondary hover:text-secondary transition-colors font-label text-sm">2</button>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-outline hover:border-secondary hover:text-secondary transition-colors font-label text-sm">3</button>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-outline hover:border-secondary hover:text-secondary transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Subscription Section -->
+<section class="bg-primary text-white py-20 px-6 md:px-12 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] -mr-48 -mt-48"></div>
+<div class="max-w-3xl mx-auto text-center relative z-10">
+<h2 class="font-headline text-4xl mb-6">Join the Inner Circle</h2>
+<p class="font-body text-on-primary-container mb-10 text-lg">Receive exclusive invitations to tasting events and the latest dispatches from the coast directly to your inbox.</p>
+<form class="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
+<input class="flex-grow bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:ring-secondary focus:border-secondary py-4 px-6 rounded-md" placeholder="Your email address" type="email"/>
+<button class="bg-[#D4A843] text-primary font-label font-semibold px-10 py-4 rounded-md tracking-widest uppercase hover:bg-secondary-fixed-dim transition-colors" type="submit">Subscribe</button>
+</form>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-[#002451] dark:bg-[#001836] w-full pt-20 pb-10 px-6 md:px-12">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-7xl mx-auto">
+<div class="col-span-1 md:col-span-1">
+<span class="font-['Playfair_Display'] text-3xl text-[#D4A843] mb-6 block">Porto Cabral BC</span>
+<p class="font-['Inter'] text-slate-300 leading-relaxed mb-6">Experience the pinnacle of maritime elegance at Balneário Camboriú's most exclusive nautical destination.</p>
+<div class="flex gap-4">
+<a class="text-slate-400 hover:text-[#D4A843] transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+<a class="text-slate-400 hover:text-[#D4A843] transition-colors" href="#"><span class="material-symbols-outlined">location_on</span></a>
+<a class="text-slate-400 hover:text-[#D4A843] transition-colors" href="#"><span class="material-symbols-outlined">mail</span></a>
+</div>
+</div>
+<div>
+<h4 class="font-label text-[#D4A843] text-xs uppercase tracking-widest mb-8">Navigation</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">Home</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">Experiences</a></li>
+<li><a class="text-[#D4A843] font-semibold" href="#">Blog</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">About Us</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label text-[#D4A843] text-xs uppercase tracking-widest mb-8">Menu</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">The Kitchen</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">Wine Cellar</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">Signature Cocktails</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label text-[#D4A843] text-xs uppercase tracking-widest mb-8">Contact</h4>
+<p class="text-slate-400 mb-2">Pier 4, South Harbor</p>
+<p class="text-slate-400 mb-6">Balneário Camboriú, SC</p>
+<a class="text-slate-300 font-semibold block mb-2" href="tel:+554700000000">+55 47 0000-0000</a>
+<a class="text-slate-300 font-semibold block underline" href="mailto:hello@portocabral.com">hello@portocabral.com</a>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-slate-500 text-sm">© 2024 Porto Cabral BC. All rights reserved.</p>
+<div class="flex gap-8 text-xs text-slate-500 uppercase tracking-widest">
+<a class="hover:text-[#D4A843] transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-[#D4A843] transition-colors" href="#">Terms of Use</a>
+</div>
+</div>
+</footer>
+</body></html>

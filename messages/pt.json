@@ -1,0 +1,81 @@
+{
+  "home": {
+    "title": "Porto Cabral BC",
+    "hero_eyebrow": "Balneário Camboriú · Gastronomia Flutuante",
+    "hero_tagline": "Onde o sabor\nencontra o horizonte",
+    "cta_reserva": "Fazer Reserva",
+    "cta_cardapio": "Ver Cardápio",
+
+    "dishes_eyebrow": "A Selection of Excellence",
+    "dishes_title": "Iguarias do Mar",
+    "dish_cta": "Ver no cardápio",
+    "dishes": [
+      { "title": "Capitão Cabral",   "desc": "Polvo à moda da casa, arroz cremoso de limão siciliano e batata sauté." },
+      { "title": "Lagosta Grelhada", "desc": "Lagosta inteira na manteiga, batatas gratinadas e molho de camarão." },
+      { "title": "Camarão Porto",    "desc": "Camarões gigantes flambados no conhaque com queijo brie." },
+      { "title": "Tesouros do Mar",  "desc": "Lagosta, camarão, congrio ou salmão, bolinhos e ostras gratinadas." },
+      { "title": "Salmão ao Molhe",  "desc": "Filé grelhado ao molho de maracujá com aspargos frescos." },
+      { "title": "Ostras Frescas",   "desc": "Selecionadas à mão, servidas com vinagrete clássico e limão siciliano." }
+    ],
+
+    "history_eyebrow": "Since 1998",
+    "history_title": "Nossa História:\nO Legado dos Mares",
+    "history_p1": "Fundado por Edson Cabral, o Porto Cabral BC nasceu de uma paixão visceral pelo mar e pela hospitalidade. O que começou como um pequeno píer familiar tornou-se o destino gastronômico mais emblemático da Barra Sul.",
+    "history_p2": "Cada detalhe — da arquitetura que remete aos antigos galeões à curadoria dos vinhos — foi pensado para proporcionar uma imersão total no luxo náutico.",
+    "history_quote": "O Porto Cabral não é apenas um restaurante, é o meu convite pessoal para que você sinta a alma de Balneário Camboriú.",
+    "history_quote_author": "— Edson Cabral, Fundador",
+
+    "pillars_eyebrow": "A Experiência Completa",
+    "pillars_title": "Três razões para vir",
+    "pillars": [
+      { "title": "Sobre o Mar",      "desc": "Sinta a brisa do oceano e o balanço suave sobre as águas da Barra Sul." },
+      { "title": "Melhor Sunset",    "desc": "O pôr do sol mais icônico de Balneário Camboriú, com vista panorâmica para o skyline." },
+      { "title": "Alta Gastronomia", "desc": "Ingredientes frescos do oceano e técnicas contemporâneas que elevam cada sabor." }
+    ],
+
+    "location_eyebrow": "Como nos encontrar",
+    "location_title": "Localização\nPrivilegiada",
+    "location_desc": "No Molhe da Barra Sul — o ponto mais exclusivo de Balneário Camboriú, onde o rio encontra o mar. Uma experiência gastronômica literalmente sobre as águas.",
+    "location_maps": "Abrir no Maps",
+
+    "reserva_eyebrow": "Garanta seu lugar",
+    "reserva_title": "Reserve sua Mesa",
+    "reserva_sub": "No horizonte mais belo de Balneário Camboriú."
+  },
+  "nav": {
+    "home": "Home",
+    "cardapio": "Cardápio",
+    "sobre": "Sobre",
+    "blog": "Blog",
+    "cliente": "Área do Cliente"
+  },
+  "reservation": {
+    "title": "Reserve sua Mesa",
+    "subtitle": "Garanta seu lugar no horizonte.",
+    "name": "Nome Completo",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "date": "Data",
+    "time": "Horário",
+    "party_size": "Número de Pessoas",
+    "observations": "Observações",
+    "lgpd": "Concordo com o tratamento de meus dados para fins de reserva e comunicações exclusivas do Porto Cabral BC, conforme a LGPD.",
+    "submit": "Confirmar Reserva",
+    "sending": "Enviando...",
+    "success": "Reserva Confirmada!",
+    "success_body": "Verifique seu email para a confirmação.",
+    "error": "Erro ao enviar reserva. Tente novamente.",
+    "lgpd_required": "Aceite os termos LGPD para continuar."
+  },
+  "auth": {
+    "login": "Entrar",
+    "signup": "Criar conta",
+    "email": "Email",
+    "password": "Senha",
+    "name": "Nome completo",
+    "whatsapp": "WhatsApp",
+    "google": "Continuar com Google",
+    "invalid_credentials": "Email ou senha inválidos.",
+    "dashboard_title": "Cabine do Comandante"
+  }
+}

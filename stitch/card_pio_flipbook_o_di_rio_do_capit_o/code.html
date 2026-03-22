@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&amp;family=Josefin+Sans:wght@300;400;600&amp;family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@400;500;600&amp;family=Great+Vibes&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error": "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#eec058",
+              "surface-tint": "#415e91",
+              "on-primary-fixed": "#001b3f",
+              "outline": "#747780",
+              "on-error-container": "#93000a",
+              "surface": "#fef9f1",
+              "primary": "#002451",
+              "primary-fixed": "#d7e2ff",
+              "tertiary-fixed-dim": "#cac6be",
+              "surface-container": "#f2ede5",
+              "secondary": "#795900",
+              "on-surface-variant": "#43474f",
+              "on-tertiary-container": "#a8a59e",
+              "inverse-surface": "#32302b",
+              "surface-bright": "#fef9f1",
+              "surface-container-high": "#ece8e0",
+              "on-secondary-container": "#755700",
+              "tertiary-fixed": "#e7e2da",
+              "on-primary-fixed-variant": "#284678",
+              "on-primary": "#ffffff",
+              "tertiary": "#272520",
+              "background": "#fef9f1",
+              "on-tertiary-fixed-variant": "#494741",
+              "surface-container-highest": "#e7e2da",
+              "on-primary-container": "#89a5dd",
+              "inverse-on-surface": "#f5f0e8",
+              "tertiary-container": "#3d3b35",
+              "on-error": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#abc7ff",
+              "primary-container": "#1a3a6b",
+              "secondary-fixed": "#ffdf9f",
+              "surface-variant": "#e7e2da",
+              "error-container": "#ffdad6",
+              "on-surface": "#1d1c17",
+              "on-background": "#1d1c17",
+              "inverse-primary": "#abc7ff",
+              "surface-container-low": "#f8f3eb",
+              "on-secondary-fixed": "#261a00",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#ded9d2",
+              "secondary-container": "#fece65",
+              "on-tertiary-fixed": "#1d1c17",
+              "outline-variant": "#c4c6d0",
+              "on-secondary-fixed-variant": "#5b4300"
+            },
+            fontFamily: {
+              "headline": ["Noto Serif"],
+              "body": ["Inter"],
+              "label": ["Manrope"],
+              "display": ["Playfair Display"],
+              "deco": ["Josefin Sans"],
+              "script": ["Great Vibes", "cursive"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.perspective-lg {
+    perspective: 2500px
+    }
+.book-shadow {
+    box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.6), 0 20px 40px -20px rgba(0, 0, 0, 0.7)
+    }
+.aged-parchment {
+    background-color: #f4e9d5;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuD4pxSLvPFHnnW1l0jvGcqinzLWQpW-4CDUrYQs53GkNXXSYa-U3fDZ94H3Xjrjvpk2DrVgCJ9LcBKowTehaXkqX5D90zorhb9nw3U1i7UWDbiNy4n-CtFtc0vbM1FaNx3YtRAVPyjgRmiP1KQRWLGvEp0aJFndmc-sl79WkYhwd5f_ztKQZcJ3TBky0nDKGPzx8bRulU-dHeXsXaNjPKbYoGEIqEj25cX8AdpSNUQjIQxnlePkSXVRIWQSds9R49rmeARLRxgT8sJy), radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.05) 100%)
+    }
+.wood-deck {
+    background-color: #2a1e12;
+    background-image: linear-gradient(90deg, transparent 95%, rgba(0, 0, 0, 0.3) 100%), url(https://lh3.googleusercontent.com/aida-public/AB6AXuAcjwtMzGCkfWwvAiK0HLczWAVTkSVJkiwnb42iiqBAcsoMfLRCyGjHIJjrk6Ft-SNoAkxl4JfpmdpYKTlTRI9-hnWXVPjLJSG8lUzZjp52WHgIeg_Euv2X87nVQCM2lW5fmRaj-YPbE_ZWr_qZEE4R2hVnkOc_tFyeYyRsWhukiXZM2rwlqfEeS9pl9hGoxjSsq6l9RYjJ0ch_1keR7NCeMGoVEvCPd5DRYkwjO-titfqypIzMFuRD-Dm3CagBwykNxo9cX6vQokDr);
+    background-size: 180px 100%, auto
+    }
+.leather-binding {
+    background: linear-gradient(90deg, #3d2b1f 0%, #5d4037 20%, #2b1d14 50%, #5d4037 80%, #3d2b1f 100%);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5)
+    }
+.ink-text {
+    color: #1a1a1a;
+    font-family: "Great Vibes", cursive;
+    letter-spacing: 0.02em
+    }
+.salt-stain {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+    filter: blur(8px)
+    }
+.page-curl-corner {
+    background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.05) 100%)
+    }</style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-secondary/30">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 border-b border-white/20 bg-[#1A3A6B]/85 backdrop-blur-xl transition-all duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+<nav class="flex justify-between items-center px-6 md:px-12 py-4 w-full max-w-[1440px] mx-auto">
+<div class="text-2xl font-bold text-white flex items-center gap-2 font-display tracking-wide uppercase">
+            Porto Cabral BC
+        </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-display tracking-wide uppercase text-sm text-white/80 hover:text-white transition-colors" href="#">Home</a>
+<a class="font-display tracking-wide uppercase text-sm text-[#D4A843] border-b-2 border-[#D4A843] pb-1" href="#">Menu</a>
+<a class="font-display tracking-wide uppercase text-sm text-white/80 hover:text-white transition-colors" href="#">Experiences</a>
+<a class="font-display tracking-wide uppercase text-sm text-white/80 hover:text-white transition-colors" href="#">About</a>
+<a class="font-display tracking-wide uppercase text-sm text-white/80 hover:text-white transition-colors" href="#">Blog</a>
+<a class="font-display tracking-wide uppercase text-sm text-white/80 hover:text-white transition-colors" href="#">Client Area</a>
+</div>
+<div class="flex items-center gap-4 text-[#D4A843]">
+<span class="material-symbols-outlined cursor-pointer hover:bg-white/10 p-2 rounded-full transition-all duration-300">language</span>
+<span class="md:hidden material-symbols-outlined">menu</span>
+</div>
+</nav>
+</header>
+<!-- Category Quick Access Bar -->
+<div class="pt-24 pb-8 bg-surface-container-low flex justify-center items-center overflow-x-auto px-4 gap-4 md:gap-12">
+<button class="font-deco text-sm font-semibold text-secondary uppercase tracking-widest border-b-2 border-secondary whitespace-nowrap">Capas</button>
+<button class="font-deco text-sm font-semibold text-on-surface-variant hover:text-secondary transition-colors uppercase tracking-widest whitespace-nowrap">Entradas</button>
+<button class="font-deco text-sm font-semibold text-on-surface-variant hover:text-secondary transition-colors uppercase tracking-widest whitespace-nowrap">Iguarias do Mar</button>
+<button class="font-deco text-sm font-semibold text-on-surface-variant hover:text-secondary transition-colors uppercase tracking-widest whitespace-nowrap">Peixes</button>
+<button class="font-deco text-sm font-semibold text-on-surface-variant hover:text-secondary transition-colors uppercase tracking-widest whitespace-nowrap">Vinhos</button>
+</div>
+<!-- Main Content: The Flipbook Canvas -->
+<main class="min-h-screen wood-deck py-16 px-4 flex justify-center items-start">
+<div class="relative perspective-lg w-full max-w-6xl mt-4">
+<!-- Book Container -->
+<div class="flex flex-col lg:flex-row w-full book-shadow rounded-sm overflow-hidden min-h-[900px] relative">
+<!-- Left Page: Cover (Logbook Style) -->
+<div class="w-full lg:w-1/2 relative bg-[#1c2e4a] flex flex-col items-center justify-center p-12 text-center border-r-4 border-black/20">
+<!-- Nautical Texture Overlay -->
+<div class="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD53G79HsGNeg1gmWzlRYkgLBeZSa3kUejBylDJZSyEvNQwZw9uzcXUSFrsNSHalWF8vZpJ_z7E_yC4ktwBa5Ywf7rAE_6TlnvvrrNz3jkCFASwH8qa5WoHN_FIBqH_mz9gTLkWMa6UjUc9EZJt9V8NodVXiowQu-aqoyxVCicQvT9rjjwqHgwS79_K6byzQJpUJSCR47TD2aW8l3kOTrDy4DorXpiAJfLDbT_eqQA9MDerkErtTO-n3Y7T3WtFci7CJsU0T2iGpwSR');"></div>
+<!-- Gold Line Illustration: Anchor Left -->
+<div class="absolute top-12 left-12 opacity-40">
+<span class="material-symbols-outlined text-[#D4A843] text-6xl" style="font-variation-settings: 'wght' 200;">anchor</span>
+</div>
+<!-- Gold Line Illustration: Ship Wheel Right -->
+<div class="absolute bottom-12 right-12 opacity-40">
+<span class="material-symbols-outlined text-[#D4A843] text-6xl" style="font-variation-settings: 'wght' 200;">settings_motion_mode</span>
+</div>
+<div class="relative z-10 space-y-10 border-2 border-[#D4A843]/30 p-16 bg-black/10 backdrop-blur-sm">
+<span class="material-symbols-outlined text-[#D4A843] text-9xl" style="font-variation-settings: 'FILL' 1;">sailing</span>
+<div>
+<h2 class="font-deco text-[#D4A843]/60 tracking-[0.4em] text-xs uppercase mb-4">Logbook Nº 24</h2>
+<h1 class="font-display italic text-7xl text-[#D4A843] leading-tight">Porto Cabral</h1>
+<div class="w-32 h-0.5 bg-gradient-to-r from-transparent via-[#D4A843] to-transparent mx-auto my-6"></div>
+<p class="font-display text-white/90 tracking-widest text-lg italic">Relatos de Mar e Sal</p>
+</div>
+<div class="pt-8">
+<p class="font-deco text-[#D4A843]/70 tracking-[0.2em] text-[10px] uppercase">Balneário Camboriú • SC</p>
+</div>
+</div>
+<!-- Leather Corner Protectors -->
+<div class="absolute top-0 left-0 w-24 h-24 bg-[#3d2b1f] rotate-45 -translate-x-12 -translate-y-12 shadow-xl border border-black/20"></div>
+<div class="absolute bottom-0 left-0 w-24 h-24 bg-[#3d2b1f] -rotate-45 -translate-x-12 translate-y-12 shadow-xl border border-black/20"></div>
+</div>
+<!-- Leather Binding Spine -->
+<div class="hidden lg:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-12 leather-binding z-20"></div>
+<!-- Right Page: Menu Items (Aged Parchment) -->
+<div class="w-full lg:w-1/2 aged-parchment p-8 md:p-16 flex flex-col relative overflow-hidden">
+<!-- Water droplets/Salt Stains -->
+<div class="absolute top-4 right-4 w-32 h-32 salt-stain"></div>
+<div class="absolute bottom-12 left-8 w-24 h-24 salt-stain opacity-60"></div>
+<!-- Botanical Style Header -->
+<div class="mb-14 text-center relative">
+<!-- Crab Illustration -->
+<div class="absolute -top-8 -left-4 opacity-20 rotate-[-15deg]">
+<span class="material-symbols-outlined text-secondary text-5xl">set_meal</span>
+</div>
+<!-- Lemon/Leaf Illustration -->
+<div class="absolute -top-6 -right-4 opacity-20 rotate-[15deg]">
+<span class="material-symbols-outlined text-secondary text-5xl">nature_people</span>
+</div>
+<h2 class="font-display italic text-5xl text-primary mb-3">Iguarias do Mar</h2>
+<p class="font-script text-2xl text-secondary/80">Estudos sobre os Tesouros das Profundezas</p>
+<div class="mt-4 flex justify-center items-center gap-4">
+<div class="h-px w-8 bg-secondary/30"></div>
+<span class="material-symbols-outlined text-secondary text-sm">fluid_med</span>
+<div class="h-px w-8 bg-secondary/30"></div>
+</div>
+</div>
+<!-- Menu List (Ink and Nib Style) -->
+<div class="space-y-14 relative z-10">
+<!-- Item 1: Tesouros do Mar -->
+<article class="group">
+<div class="flex justify-between items-baseline gap-4 mb-2">
+<h3 class="font-display font-bold text-xl text-primary uppercase tracking-tight">Tesouros do Mar</h3>
+<span class="flex-grow border-b border-secondary/20 mx-2 mb-1"></span>
+<span class="font-deco font-bold text-secondary">R$ 499</span>
+</div>
+<p class="ink-text text-xl leading-relaxed mb-4 opacity-90">
+                            Uma meticulosa seleção de crustáceos nobres: lagosta da costa azul, camarões VG capturados ao alvorecer, vieiras e polvo tenro. Grelhados em infusão de manteiga de ervas e sal de flor.
+                        </p>
+</article>
+<!-- Item 2: Lagosta Grelhada (With Photo - Botanical Frame) -->
+<article class="flex flex-col md:flex-row gap-8">
+<div class="w-full md:w-2/5 aspect-[4/5] border-2 border-secondary/30 p-2 flex-shrink-0 shadow-inner bg-white/40">
+<div class="w-full h-full overflow-hidden relative grayscale-[30%] sepia-[20%] hover:grayscale-0 hover:sepia-0 transition-all duration-700">
+<img alt="Grilled Lobster" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjBrSI5OiBAyBVEGRc-y1ZW9dty-lF4Tq8gJ-qZfygQtzPsyRydqOrjO0AmIIG_rd7wpvmlmsAzTaTIbzqucpCCwCpAoIPCgRaLQVy5uZDojq18iNThL3HVhcaktbvR3Bpt0kWrnHeiECCYJu9B5zny-RSNQ3-cz5DdQ22jXChK6enQA52q-hsgcu2Xu0tJZZWlocC0-yb9ShSD66G8AdWE9aYqXgnpIGRMxrbFuCZvhndLypqzQbEyv2WVO33C8tPVMeAQt6YNX-7"/>
+<div class="absolute bottom-0 right-0 bg-secondary/80 text-white text-[8px] px-2 py-1 font-deco">PLATE IV. LAGOSTA</div>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-baseline gap-4 mb-3">
+<h3 class="font-display font-bold text-xl text-primary uppercase tracking-tight">Lagosta Grelhada</h3>
+<span class="font-deco font-bold text-secondary">R$ 399</span>
+</div>
+<p class="ink-text text-xl leading-relaxed">
+                                Caudas selecionadas, submetidas ao calor do fogo de chão, temperadas apenas com o frescor do limão siciliano e a pureza do sal marinho.
+                            </p>
+<div class="mt-4 flex gap-3 text-secondary/60">
+<span class="material-symbols-outlined text-sm">water_drop</span>
+<span class="material-symbols-outlined text-sm">set_meal</span>
+</div>
+</div>
+</article>
+<!-- Item 3: Capitão Cabral -->
+<article>
+<div class="flex justify-between items-baseline gap-4 mb-2">
+<h3 class="font-display font-bold text-xl text-primary uppercase tracking-tight">Capitão Cabral</h3>
+<span class="flex-grow border-b border-secondary/20 mx-2 mb-1"></span>
+<span class="font-deco font-bold text-secondary">R$ 319</span>
+</div>
+<p class="ink-text text-xl leading-relaxed">
+                            Nossa honraria ao mar: Filé de côngrio rosa envolto em crosta de frutos secos, repousado sobre aspargos colhidos ao amanhecer e purê aveludado de raízes locais.
+                        </p>
+</article>
+</div>
+<!-- Navigation Footer -->
+<div class="mt-auto pt-16 flex justify-between items-center border-t border-secondary/10">
+<button class="flex items-center gap-3 group">
+<span class="material-symbols-outlined text-secondary group-hover:-translate-x-1 transition-transform">keyboard_double_arrow_left</span>
+<span class="font-deco text-[10px] uppercase tracking-[0.3em] text-on-surface-variant font-bold">Relato Anterior</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="font-script text-lg text-secondary/60">Folio 04 — 05</span>
+<div class="w-12 h-px bg-secondary/20 mt-1"></div>
+</div>
+<button class="flex items-center gap-3 group">
+<span class="font-deco text-[10px] uppercase tracking-[0.3em] text-on-surface-variant font-bold">Próximo Relato</span>
+<span class="material-symbols-outlined text-secondary group-hover:translate-x-1 transition-transform">keyboard_double_arrow_right</span>
+</button>
+</div>
+<!-- Page Corner visual -->
+<div class="absolute bottom-0 right-0 w-16 h-16 page-curl-corner pointer-events-none opacity-50"></div>
+</div>
+</div>
+<!-- Deck Shadow and Objects -->
+<div class="absolute -right-12 top-1/4 opacity-40 pointer-events-none rotate-12">
+<span class="material-symbols-outlined text-white text-9xl">compass_calibration</span>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full pt-20 pb-10 px-6 md:px-12 bg-[#001b3f] border-t border-white/5">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-7xl mx-auto">
+<div class="md:col-span-1">
+<span class="font-display text-3xl text-[#D4A843] mb-6 block">Porto Cabral BC</span>
+<p class="font-body text-slate-400 leading-relaxed text-sm">
+                A mais exclusiva experiência náutica e gastronômica do litoral catarinense. Sinta a brisa, deguste o mar.
+            </p>
+</div>
+<div>
+<h4 class="font-deco text-[#D4A843] font-semibold mb-6 uppercase tracking-widest text-sm">Navegação</h4>
+<ul class="space-y-4">
+<li><a class="font-body text-slate-400 hover:text-[#D4A843] transition-all text-sm" href="#">Início</a></li>
+<li><a class="font-body text-[#D4A843] font-semibold text-sm" href="#">Cardápio</a></li>
+<li><a class="font-body text-slate-400 hover:text-[#D4A843] transition-all text-sm" href="#">Reservas</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-deco text-[#D4A843] font-semibold mb-6 uppercase tracking-widest text-sm">Contato</h4>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-slate-400 text-sm">
+<span class="material-symbols-outlined text-xs">location_on</span> Av. Atlântica, BC
+                </li>
+<li class="flex items-center gap-3 text-slate-400 text-sm">
+<span class="material-symbols-outlined text-xs">call</span> +55 (47) 9999-9999
+                </li>
+</ul>
+</div>
+<div>
+<h4 class="font-deco text-[#D4A843] font-semibold mb-6 uppercase tracking-widest text-sm">Social</h4>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-[#D4A843] hover:text-[#D4A843] transition-colors" href="#">
+<span class="material-symbols-outlined">public</span>
+</a>
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-[#D4A843] hover:text-[#D4A843] transition-colors" href="#">
+<span class="material-symbols-outlined">camera</span>
+</a>
+</div>
+</div>
+</div>
+<div class="mt-20 pt-8 border-t border-white/5 text-center">
+<p class="text-slate-500 text-xs font-label">© 2024 Porto Cabral BC. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,81 @@
+{
+  "home": {
+    "title": "Porto Cabral BC",
+    "hero_eyebrow": "Balneário Camboriú · Gastronomía Flotante",
+    "hero_tagline": "Donde el sabor se encuentra\ncon el horizonte",
+    "cta_reserva": "Hacer una Reserva",
+    "cta_cardapio": "Ver Menú",
+
+    "dishes_eyebrow": "Una Selección de Excelencia",
+    "dishes_title": "Delicias del Mar",
+    "dish_cta": "Ver en el menú",
+    "dishes": [
+      { "title": "Capitão Cabral",   "desc": "Pulpo al estilo de la casa, arroz cremoso de limón siciliano y papas salteadas." },
+      { "title": "Langosta a la Plancha", "desc": "Langosta entera en mantequilla, papas gratinadas y salsa de camarones." },
+      { "title": "Camarones Porto",  "desc": "Camarones gigantes flambeados en coñac con queso brie." },
+      { "title": "Tesoros del Mar",  "desc": "Langosta, camarones, abadejo o salmón, croquetas y ostras gratinadas." },
+      { "title": "Salmón al Molhe",  "desc": "Filete a la plancha en salsa de maracuyá con espárragos frescos." },
+      { "title": "Ostras Frescas",   "desc": "Seleccionadas a mano, servidas con vinagreta clásica y limón." }
+    ],
+
+    "history_eyebrow": "Desde 1998",
+    "history_title": "Nuestra Historia:\nEl Legado de los Mares",
+    "history_p1": "Fundado por Edson Cabral, Porto Cabral BC nació de una pasión visceral por el mar y la hospitalidad. Lo que comenzó como un pequeño muelle familiar se convirtió en el destino gastronómico más emblemático de Barra Sul.",
+    "history_p2": "Cada detalle — desde la arquitectura que evoca antiguos galeones hasta la curaduría de vinos — fue pensado para proporcionar una inmersión total en el lujo náutico.",
+    "history_quote": "Porto Cabral no es solo un restaurante, es mi invitación personal para que sientas el alma de Balneário Camboriú.",
+    "history_quote_author": "— Edson Cabral, Fundador",
+
+    "pillars_eyebrow": "La Experiencia Completa",
+    "pillars_title": "Tres razones para venir",
+    "pillars": [
+      { "title": "Sobre el Mar",       "desc": "Siente la brisa del océano y el suave balanceo sobre las aguas de Barra Sul." },
+      { "title": "Mejor Atardecer",    "desc": "El atardecer más icónico de Balneário Camboriú, con vista panorámica al skyline." },
+      { "title": "Alta Gastronomía",   "desc": "Ingredientes frescos del océano y técnicas contemporáneas que elevan cada sabor." }
+    ],
+
+    "location_eyebrow": "Cómo encontrarnos",
+    "location_title": "Ubicación\nPrivilegiada",
+    "location_desc": "En el Molhe da Barra Sul — el punto más exclusivo de Balneário Camboriú, donde el río se encuentra con el mar. Una experiencia gastronómica literalmente sobre las aguas.",
+    "location_maps": "Abrir en Maps",
+
+    "reserva_eyebrow": "Asegure su lugar",
+    "reserva_title": "Reserve su Mesa",
+    "reserva_sub": "En el horizonte más bello de Balneário Camboriú."
+  },
+  "nav": {
+    "home": "Inicio",
+    "cardapio": "Menú",
+    "sobre": "Sobre",
+    "blog": "Blog",
+    "cliente": "Área del Cliente"
+  },
+  "reservation": {
+    "title": "Reserve su Mesa",
+    "subtitle": "Asegure su lugar en el horizonte.",
+    "name": "Nombre Completo",
+    "whatsapp": "WhatsApp",
+    "email": "Correo",
+    "date": "Fecha",
+    "time": "Hora",
+    "party_size": "Número de Personas",
+    "observations": "Observaciones",
+    "lgpd": "Acepto el tratamiento de mis datos para reservas y comunicaciones exclusivas de Porto Cabral BC, conforme a la LGPD.",
+    "submit": "Confirmar Reserva",
+    "sending": "Enviando...",
+    "success": "¡Reserva Confirmada!",
+    "success_body": "Revise su correo para la confirmación.",
+    "error": "Error al enviar la reserva. Intente de nuevo.",
+    "lgpd_required": "Acepte los términos LGPD para continuar."
+  },
+  "auth": {
+    "login": "Entrar",
+    "signup": "Crear cuenta",
+    "email": "Correo",
+    "password": "Contraseña",
+    "name": "Nombre completo",
+    "whatsapp": "WhatsApp",
+    "google": "Continuar con Google",
+    "invalid_credentials": "Correo o contraseña inválidos.",
+    "dashboard_title": "Cabina del Comandante"
+  }
+}

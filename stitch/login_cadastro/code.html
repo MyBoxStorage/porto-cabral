@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@300;400;600&amp;family=Josefin+Sans:wght@300;400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-low": "#f8f3eb",
+                        "secondary": "#795900",
+                        "primary-container": "#1a3a6b",
+                        "on-tertiary-fixed": "#1d1c17",
+                        "inverse-primary": "#abc7ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#89a5dd",
+                        "surface-tint": "#415e91",
+                        "inverse-on-surface": "#f5f0e8",
+                        "on-surface-variant": "#43474f",
+                        "surface-container-highest": "#e7e2da",
+                        "on-surface": "#1d1c17",
+                        "surface-container-high": "#ece8e0",
+                        "on-primary-fixed-variant": "#284678",
+                        "on-primary-fixed": "#001b3f",
+                        "on-tertiary-container": "#a8a59e",
+                        "surface-dim": "#ded9d2",
+                        "secondary-fixed": "#ffdf9f",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#1d1c17",
+                        "tertiary": "#272520",
+                        "primary": "#002451",
+                        "outline-variant": "#c4c6d0",
+                        "on-tertiary-fixed-variant": "#494741",
+                        "on-secondary-fixed": "#261a00",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e7e2da",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#abc7ff",
+                        "secondary-container": "#fece65",
+                        "surface-container": "#f2ede5",
+                        "background": "#fef9f1",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#5b4300",
+                        "secondary-fixed-dim": "#eec058",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#fef9f1",
+                        "surface": "#fef9f1",
+                        "outline": "#747780",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#3d3b35",
+                        "on-secondary-container": "#755700",
+                        "inverse-surface": "#32302b",
+                        "tertiary-fixed-dim": "#cac6be",
+                        "tertiary-fixed": "#e7e2da",
+                        "primary-fixed": "#d7e2ff"
+                    },
+                    fontFamily: {
+                        "headline": ["Playfair Display", "serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Josefin Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(0, 36, 81, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 50px rgba(29, 28, 23, 0.1);
+        }
+        .shimmer-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer-effect::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+        .shimmer-effect:hover::after {
+            opacity: 1;
+            left: 100%;
+            top: 100%;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- Full Screen Background Wrapper -->
+<div class="fixed inset-0 z-0">
+<img alt="" class="w-full h-full object-cover" data-alt="Luxury restaurant exterior at sunset over the calm sea" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYm8r5svyS3AlFo03BeeVlMtcLlUYMKDC-Tf-hAwMBoIcUG6jCxF80y3z9Iye3F7hPLKbbZI2AixJvBzwte7Fmw43RpciPYVU8XdIBnLBUbZouyY9wTeZxrU8gBFDEdZwnzhdZOTsX615FW3wGmbOH0i4Yl_LM8MwbZqDYkWgNZD1bnFxmAQcrTaVKD9xpnVg7q-PTy7amMSDqL9wAM3qoMTtduSZ_iWbcpbIYfAAoouG1c_BYvtCFNK1WYbAF9hRl5iPDN8TO4n_M"/>
+<!-- Deep Blue Glassmorphism Overlay -->
+<div class="absolute inset-0 glass-panel"></div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 min-h-screen flex flex-col items-center justify-center p-6">
+<!-- Brand Header (Floating above the card) -->
+<div class="mb-10 text-center">
+<h1 class="font-headline text-4xl md:text-5xl font-bold tracking-tighter text-on-primary italic mb-2">
+                Porto Cabral BC
+            </h1>
+<p class="font-label text-on-primary-container tracking-[0.3em] uppercase text-xs">
+                The Maritime Curator Experience
+            </p>
+</div>
+<!-- Centered Auth Card -->
+<div class="auth-card w-full max-w-md rounded-xl p-10 relative overflow-hidden">
+<!-- Art Deco Accent (Thin Gold Line) -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-secondary opacity-40"></div>
+<!-- Tabs -->
+<div class="flex border-b border-surface-container-highest mb-8">
+<button class="flex-1 pb-4 text-sm font-label tracking-widest uppercase border-b-2 border-secondary text-on-surface">
+                    Entrar
+                </button>
+<button class="flex-1 pb-4 text-sm font-label tracking-widest uppercase border-b-2 border-transparent text-outline hover:text-on-surface transition-colors">
+                    Cadastrar
+                </button>
+</div>
+<!-- Login Form -->
+<form class="space-y-6">
+<!-- Email Field -->
+<div class="space-y-1.5">
+<label class="block font-label text-[10px] uppercase tracking-widest text-on-surface-variant" for="email">Email Corporativo</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors text-lg">mail</span>
+<input class="w-full pl-8 pr-4 py-3 bg-transparent border-b border-outline-variant focus:border-secondary focus:ring-0 text-on-surface placeholder:text-outline/50 transition-all outline-none" id="email" name="email" placeholder="seu@email.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-1.5">
+<div class="flex justify-between items-end">
+<label class="block font-label text-[10px] uppercase tracking-widest text-on-surface-variant" for="password">Senha</label>
+<a class="font-label text-[10px] uppercase tracking-widest text-secondary hover:opacity-70 transition-opacity" href="#">Esqueceu?</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors text-lg">lock</span>
+<input class="w-full pl-8 pr-4 py-3 bg-transparent border-b border-outline-variant focus:border-secondary focus:ring-0 text-on-surface placeholder:text-outline/50 transition-all outline-none" id="password" name="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="pt-4 space-y-4">
+<button class="w-full py-4 bg-primary text-secondary font-label font-semibold tracking-widest uppercase text-xs rounded-lg shimmer-effect transition-all active:scale-[0.98]" type="submit">
+                        Entrar
+                    </button>
+<button class="w-full py-4 border border-secondary/30 text-on-surface font-label font-semibold tracking-widest uppercase text-xs rounded-lg hover:bg-surface-container-low transition-all active:scale-[0.98]" type="button">
+                        Cadastrar
+                    </button>
+</div>
+<!-- Divider -->
+<div class="flex items-center gap-4 py-2">
+<div class="h-[1px] flex-1 bg-outline-variant"></div>
+<span class="font-label text-[10px] text-outline uppercase tracking-widest">Ou continue com</span>
+<div class="h-[1px] flex-1 bg-outline-variant"></div>
+</div>
+<!-- OAuth -->
+<button class="w-full py-3 flex items-center justify-center gap-3 border border-outline-variant text-on-surface font-label font-medium text-xs rounded-lg hover:bg-surface-container-lowest hover:border-outline transition-all" type="button">
+<svg class="w-4 h-4" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+                    Login with Google
+                </button>
+</form>
+<!-- Decorative Illustration (Thin Gold Nautical) -->
+<div class="absolute -bottom-10 -right-10 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-9xl text-secondary">anchor</span>
+</div>
+</div>
+<!-- Footer Info -->
+<footer class="mt-12 text-center space-y-4">
+<p class="font-label text-[10px] text-on-primary-container/60 uppercase tracking-widest max-w-xs leading-relaxed">
+                Acesso restrito a convidados e curadores registrados no ecossistema Porto Cabral.
+            </p>
+<div class="flex justify-center gap-6">
+<a class="text-on-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">language</span>
+</a>
+<a class="text-on-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">info</span>
+</a>
+</div>
+</footer>
+</main>
+<!-- Navigation Restriction Check (Suppressing Nav for Transactional Flow) -->
+</body></html>

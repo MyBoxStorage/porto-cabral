@@ -1,0 +1,81 @@
+{
+  "home": {
+    "title": "Porto Cabral BC",
+    "hero_eyebrow": "Balneário Camboriú · Floating Gastronomy",
+    "hero_tagline": "Where flavor meets\nthe horizon",
+    "cta_reserva": "Make a Reservation",
+    "cta_cardapio": "View Menu",
+
+    "dishes_eyebrow": "A Selection of Excellence",
+    "dishes_title": "Treasures of the Sea",
+    "dish_cta": "See on the menu",
+    "dishes": [
+      { "title": "Capitão Cabral",   "desc": "Octopus in our signature style, creamy lemon risotto and sautéed potatoes." },
+      { "title": "Grilled Lobster",  "desc": "Whole lobster in butter, gratin potatoes and shrimp sauce." },
+      { "title": "Porto Shrimp",     "desc": "Giant shrimp flambéed in cognac with brie cheese." },
+      { "title": "Sea Treasures",    "desc": "Lobster, shrimp, cusk or salmon, croquettes and gratin oysters." },
+      { "title": "Salmon au Molhe",  "desc": "Grilled fillet in passion fruit sauce with fresh asparagus." },
+      { "title": "Fresh Oysters",    "desc": "Hand-selected, served with classic vinaigrette and lemon." }
+    ],
+
+    "history_eyebrow": "Since 1998",
+    "history_title": "Our Story:\nThe Legacy of the Seas",
+    "history_p1": "Founded by Edson Cabral, Porto Cabral BC was born from a visceral passion for the sea and hospitality. What began as a small family pier became the most iconic gastronomic destination of Barra Sul.",
+    "history_p2": "Every detail — from the architecture reminiscent of old galleons to the wine curation — was designed to provide a total immersion in nautical luxury.",
+    "history_quote": "Porto Cabral is not just a restaurant, it is my personal invitation for you to feel the soul of Balneário Camboriú.",
+    "history_quote_author": "— Edson Cabral, Founder",
+
+    "pillars_eyebrow": "The Complete Experience",
+    "pillars_title": "Three reasons to visit",
+    "pillars": [
+      { "title": "Over the Sea",       "desc": "Feel the ocean breeze and the gentle sway over the waters of Barra Sul." },
+      { "title": "Best Sunset",        "desc": "The most iconic sunset in Balneário Camboriú, with a panoramic view of the skyline." },
+      { "title": "Fine Dining",        "desc": "Fresh ocean ingredients and contemporary techniques that elevate every flavor." }
+    ],
+
+    "location_eyebrow": "How to find us",
+    "location_title": "Prime\nLocation",
+    "location_desc": "At the Molhe da Barra Sul — the most exclusive point of Balneário Camboriú, where the river meets the sea. A gastronomic experience literally over the waters.",
+    "location_maps": "Open in Maps",
+
+    "reserva_eyebrow": "Secure your spot",
+    "reserva_title": "Reserve Your Table",
+    "reserva_sub": "On the most beautiful horizon of Balneário Camboriú."
+  },
+  "nav": {
+    "home": "Home",
+    "cardapio": "Menu",
+    "sobre": "About",
+    "blog": "Blog",
+    "cliente": "Client Area"
+  },
+  "reservation": {
+    "title": "Reserve Your Table",
+    "subtitle": "Secure your place on the horizon.",
+    "name": "Full Name",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "date": "Date",
+    "time": "Time",
+    "party_size": "Number of Guests",
+    "observations": "Notes",
+    "lgpd": "I agree to the processing of my data for reservation and exclusive Porto Cabral BC communications, in accordance with LGPD.",
+    "submit": "Confirm Reservation",
+    "sending": "Sending...",
+    "success": "Reservation Confirmed!",
+    "success_body": "Check your email for confirmation.",
+    "error": "Error sending reservation. Please try again.",
+    "lgpd_required": "Please accept the LGPD terms to continue."
+  },
+  "auth": {
+    "login": "Sign In",
+    "signup": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full Name",
+    "whatsapp": "WhatsApp",
+    "google": "Continue with Google",
+    "invalid_credentials": "Invalid email or password.",
+    "dashboard_title": "Captain's Cabin"
+  }
+}

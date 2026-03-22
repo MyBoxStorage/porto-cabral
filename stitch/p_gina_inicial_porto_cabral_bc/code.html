@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Porto Cabral BC | Onde o sabor encontra o horizonte</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&amp;family=Inter:wght@300;400;500;600;700&amp;family=Josefin+Sans:wght@300;400;600&amp;family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error": "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#eec058",
+              "surface-tint": "#415e91",
+              "on-primary-fixed": "#001b3f",
+              "outline": "#747780",
+              "on-error-container": "#93000a",
+              "surface": "#fef9f1",
+              "primary": "#002451",
+              "primary-fixed": "#d7e2ff",
+              "tertiary-fixed-dim": "#cac6be",
+              "surface-container": "#f2ede5",
+              "secondary": "#795900",
+              "on-surface-variant": "#43474f",
+              "on-tertiary-container": "#a8a59e",
+              "inverse-surface": "#32302b",
+              "surface-bright": "#fef9f1",
+              "surface-container-high": "#ece8e0",
+              "on-secondary-container": "#755700",
+              "tertiary-fixed": "#e7e2da",
+              "on-primary-fixed-variant": "#284678",
+              "on-primary": "#ffffff",
+              "tertiary": "#272520",
+              "background": "#fef9f1",
+              "on-tertiary-fixed-variant": "#494741",
+              "surface-container-highest": "#e7e2da",
+              "on-primary-container": "#89a5dd",
+              "inverse-on-surface": "#f5f0e8",
+              "tertiary-container": "#3d3b35",
+              "on-error": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#abc7ff",
+              "primary-container": "#1a3a6b",
+              "secondary-fixed": "#ffdf9f",
+              "surface-variant": "#e7e2da",
+              "error-container": "#ffdad6",
+              "on-surface": "#1d1c17",
+              "on-background": "#1d1c17",
+              "inverse-primary": "#abc7ff",
+              "surface-container-low": "#f8f3eb",
+              "on-secondary-fixed": "#261a00",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#ded9d2",
+              "secondary-container": "#fece65",
+              "on-tertiary-fixed": "#1d1c17",
+              "outline-variant": "#c4c6d0",
+              "on-secondary-fixed-variant": "#5b4300"
+            },
+            fontFamily: {
+              "headline": ["Noto Serif"],
+              "body": ["Inter"],
+              "label": ["Manrope"],
+              "display": ["Playfair Display"],
+              "accent": ["Josefin Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-nav {
+            background: rgba(26, 58, 107, 0.85);
+            backdrop-filter: blur(20px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, rgba(212,168,67,1) 0%, rgba(254,206,101,1) 50%, rgba(212,168,67,1) 100%);
+            background-size: 200% auto;
+        }
+        .text-shadow-lg {
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .wave-top {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23000' fill-opacity='1' d='M0,160L60,170.7C120,181,240,203,360,186.7C480,171,600,117,720,112C840,107,960,149,1080,154.7C1200,160,1320,128,1380,112L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            mask-size: cover;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-secondary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 border-b border-white/20 glass-nav shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+<div class="flex justify-between items-center px-6 md:px-12 py-4 w-full">
+<div class="text-2xl font-bold text-white flex items-center gap-2">
+<span class="font-display tracking-wide uppercase text-sm md:text-xl">Porto Cabral BC</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-[#D4A843] border-b-2 border-[#D4A843] pb-1 font-display tracking-wide uppercase text-sm" href="#">Home</a>
+<a class="text-white/80 hover:text-white transition-colors font-display tracking-wide uppercase text-sm" href="#">Menu</a>
+<a class="text-white/80 hover:text-white transition-colors font-display tracking-wide uppercase text-sm" href="#">Experiences</a>
+<a class="text-white/80 hover:text-white transition-colors font-display tracking-wide uppercase text-sm" href="#">About</a>
+<a class="text-white/80 hover:text-white transition-colors font-display tracking-wide uppercase text-sm" href="#">Blog</a>
+<a class="text-white/80 hover:text-white transition-colors font-display tracking-wide uppercase text-sm" href="#">Client Area</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#D4A843] hover:bg-white/10 transition-all duration-300 p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+</button>
+<button class="md:hidden text-white">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Section 1: Hero -->
+<section class="relative h-screen w-full overflow-hidden flex items-center justify-center">
+<!-- Video Placeholder -->
+<div class="absolute inset-0 bg-primary-container z-0">
+<div class="absolute inset-0 bg-black/40 z-10"></div>
+<img alt="Luxury ocean view restaurant" class="w-full h-full object-cover opacity-60" data-alt="Deep ocean waves reflecting sunset light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc5R0e4x5ToVeEXxB1WDAm06DHBWc1gVz3k8Ol49PT9h5INahks98SvUQOmfeeJR79AwQ2Qod54IQFPb4Piwb-G20qin9n82Kr_RHFCv5W4BUdOaii0ZNUYP7zBN5UDrvZOKDL0SG73BbyIGGXzKl3r-sCECp-OdLMpG-gcMAxXVDug6Pgt1oEu230mANbB3BhAKfuoLpAX6SDjTSFSDiAIEWJJmNeqVL11Z7gcChvFgEY9HfKLvQE-s7sR7diwXgnqjAzo41vlyYS"/>
+</div>
+<div class="relative z-20 text-center px-4 max-w-4xl mx-auto">
+<!-- White SVG Logo Placeholder (Caravela) -->
+<div class="mb-8 flex justify-center">
+<span class="material-symbols-outlined text-white text-8xl md:text-9xl opacity-90 font-light" data-icon="sailing">sailing</span>
+</div>
+<h1 class="font-display italic text-3xl md:text-5xl text-white mb-10 tracking-wider text-shadow-lg">
+                "Onde o sabor encontra o horizonte"
+            </h1>
+<div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+<button class="shimmer bg-secondary text-on-secondary px-10 py-4 rounded-lg font-accent font-semibold uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">
+                    Fazer Reserva
+                </button>
+<button class="bg-transparent border-2 border-white text-white px-10 py-4 rounded-lg font-accent font-semibold uppercase tracking-widest hover:bg-white/10 active:scale-95 transition-all">
+                    Ver Cardápio
+                </button>
+</div>
+</div>
+<!-- Scroll Indicator -->
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-white animate-bounce">
+<span class="material-symbols-outlined text-4xl" data-icon="keyboard_double_arrow_down">keyboard_double_arrow_down</span>
+</div>
+</section>
+<!-- Section 2: Experience Cards -->
+<section class="py-24 px-6 md:px-12 bg-surface relative">
+<!-- Nautical background element -->
+<div class="absolute top-20 right-10 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[300px] text-secondary" data-icon="explore">explore</span>
+</div>
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+<!-- Card 1 -->
+<div class="group flex flex-col items-center text-center space-y-6">
+<div class="w-20 h-20 rounded-full bg-surface-container-low flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-white transition-all duration-500 shadow-sm">
+<span class="material-symbols-outlined text-4xl" data-icon="water">water</span>
+</div>
+<h3 class="font-display text-2xl text-primary font-bold">Sobre o Mar</h3>
+<p class="text-on-surface-variant leading-relaxed">Sinta a brisa do oceano e o balanço suave enquanto desfruta da nossa localização privilegiada sobre as águas de Balneário Camboriú.</p>
+</div>
+<!-- Card 2 -->
+<div class="group flex flex-col items-center text-center space-y-6">
+<div class="w-20 h-20 rounded-full bg-surface-container-low flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-white transition-all duration-500 shadow-sm">
+<span class="material-symbols-outlined text-4xl" data-icon="wb_twilight">wb_twilight</span>
+</div>
+<h3 class="font-display text-2xl text-primary font-bold">Melhor Sunset</h3>
+<p class="text-on-surface-variant leading-relaxed">O cenário perfeito para o fim de tarde. O pôr do sol mais icônico da região, com vista panorâmica para o skyline e o mar.</p>
+</div>
+<!-- Card 3 -->
+<div class="group flex flex-col items-center text-center space-y-6">
+<div class="w-20 h-20 rounded-full bg-surface-container-low flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-white transition-all duration-500 shadow-sm">
+<span class="material-symbols-outlined text-4xl" data-icon="restaurant">restaurant</span>
+</div>
+<h3 class="font-display text-2xl text-primary font-bold">Alta Gastronomia</h3>
+<p class="text-on-surface-variant leading-relaxed">Uma curadoria rigorosa de ingredientes frescos e técnicas contemporâneas que elevam o sabor clássico do mar.</p>
+</div>
+</div>
+</section>
+<!-- Wave Divider -->
+<div class="w-full h-24 bg-primary wave-top -mt-1 relative z-10"></div>
+<!-- Section 3: Iguarias do Mar -->
+<section class="bg-primary py-24 px-6 md:px-12 text-white overflow-hidden">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<span class="font-accent text-secondary tracking-[0.3em] uppercase text-sm block mb-4">A Selection of Excellence</span>
+<h2 class="font-display text-4xl md:text-6xl mb-6">Iguarias do Mar</h2>
+<div class="w-24 h-1 bg-secondary mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Dish 1 -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-primary-container rounded-lg">
+<img alt="Capitão Cabral Dish" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" data-alt="Exotic seafood platter with grilled octopus and fresh herbs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtg-nnnM0q_kEEMYTwsre6lLmLLW2_-2uwHoNZsDCS9fIlPMZHgwHy9C9ee-Z4lowJqRGbSUAFvBaWdQnb1z65BDFRMTYMub3Z4gAhF0wWQwLCfC3Ysbhnl9H9vrIsD8gFrxGM04kqWWTkob5BUVTqwGA7xuQkOEqaXJo7H-t2p2ThE48k7iJxbdGyIwvIRpFtZcmkZ_czAz_UgZYn6znSQILRcfZFO5BrD7us5rvr9IwZ0AkImr9-Dxtnfhs177tXA6iouWhhxXx5"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent flex flex-col justify-end p-8">
+<h4 class="font-display text-2xl text-secondary mb-2">Capitão Cabral</h4>
+<p class="text-sm text-slate-300 font-light line-clamp-2">Mix de frutos do mar grelhados na brasa com manteiga de ervas finas e batatas rústicas.</p>
+</div>
+</div>
+<!-- Dish 2 -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-primary-container rounded-lg">
+<img alt="Lagosta Grelhada" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" data-alt="Grilled lobster with lemon butter sauce on a ceramic plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbN_Z2JY8wlsIR9elbLfm7zddLwEBhzJYkSHWYT-VOcPCg9_hCLRaGUUxmVanFdKK-eY9X8brHXqmugCPcTCCMRMyyISj8ACry7igiuZgYlgRkClzsjfxMowpZM-T7jtrG5o8yPyor2MfoToKEgcu62w9Sm4YldH0Wt2IHUuW-pjy9TimzsZS4CsDv_zIAKWwW05hRqUyk4vO1z2fdiJGUGGWWLr9HwgPsq8s0tR9nmqmvn0wMf310xZOVnDoRxpBPoEeqF3rln80w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent flex flex-col justify-end p-8">
+<h4 class="font-display text-2xl text-secondary mb-2">Lagosta Grelhada</h4>
+<p class="text-sm text-slate-300 font-light line-clamp-2">Lagosta inteira gratinada com parmesão e acompanhada de risoto de açafrão.</p>
+</div>
+</div>
+<!-- Dish 3 -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-primary-container rounded-lg">
+<img alt="Camarão Porto" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" data-alt="Premium giant shrimp appetizer beautifully plated" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxYnJYnlq8B3Tw34yZT5EBp7ofp6H-4o-8BOAbUqOF5MEe7nroLNOC2VRSBDqNT05sq0bt46Qj7mLFAbpbGkEcBTQTFP1GYODcdBmn4QV1wgEKMloTuh0lFTo_mAknhRmgKbYgHLKAG3s2cFMB48UqFcudilJo-NJQhM2IVEUNOKU9htWQqb_cBW8cscn-o2N82eUV2U_k6gp9gMI0yY5lJKvLsUMGn79IcJ3emphE2-J1zT7DUMZHHBHgwmn6XEivqS2hFlb7mnTH"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent flex flex-col justify-end p-8">
+<h4 class="font-display text-2xl text-secondary mb-2">Camarão Porto</h4>
+<p class="text-sm text-slate-300 font-light line-clamp-2">Camarões rosa gigantes flambados no conhaque com molho de queijo brie.</p>
+</div>
+</div>
+<!-- Dish 4 -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-primary-container rounded-lg">
+<img alt="Risoto Mediterrâneo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" data-alt="Creamy seafood risotto with scallops and parsley" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCH2h9RiRNeyhJyClzu2mYaGAsE9x1rFD_jSQYjH27fKvmsTpMDoGPlu9-MPk5Jn4cfb7EzsIuktQEB2zprNO3fsau5GGN7-fAM8dnlFw31tDpoOdEkuDdiPgd30oWt1XhcdlohQ0nikIXAHY_0-I8Pa7E4YHPv2APp1a-Hb3_wviK8Q3bIsYhm8l1UHYaZgRcupBQqKwjTyhBiTliUxXRW2gkFtlNUgCahd48bsyuove429qx_GJvQ58ujR7Vl6wqCKESLO58YtEcr"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent flex flex-col justify-end p-8">
+<h4 class="font-display text-2xl text-secondary mb-2">Risoto Mediterrâneo</h4>
+<p class="text-sm text-slate-300 font-light line-clamp-2">Arroz arbóreo com lulas frescas, camarões e um toque de limão siciliano.</p>
+</div>
+</div>
+<!-- Dish 5 -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-primary-container rounded-lg">
+<img alt="Salmão ao Molhe" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" data-alt="Seared salmon fillet with asparagus and citrus reduction" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKJEfZql4H0doHEtS6GyjO2aKdgY_QdsAqLVzcKsw7RlJP3B_q7Hu0tsEl4ukMLAWiOTd3BFFrdfRvBNf7ya_LGPxwDP9oQm3ALse52c26BqzYZnl3L6HCwFYGMIuf7s5jYzGsQKkGa43hYTi5yIIUW2um3ijcLPMcEMdu3UKGrhjVJa6F55KJu00KqS2FX7hlHY8rIiktWGiEKCZek9gqdJTgFYj5azyLsE0ipYHrCIGDf9tkDNR1kcnHSSG5KvxGNFpT-qEPkjCA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent flex flex-col justify-end p-8">
+<h4 class="font-display text-2xl text-secondary mb-2">Salmão ao Molhe</h4>
+<p class="text-sm text-slate-300 font-light line-clamp-2">Filé de salmão grelhado ao molho de maracujá e aspargos salteados.</p>
+</div>
+</div>
+<!-- Dish 6 -->
+<div class="group relative overflow-hidden aspect-[4/5] bg-primary-container rounded-lg">
+<img alt="Ostras Frescas" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" data-alt="Fresh oysters on ice with lemon wedges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7pL8LmcDZsCpRomjui_p-BmRBiP2QbjPVCnQnsIHnf4ilHrxsF4Zm6Vf9odM1_pRiDmPWsvZCZqy_G4MPjghoaYF9nfpGGT9R42Z3fXlNyJ49JxCbxuAtlHSZS_74X7d4RZXyUOVj21PQzdcQdR0gug6JoJNE5GKYWIyEuiWn_nSB_nXg6NDpz1e96g_krScgBmxuilV10qVn0vrXniBJ7c29_0SEMkdglV6smeooxvinKkifdNeB862e-9bwWg7gQfX29I5YOUHA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent flex flex-col justify-end p-8">
+<h4 class="font-display text-2xl text-secondary mb-2">Ostras Frescas</h4>
+<p class="text-sm text-slate-300 font-light line-clamp-2">Ostras da região selecionadas manualmente, servidas com vinagrete clássico.</p>
+</div>
+</div>
+</div>
+<div class="mt-16 text-center">
+<a class="inline-flex items-center gap-2 text-secondary font-accent uppercase tracking-widest hover:gap-4 transition-all" href="#">
+                    Explorar Cardápio Completo
+                    <span class="material-symbols-outlined" data-icon="arrow_right_alt">arrow_right_alt</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Section 4: Nossa História -->
+<section class="py-32 px-6 md:px-12 bg-surface-container-low overflow-hidden">
+<div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+<div class="w-full lg:w-1/2 relative">
+<div class="absolute -top-10 -left-10 w-full h-full border-2 border-secondary/20 rounded-lg"></div>
+<img alt="Founder Edson Cabral" class="relative z-10 w-full rounded-lg shadow-2xl" data-alt="Professional portrait of an elegant elderly man in a dark suit" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbI6Pm6AWJQwGMyJujqdz0-kew7hXsyM8zABvgPIyqHKBxHjR-Ef8mw6vEhsqG0Kyh829Wh6xu09qSHCcbWlgzDScY1AYH9udeaqGVUNRiftBBaWyt94-IC1zczdKcY7JW7w2gPG5eYmmRBS_6lMY7IeyJDMKVOoRsTVqn02FYJKTDM55au4MMRitVxUkh6JZOf__4gpdq6M-Lk62f1DfKeEJIHulSSWtv4IwifoGb3Zmk0Tk79PAt8jEfYAWpLCjmAHIPypFYkid-"/>
+</div>
+<div class="w-full lg:w-1/2 space-y-8">
+<span class="font-accent text-secondary tracking-[0.2em] uppercase text-xs">Since 1998</span>
+<h2 class="font-display text-4xl md:text-5xl text-primary leading-tight">Nossa História: O Legado dos Mares</h2>
+<div class="space-y-6 text-on-surface-variant leading-relaxed">
+<p>Fundado por Edson Cabral, o Porto Cabral BC nasceu de uma paixão visceral pelo mar e pela hospitalidade. O que começou como um pequeno píer familiar tornou-se o destino gastronômico mais emblemático da Barra Sul.</p>
+<p>Cada detalhe, da arquitetura que remete aos antigos galeões à curadoria dos vinhos, foi pensado para proporcionar uma imersão total no luxo náutico.</p>
+</div>
+<blockquote class="italic font-display text-2xl text-primary border-l-4 border-secondary pl-6 py-2">
+                    "O Porto Cabral não é apenas um restaurante, é o meu convite pessoal para que você sinta a alma de Balneário Camboriú."
+                    <footer class="text-sm font-accent text-secondary uppercase tracking-widest mt-4 non-italic">— Edson Cabral, Fundador</footer>
+</blockquote>
+</div>
+</div>
+</section>
+<!-- Section 5: Experiências (Bento Grid) -->
+<section class="py-24 px-6 md:px-12 bg-surface">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-display text-4xl text-primary mb-4">Experiências Exclusivas</h2>
+<p class="text-on-surface-variant">Momentos desenhados para serem eternos.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-[800px] md:h-[600px]">
+<div class="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-xl">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Couple dining at sunset overlooking the ocean" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoY_EbpncveGE2Hqp1HDICBB1osRGj3hrIu9ptiy04gproErmyXL13exqgYMrCgZDr7sF8k01PRD7FU-dOp5GEvYE9oNfE5eyHzvlqQTwDvG1TKBmmPniEo22cH-8JsetzPKE8gXcwqfiYZ7fbIT4d2SWeHUn_mHjt_hDB94gSNme2mtJLIhB6utW7NpP-I5sXbRxzBOGm3rNiVKWaV5buFvo3HRwQVnXGZiNJSRFSGKhyQl0SLAbIONwFz-u-9NJM_ie8sTgO2CHy"/>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<h3 class="font-display text-3xl mb-2">Jantar ao Pôr do Sol</h3>
+<p class="text-sm opacity-80 uppercase tracking-widest">O cenário mais romântico de BC</p>
+</div>
+</div>
+<div class="md:col-span-2 relative group overflow-hidden rounded-xl">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Premium wine selection in a luxury cellar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC-M18Xo6f7tS9iJAUKYlF6vDGYt1HMaAvzTy6H9_R58cUJVmD_Rg3ty4eiLugZgT3wFv3EDnNS0y_jwgTJ5J6jEo4aggf2JTtj3NhnyN1rpTauJUPCDPGiwhZrT0Blk53X3uGFeLzpo0hW2bXPN0FqFka9VGNu0d35x1Adlj3uiHzAOaDcgFTkNJTjOSK4PFVElFqjoDCtFOoCf0aEJlCnhYHzDZGXyqJt14KOTYaJEdWU9dHjgml0wtpmHlaUKF2fv_HwK2j9Rf8"/>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<h3 class="font-display text-2xl">Degustação Premium</h3>
+</div>
+</div>
+<div class="relative group overflow-hidden rounded-xl">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Live jazz band in a dim restaurant lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy_1ZCZ76DZDWUjAvIYgXXYYKUE84iwQN779mtfi70j0J1ULj7539-STQ6_a99KSrhamlEfkrBtBH_CikkzZ64wSXUpSzg00K9-ZTBvD4Hgrotm-GeU-Hv9MGLV0VNCYHy4pPZSH1TcoJCbepfM17u7Qk7fBuxSrD_9bCumbbgVpfYGnEVGkS9XOcr4qjIBNcUt_ohX19AGN_XtWaNjDhwPxr1CVU9AUsGJUzB2Q0GAG7fWLeBs-fNQUV4Baw2fLIMZ3gpmCchheB6"/>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h3 class="font-display text-xl">Eventos Sociais</h3>
+</div>
+</div>
+<div class="relative group overflow-hidden rounded-xl">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Private chef table experience with ocean view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwx6kY-tByzsg4Iu7YOimB4AY0tlH-TmWHZ33NrMcpLITnpPqfsNvUY1lyb0FlJp1DD9kkOomoh4xiXuirxdCWq0gHVyU_prbQ4Qb17jQbVpq3Y6DJUW5viy_lQtWT3Mr9f_c2bb1OWW3181T1HE3N3ApHBgLpfUEvTpKm4f_LZHNtHYK7FOWQbTiMvdBFUs6I-m3kBOsjXHaca-Ltqz7u4BCjJrjzf7t2luUFuG5YOvFuvfP7arEFRu-bkPJq9Gz33fXMuap3lSK-"/>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h3 class="font-display text-xl">Chef's Table</h3>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 6: Depoimentos -->
+<section class="py-24 bg-primary-container relative overflow-hidden">
+<!-- Blue Texture Overlay -->
+<div class="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+<div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+<div class="flex justify-center gap-1 mb-6 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<h2 class="text-white font-display text-3xl mb-12">O que dizem nossos tripulantes</h2>
+<div class="bg-primary/40 backdrop-blur-md p-10 rounded-2xl border border-white/10 shadow-2xl">
+<p class="text-xl md:text-2xl text-slate-200 font-light leading-relaxed mb-8 italic">
+                    "Uma experiência transcendental. O serviço é impecável e a lagosta grelhada foi a melhor que já comi em toda a minha vida. Ver o sol se pôr no deck com um vinho branco gelado é indispensável."
+                </p>
+<div class="flex items-center justify-center gap-4">
+<div class="w-12 h-12 rounded-full bg-slate-400"></div>
+<div class="text-left">
+<span class="block text-white font-bold">Ricardo Alencastro</span>
+<span class="text-secondary text-sm font-accent uppercase tracking-tighter">Google Local Guide</span>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-center gap-4">
+<button class="w-12 h-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Section 7: Onde Estamos -->
+<section class="h-[600px] w-full relative">
+<!-- Map Placeholder -->
+<div class="absolute inset-0 bg-slate-900 overflow-hidden">
+<img alt="Map view of Balneário Camboriú coastline" class="w-full h-full object-cover grayscale brightness-50 contrast-125" data-location="Balneário Camboriú" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKVDzicbaXQgcFqgKABOlNSrLif2awmWm-be-yC7qwTy8418gKlTErobrirux0WnzrlYkW_REGnF_ASD25MjG1J2CMHMQcbc2hYiD3Ox5A7K8MIFZrcg4ueYC_atPXuT4IT6Yjh8BkLoYnmHnX8QFAQM-2Xda1PntbvzVWC6oqeUuBdTNP7mvG6En-2vMyEPc2aSxV7Up4Q5PK2urZsp12PMGF3b4BOJE_p-7AEeAFuvB95jTGMBmOd6LT-LZPT4Y69t1JGP0U6B7O"/>
+<div class="absolute inset-0 bg-primary/30 mix-blend-multiply"></div>
+</div>
+<!-- Gold Caravela Pin -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center">
+<div class="relative group">
+<div class="absolute -inset-4 bg-secondary/30 rounded-full blur-xl animate-pulse"></div>
+<span class="material-symbols-outlined text-secondary text-6xl relative z-10" data-icon="sailing" style="font-variation-settings: 'FILL' 1;">sailing</span>
+</div>
+<div class="bg-primary/90 backdrop-blur-md px-6 py-4 rounded-lg mt-4 shadow-2xl border border-secondary/50 text-center">
+<p class="text-white font-bold mb-1">Porto Cabral BC</p>
+<p class="text-slate-300 text-xs uppercase tracking-widest">Molhe da Barra Sul</p>
+</div>
+</div>
+<div class="absolute bottom-10 left-10 z-20 hidden md:block">
+<div class="bg-surface p-8 rounded-lg shadow-2xl max-w-sm">
+<h3 class="font-display text-2xl text-primary mb-4">Localização Privilegiada</h3>
+<p class="text-on-surface-variant text-sm mb-6">Avenida Atlântica, Barra Sul - O coração náutico de Balneário Camboriú.</p>
+<a class="bg-primary text-white w-full py-3 block text-center rounded hover:bg-primary-container transition-colors font-accent uppercase text-xs tracking-widest" href="#">
+                    Abrir no Google Maps
+                </a>
+</div>
+</div>
+</section>
+<!-- Section 8: Reserva Rápida -->
+<section class="py-24 px-6 bg-surface-container relative">
+<!-- Background illustrations -->
+<div class="absolute left-0 bottom-0 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[200px] text-primary" data-icon="anchor">anchor</span>
+</div>
+<div class="max-w-4xl mx-auto relative z-10">
+<div class="text-center mb-12">
+<h2 class="font-display text-4xl text-primary mb-4">Reserve sua Mesa</h2>
+<p class="text-on-surface-variant italic">Garanta seu lugar no horizonte.</p>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 md:p-12 rounded-2xl shadow-xl">
+<div class="space-y-2">
+<label class="text-xs font-accent uppercase tracking-widest text-slate-500">Nome Completo</label>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-secondary rounded-lg px-4 py-3 placeholder:text-slate-400" placeholder="Como devemos chamá-lo?" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-accent uppercase tracking-widest text-slate-500">WhatsApp</label>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-secondary rounded-lg px-4 py-3 placeholder:text-slate-400" placeholder="(00) 00000-0000" type="tel"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-accent uppercase tracking-widest text-slate-500">Data e Hora</label>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-secondary rounded-lg px-4 py-3 text-slate-400" type="datetime-local"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-accent uppercase tracking-widest text-slate-500">Número de Pessoas</label>
+<select class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-secondary rounded-lg px-4 py-3 text-slate-500">
+<option>2 Pessoas</option>
+<option>3-4 Pessoas</option>
+<option>5-8 Pessoas</option>
+<option>Evento Privado (+8)</option>
+</select>
+</div>
+<div class="md:col-span-2 flex items-start gap-3 py-4">
+<input class="mt-1 rounded border-slate-300 text-secondary focus:ring-secondary" id="lgpd" type="checkbox"/>
+<label class="text-xs text-slate-500 leading-relaxed" for="lgpd">Concordo com o tratamento de meus dados para fins de reserva e comunicações exclusivas do Porto Cabral BC, conforme a LGPD.</label>
+</div>
+<div class="md:col-span-2">
+<button class="w-full bg-primary text-on-primary py-4 rounded-lg font-accent font-bold uppercase tracking-[0.2em] hover:bg-primary-container transition-all active:scale-[0.98]" type="submit">
+                        Confirmar Intenção de Reserva
+                    </button>
+</div>
+</form>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-[#002451] dark:bg-[#001836] w-full pt-20 pb-10 px-6 md:px-12 text-slate-300">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-7xl mx-auto">
+<div class="md:col-span-1">
+<span class="font-['Playfair_Display'] text-3xl text-[#D4A843] mb-6 block">Porto Cabral BC</span>
+<p class="text-slate-400 mb-6 leading-relaxed">A essência da sofisticação náutica em Balneário Camboriú. Uma jornada sensorial onde o luxo encontra as águas.</p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:text-[#D4A843] transition-colors" href="#"><span class="material-symbols-outlined text-lg" data-icon="facebook">social_leaderboard</span></a>
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:text-[#D4A843] transition-colors" href="#"><span class="material-symbols-outlined text-lg" data-icon="photo_camera">photo_camera</span></a>
+</div>
+</div>
+<div>
+<h4 class="text-white font-accent font-bold uppercase tracking-widest text-xs mb-8">Navegação</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">Home</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">Menu Degustação</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">Carta de Vinhos</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform duration-200 block" href="#">Reservas</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-accent font-bold uppercase tracking-widest text-xs mb-8">Horários</h4>
+<ul class="space-y-4 text-slate-400">
+<li class="flex justify-between"><span>Terça - Quinta:</span> <span class="text-white">12h às 23h</span></li>
+<li class="flex justify-between"><span>Sexta - Sábado:</span> <span class="text-white">12h às 00h</span></li>
+<li class="flex justify-between"><span>Domingo:</span> <span class="text-white">12h às 22h</span></li>
+<li class="flex justify-between"><span>Segunda:</span> <span class="text-secondary">Fechado</span></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-accent font-bold uppercase tracking-widest text-xs mb-8">Newsletter</h4>
+<p class="text-xs text-slate-500 mb-4">Receba convites para eventos exclusivos e novas safras.</p>
+<div class="relative focus-within:ring-1 focus-within:ring-[#D4A843] rounded overflow-hidden">
+<input class="w-full bg-white/5 border-none px-4 py-3 text-sm focus:ring-0" placeholder="Seu e-mail" type="email"/>
+<button class="absolute right-0 top-0 h-full px-4 text-[#D4A843]">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-20 pt-10 border-t border-white/5 text-center text-xs tracking-widest text-slate-500">
+<p>© 2024 Porto Cabral BC. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

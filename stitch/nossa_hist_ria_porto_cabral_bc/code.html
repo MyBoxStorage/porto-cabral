@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sobre - Porto Cabral BC</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;800&amp;family=Inter:wght@300;400;600&amp;family=Josefin+Sans:wght@300;400;600&amp;family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#eec058",
+                        "surface-tint": "#415e91",
+                        "on-primary-fixed": "#001b3f",
+                        "outline": "#747780",
+                        "on-error-container": "#93000a",
+                        "surface": "#fef9f1",
+                        "primary": "#002451",
+                        "primary-fixed": "#d7e2ff",
+                        "tertiary-fixed-dim": "#cac6be",
+                        "surface-container": "#f2ede5",
+                        "secondary": "#795900",
+                        "on-surface-variant": "#43474f",
+                        "on-tertiary-container": "#a8a59e",
+                        "inverse-surface": "#32302b",
+                        "surface-bright": "#fef9f1",
+                        "surface-container-high": "#ece8e0",
+                        "on-secondary-container": "#755700",
+                        "tertiary-fixed": "#e7e2da",
+                        "on-primary-fixed-variant": "#284678",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#272520",
+                        "background": "#fef9f1",
+                        "on-tertiary-fixed-variant": "#494741",
+                        "surface-container-highest": "#e7e2da",
+                        "on-primary-container": "#89a5dd",
+                        "inverse-on-surface": "#f5f0e8",
+                        "tertiary-container": "#3d3b35",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#abc7ff",
+                        "primary-container": "#1a3a6b",
+                        "secondary-fixed": "#ffdf9f",
+                        "surface-variant": "#e7e2da",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#1d1c17",
+                        "on-background": "#1d1c17",
+                        "inverse-primary": "#abc7ff",
+                        "surface-container-low": "#f8f3eb",
+                        "on-secondary-fixed": "#261a00",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#ded9d2",
+                        "secondary-container": "#fece65",
+                        "on-tertiary-fixed": "#1d1c17",
+                        "outline-variant": "#c4c6d0",
+                        "on-secondary-fixed-variant": "#5b4300"
+                    },
+                    fontFamily: {
+                        "headline": ["Noto Serif"],
+                        "body": ["Inter"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(26, 58, 107, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .nautical-line {
+            background: linear-gradient(90deg, transparent, #D4A843, transparent);
+            height: 1px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-secondary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 border-b border-white/20 glass-nav shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+<div class="flex justify-between items-center px-6 md:px-12 py-4 w-full max-w-[1440px] mx-auto">
+<div class="text-2xl font-bold text-white flex items-center gap-2 font-['Playfair_Display'] tracking-wide uppercase">
+                Porto Cabral BC
+            </div>
+<div class="hidden md:flex items-center gap-8 font-['Playfair_Display'] tracking-wide uppercase text-sm">
+<a class="text-white/80 hover:text-white transition-colors" href="#">Home</a>
+<a class="text-white/80 hover:text-white transition-colors" href="#">Menu</a>
+<a class="text-white/80 hover:text-white transition-colors" href="#">Experiences</a>
+<a class="text-[#D4A843] border-b-2 border-[#D4A843] pb-1" href="#">About</a>
+<a class="text-white/80 hover:text-white transition-colors" href="#">Blog</a>
+<a class="text-white/80 hover:text-white transition-colors" href="#">Client Area</a>
+</div>
+<div class="flex items-center gap-4 text-[#D4A843]">
+<button class="material-symbols-outlined scale-95 active:scale-90 transition-transform">language</button>
+<button class="md:hidden material-symbols-outlined text-white">menu</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative h-[870px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="Panoramic aerial view of Molhe da Barra Sul and deep blue ocean" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvu8G2ag8QcpNSIP1_sWRuI7H_1wDUf46UzOo5cB-69RefcHqEzyqd9KnNdvuZ_xwJT_0-t_zs5JymASRaAb0cwY_sY2uIA95NlhnXn6PmdJh97Zo2LGUy1zK2Z02cM1Td0o2S1j74U3MlIs99qbykwZ4bDSQOv299vjgkQqONe_BbOjkIHQWMU6G_GkyEtDYS_jfZARRCRpaw9RswyM7GVJQ31uRhl19vjE8Z97JGk8Ymm74scj5Eji9If6F3cF5NXkAkcWGJa_6S"/>
+<div class="absolute inset-0 bg-gradient-to-b from-primary/60 via-transparent to-surface"></div>
+</div>
+<div class="relative z-10 text-center px-6 max-w-4xl">
+<h1 class="font-['Playfair_Display'] text-5xl md:text-7xl font-extrabold text-white mb-6 drop-shadow-2xl">
+                Nossa História
+            </h1>
+<div class="flex justify-center items-center gap-4 text-secondary-fixed-dim">
+<span class="h-[1px] w-12 bg-secondary"></span>
+<span class="font-['Josefin_Sans'] uppercase tracking-[0.3em] text-sm">Desde 2009</span>
+<span class="h-[1px] w-12 bg-secondary"></span>
+</div>
+</div>
+</section>
+<!-- Section: Narrative -->
+<section class="py-24 px-6 md:px-12 bg-surface">
+<div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+<div class="relative">
+<div class="absolute -top-10 -left-10 opacity-10">
+<span class="material-symbols-outlined text-[12rem] text-secondary">sailing</span>
+</div>
+<h2 class="font-['Playfair_Display'] text-4xl md:text-5xl text-primary mb-8 relative z-10">
+                    Onde o Rio Encontra <br/><span class="italic text-secondary">o Horizonte</span>
+</h2>
+<div class="space-y-6 text-on-surface-variant leading-relaxed text-lg">
+<p>Localizado estrategicamente no Molhe da Barra Sul, o Porto Cabral BC nasceu do desejo de unir a sofisticação da gastronomia internacional com a serenidade inigualável de estar sobre as águas.</p>
+<p>Aqui, cada detalhe é desenhado para celebrar o movimento. A brisa que atravessa o convés traz consigo o frescor do Atlântico, enquanto o sol mergulha suavemente no Rio Camboriú, pintando o céu com tons que nenhuma tela poderia replicar.</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<img class="rounded-lg shadow-xl translate-y-8" data-alt="Gourmet seafood dish with artistic presentation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpEuAd6gRfvS0U4rjYpVH3I5MH1s56oJ-R573iSdYF2dzU5vC-2tbcowKMEqP7KY90oBi8EjrYwP-cwagsib8vGGNCyY4Nq9Uu8M-fc0uqtbqkVTs3zZGnSxBDsqoeLfE61XNhYPg2Gltb7P3xubv6BWfTPznriqeLntNzE5x5wPwqoft_1FLvmy-FdNiAKQurJm1xtjhhJd1oEOxcHXzwAHTm8khJO18klmPlhzsGrj1rNlSl_5_SNQ-rRByrtnY266hqcQFDGRXo"/>
+<img class="rounded-lg shadow-xl" data-alt="Golden sunset over calm coastal waters" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfwn-ndyVtGa6wgAGMZEcKoFEgsoK5kCeF-CAmeJMT82SC7WjSASnE8AIRn3JB2lrf0qWOVy2t6WzBESuKJlmO4Yu36iZiQoL0VQHbFMrvdgRmBPq96gpPpRmfvMfxTjO4DpU-s5FGiyoVa2w_Xvd26FJcDIVXvsiawHH0M3DD2_kABN2jkD6lAHaRaiklTk0yIPOXcsjdEkgtKs1NJ16EDdmu711nlwQgPzHtURq6k_k5wSOb-6-0ITZLwXPWox0wjkSZ9uxMFP4J"/>
+</div>
+</div>
+</section>
+<!-- Section: Nasce um Sonho Timeline -->
+<section class="py-24 bg-primary text-white overflow-hidden relative">
+<div class="absolute inset-0 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[40rem] absolute -right-40 -bottom-40">anchor</span>
+</div>
+<div class="max-w-7xl mx-auto px-6 md:px-12">
+<h2 class="font-['Playfair_Display'] text-4xl text-center mb-20">Nasce um Sonho</h2>
+<div class="relative">
+<!-- Timeline Desktop Line -->
+<div class="hidden md:block absolute top-1/2 left-0 w-full h-[1px] bg-secondary/30"></div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+<!-- 2009 -->
+<div class="text-center group">
+<div class="w-16 h-16 bg-secondary text-primary rounded-full flex items-center justify-center mx-auto mb-6 relative z-10 border-4 border-primary group-hover:scale-110 transition-transform">
+<span class="font-bold">2009</span>
+</div>
+<h3 class="font-['Josefin_Sans'] font-semibold mb-2">A Concepção</h3>
+<p class="text-sm text-on-primary-container">Edson Cabral vislumbra o primeiro restaurante flutuante de alto padrão em Balneário Camboriú.</p>
+</div>
+<!-- 2014 -->
+<div class="text-center group">
+<div class="w-16 h-16 bg-surface text-primary rounded-full flex items-center justify-center mx-auto mb-6 relative z-10 border-4 border-primary group-hover:scale-110 transition-transform">
+<span class="font-bold">2014</span>
+</div>
+<h3 class="font-['Josefin_Sans'] font-semibold mb-2">O Lançamento</h3>
+<p class="text-sm text-on-primary-container">Inauguração do Porto Cabral, tornando-se instantaneamente um ícone gastronômico da região.</p>
+</div>
+<!-- 2019 -->
+<div class="text-center group">
+<div class="w-16 h-16 bg-surface text-primary rounded-full flex items-center justify-center mx-auto mb-6 relative z-10 border-4 border-primary group-hover:scale-110 transition-transform">
+<span class="font-bold">2019</span>
+</div>
+<h3 class="font-['Josefin_Sans'] font-semibold mb-2">Expansão</h3>
+<p class="text-sm text-on-primary-container">Renovação do deck e inclusão de novas experiências sensoriais e carta de vinhos exclusiva.</p>
+</div>
+<!-- Presente -->
+<div class="text-center group">
+<div class="w-16 h-16 bg-secondary text-primary rounded-full flex items-center justify-center mx-auto mb-6 relative z-10 border-4 border-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">stars</span>
+</div>
+<h3 class="font-['Josefin_Sans'] font-semibold mb-2">Hoje</h3>
+<p class="text-sm text-on-primary-container">Consolidado como a principal parada de luxo no Molhe da Barra Sul.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Founder -->
+<section class="py-24 bg-surface-container-low px-6">
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
+<div class="w-full md:w-1/2 relative">
+<div class="absolute -inset-4 border border-secondary/20 rounded-xl translate-x-4 translate-y-4"></div>
+<img class="relative z-10 w-full aspect-[4/5] object-cover rounded-xl shadow-2xl" data-alt="Portrait of founder Edson Cabral with a visionary look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnstjOnlfHJRY3Nix7FgjEStJeqvJ1A8II5QddzeFrSk_ekWtyNAchlQgnYbNRIGeY-VK2Kg2r_UfBAjrEhUDA0tSv-EShyfDXwNSizy0WcjYHhhgGo3Cr8xxXE6s5F-EViQx5iBJzc-TTQpJP4V7xzA_PEku-YB9A0r4iAdOtXKDXcqt7K1OUWOQlG6j1ENI_Admdg1ch1Ze1TTuErNTbJ81F0P3rs4TvNOheJR6KGlRRLysiBCLRqFiYvyFZdjoSHckzS5tq31MU"/>
+</div>
+<div class="w-full md:w-1/2">
+<span class="font-['Josefin_Sans'] text-secondary uppercase tracking-widest text-sm mb-4 block">O Fundador</span>
+<h2 class="font-['Playfair_Display'] text-4xl text-primary mb-8">Edson Cabral</h2>
+<div class="relative pl-8 border-l-2 border-secondary">
+<p class="text-2xl md:text-3xl font-['Playfair_Display'] italic text-on-surface leading-relaxed mb-6">
+                        "O Porto Cabral não é apenas um restaurante; é o meu manifesto sobre a liberdade de estar no mar e o prazer de servir com excelência."
+                    </p>
+<cite class="not-italic font-['Josefin_Sans'] text-secondary-fixed-dim">— Edson Cabral</cite>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Por que Flutuante? -->
+<section class="py-24 px-6 bg-surface">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-20">
+<h2 class="font-['Playfair_Display'] text-4xl md:text-5xl text-primary mb-4">Por que Flutuante?</h2>
+<div class="h-1 w-24 bg-secondary mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Pillar 1 -->
+<div class="group p-10 bg-white border border-transparent hover:border-secondary/20 transition-all duration-500 rounded-xl shadow-sm">
+<div class="mb-8 flex justify-center">
+<span class="material-symbols-outlined text-6xl text-secondary group-hover:scale-110 transition-transform">visibility</span>
+</div>
+<h3 class="font-['Josefin_Sans'] text-xl text-center mb-4 uppercase tracking-wider text-primary">Vista Privilegiada</h3>
+<p class="text-on-surface-variant text-center leading-relaxed">Uma perspectiva de 360 graus da orla de Balneário Camboriú, onde a arquitetura urbana encontra o azul profundo.</p>
+</div>
+<!-- Pillar 2 -->
+<div class="group p-10 bg-white border border-transparent hover:border-secondary/20 transition-all duration-500 rounded-xl shadow-sm">
+<div class="mb-8 flex justify-center">
+<span class="material-symbols-outlined text-6xl text-secondary group-hover:scale-110 transition-transform">directions_boat</span>
+</div>
+<h3 class="font-['Josefin_Sans'] text-xl text-center mb-4 uppercase tracking-wider text-primary">Sensação de Bordo</h3>
+<p class="text-on-surface-variant text-center leading-relaxed">O balanço suave da maré cria uma atmosfera de relaxamento total, transportando você para uma jornada náutica.</p>
+</div>
+<!-- Pillar 3 -->
+<div class="group p-10 bg-white border border-transparent hover:border-secondary/20 transition-all duration-500 rounded-xl shadow-sm">
+<div class="mb-8 flex justify-center">
+<span class="material-symbols-outlined text-6xl text-secondary group-hover:scale-110 transition-transform">sunny</span>
+</div>
+<h3 class="font-['Josefin_Sans'] text-xl text-center mb-4 uppercase tracking-wider text-primary">Sunset Único</h3>
+<p class="text-on-surface-variant text-center leading-relaxed">Assista ao espetáculo do pôr do sol da poltrona da frente, com o sol se escondendo atrás das montanhas da Barra Sul.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Team Grid -->
+<section class="py-24 bg-surface-container">
+<div class="max-w-7xl mx-auto px-6">
+<h2 class="font-['Playfair_Display'] text-4xl text-center text-primary mb-16">Nossa Tripulação</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+<div class="aspect-[3/4] overflow-hidden rounded-lg group relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Head chef preparing a dish" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOAZLWDTLwZEhGfA2BQzqye9MGcfsWxeo3IZJ2iga2MXSvXRdaNmLrmG7lgWejW1v5ik84QiLrIaABwE00TPfHZ3juJnI2zU5Bhb0YW65qfFAG01jg2JItRxXtSMhEgGyxjhTf3qF6KFsCWqlP4w9bynYXBZh8i_cySkId6w2uCizbpNiIZTPcjkqkXhWXD3KKMKOrpNXdPOMJf_vTx-oU9Kp1yh9OlX9bUBGCFFfWp8E2bhzuCMGoKM050q2tA_vPyokGsv58bLn1"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+<p class="text-white font-['Josefin_Sans']">Cozinha Autoral</p>
+</div>
+</div>
+<div class="aspect-[3/4] overflow-hidden rounded-lg group relative translate-y-8">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Mixologist crafting a cocktail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDX6JEcTvoNdHQlhUywkkhhg7qvHuY-2kHlQe0CYJwbWVX2qzOG2hMTLFrvUzN7kSATvADqwAAjx5Vasx9pVLNePBq-ilgGG5N_ZDjjoCGSJRGlbe8CzQpnCYQepfAx6y5dy94UFuBky2iB7Q6nZeh04Yw__XBZXZc7aMZuMvbMMGbvYsPm7jo_lCdabZphmonSGNoJz65aPHz5NXLCes7lkBOxMiba8KTUmDbXNvKPe-FZpmdT0N3o1K6lndqMDe4pCligvtvYzvvE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+<p class="text-white font-['Josefin_Sans']">Mixologia</p>
+</div>
+</div>
+<div class="aspect-[3/4] overflow-hidden rounded-lg group relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Waitstaff serving customers with a smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPQlBWIVSSPzSYiNBXA0XWKwHlZQloijeUJNdI416JxSjFHpf-nlg6Iku-ypqVkwGEs_mmHcwcbsPY-pt19k3tTkNpdS3tE7o1Oi5DWxNhWUlLY67Fr47GFj_hRn6M5vWHmM_anU3Uv3CLlFJeSFFs9nNk4ou8p8UVBKP0nR6eXzpr4LjMHbbGqS4uhV88gytOqnDn8k2JNF8qzBPjunxytLYWemrmv5Og8ADLdTEA--sWYRsB9NF1YxuFlVCvgvNSTbjCxFIevayp"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+<p class="text-white font-['Josefin_Sans']">Hospitalidade</p>
+</div>
+</div>
+<div class="aspect-[3/4] overflow-hidden rounded-lg group relative translate-y-8">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Sommelier tasting wine" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgFj_Nxvsq-MFZ6Xnx9nD2Kz7y-aY-SnFk4SHCxUk_r0Z9fFJsEE6djAwHIEKa1iPE_8LHCsT94xZfD87IkC3sjmmmrMRwtJ8JgP4-9eKsx2YzkU7ssf2EB4IR8ZzGh_rpHXcAu3Fb8hMVvHGYhisQI-4sB9aWNBHzLQzxdFDOszYV8hBe1Kd1-dXtK-orbpRWA59xKs0GXejVwhDfJeU3VbptICCCQOgnIf6KK81OICbYf_-atCjPZINkme3PXVXpZ2jIX9r7ArCk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+<p class="text-white font-['Josefin_Sans']">Sommeliers</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Philosophy and Values -->
+<section class="py-24 px-6 bg-white overflow-hidden">
+<div class="max-w-4xl mx-auto relative">
+<div class="absolute -top-10 -right-20 opacity-5">
+<span class="material-symbols-outlined text-[15rem] text-primary">explore</span>
+</div>
+<div class="space-y-16">
+<div>
+<h3 class="font-['Playfair_Display'] text-3xl text-primary mb-6 flex items-center gap-4">
+<span class="h-px w-8 bg-secondary"></span> Nossa Missão
+                    </h3>
+<p class="text-lg text-on-surface-variant leading-relaxed pl-12">Proporcionar uma experiência sensorial única, onde a excelência gastronômica e a conexão com o mar criam memórias inesquecíveis para cada visitante.</p>
+</div>
+<div>
+<h3 class="font-['Playfair_Display'] text-3xl text-primary mb-6 flex items-center gap-4">
+<span class="h-px w-8 bg-secondary"></span> Valores
+                    </h3>
+<div class="grid grid-cols-2 gap-8 pl-12">
+<div>
+<h4 class="font-['Josefin_Sans'] text-secondary uppercase text-sm mb-2">Respeito ao Mar</h4>
+<p class="text-sm text-on-surface-variant">Operamos com sustentabilidade e carinho pelo ecossistema que nos acolhe.</p>
+</div>
+<div>
+<h4 class="font-['Josefin_Sans'] text-secondary uppercase text-sm mb-2">Refinamento</h4>
+<p class="text-sm text-on-surface-variant">A busca constante pelo detalhe perfeito em cada prato e atendimento.</p>
+</div>
+<div>
+<h4 class="font-['Josefin_Sans'] text-secondary uppercase text-sm mb-2">Transparência</h4>
+<p class="text-sm text-on-surface-variant">Ingredientes frescos e processos claros para nossa clientela.</p>
+</div>
+<div>
+<h4 class="font-['Josefin_Sans'] text-secondary uppercase text-sm mb-2">Inovação</h4>
+<p class="text-sm text-on-surface-variant">Sempre buscando novas formas de surpreender os sentidos.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-[#002451] dark:bg-[#001836] w-full pt-20 pb-10 px-6 md:px-12">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 font-['Inter'] text-slate-300">
+<div>
+<span class="font-['Playfair_Display'] text-3xl text-[#D4A843] mb-6 block">Porto Cabral BC</span>
+<p class="text-sm leading-relaxed mb-6">A experiência gastronômica flutuante definitiva em Balneário Camboriú.</p>
+<div class="flex gap-4">
+<a class="w-10 h-10 border border-[#D4A843]/30 rounded-full flex items-center justify-center hover:bg-[#D4A843] hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined text-sm">public</span>
+</a>
+<a class="w-10 h-10 border border-[#D4A843]/30 rounded-full flex items-center justify-center hover:bg-[#D4A843] hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined text-sm">mail</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-white font-['Josefin_Sans'] uppercase tracking-widest text-sm mb-6">Navigation</h4>
+<ul class="space-y-4">
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform" href="#">Home</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform" href="#">Menu</a></li>
+<li><a class="text-slate-400 hover:text-[#D4A843] hover:translate-x-1 transition-transform" href="#">Experiences</a></li>
+<li><a class="text-[#D4A843] font-semibold" href="#">About Us</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-['Josefin_Sans'] uppercase tracking-widest text-sm mb-6">Contact</h4>
+<ul class="space-y-4 text-sm">
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#D4A843]">location_on</span>
+                        Molhe da Barra Sul, BC - SC
+                    </li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#D4A843]">call</span>
+                        +55 (47) 9999-9999
+                    </li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-['Josefin_Sans'] uppercase tracking-widest text-sm mb-6">Newsletter</h4>
+<div class="relative">
+<input class="w-full bg-primary-container border-none rounded-lg py-3 px-4 text-sm focus:ring-1 focus:ring-[#D4A843]" placeholder="Seu e-mail" type="email"/>
+<button class="absolute right-2 top-2 bg-[#D4A843] text-primary p-1.5 rounded-md">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+<p>© 2024 Porto Cabral BC. All rights reserved.</p>
+<div class="flex gap-8">
+<a class="hover:text-[#D4A843]" href="#">Privacy Policy</a>
+<a class="hover:text-[#D4A843]" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>

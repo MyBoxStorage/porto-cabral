@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════
+   Porto Cabral BC — Design System
+   ═══════════════════════════════════════════════ */
+:root {
+  --pc-navy:       #002451;
+  --pc-navy-mid:   #1a3a6b;
+  --pc-gold:       #D4A843;
+  --pc-gold-light: #FECE65;
+  --pc-gold-dim:   rgba(212,168,67,0.18);
+  --pc-surface:    #fef9f1;
+  --pc-surface-2:  #f2ede5;
+  --pc-text:       #1d1c17;
+  --pc-muted:      #43474f;
+}
+
+html { scroll-behavior: smooth; }
+
+/* ── FONTS ── */
+.font-display { font-family: 'Playfair Display', Georgia, serif; }
+.font-accent  { font-family: 'Josefin Sans', sans-serif; }
+.font-body    { font-family: 'Inter', sans-serif; }
+
+/* ── SHIMMER BUTTON ── */
+.shimmer {
+  background: linear-gradient(90deg,#D4A843 0%,#FECE65 50%,#D4A843 100%);
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+@keyframes shimmer { to { background-position: 200% center; } }
+
+/* ── FADE-UP (Intersection Observer) ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-up.delay-1 { transition-delay: 0.1s; }
+.fade-up.delay-2 { transition-delay: 0.22s; }
+.fade-up.delay-3 { transition-delay: 0.34s; }
+.fade-up.delay-4 { transition-delay: 0.46s; }
+.fade-up.delay-5 { transition-delay: 0.58s; }
+.fade-up.delay-6 { transition-delay: 0.70s; }
+
+/* ── LINHA DOURADA DECORATIVA ── */
+.gold-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.gold-rule::before,
+.gold-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pc-gold), transparent);
+}
+
+/* ── SECTION EYEBROW ── */
+.eyebrow {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #795900;
+}
+
+/* ── CARD HOVER LIFT ── */
+.card-lift {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.22);
+}
+
+/* ── SHAKE (form errors) ── */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-8px); }
+  40%     { transform: translateX(8px); }
+  60%     { transform: translateX(-5px); }
+  80%     { transform: translateX(5px); }
+}
+.animate-shake { animation: shake 0.5s ease-in-out; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: var(--pc-navy); }
+::-webkit-scrollbar-thumb { background: var(--pc-gold); border-radius: 3px; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── NAVBAR SCROLLED STATE ── */
+.nav-scrolled {
+  background: rgba(0,18,54,0.97) !important;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.35);
+}

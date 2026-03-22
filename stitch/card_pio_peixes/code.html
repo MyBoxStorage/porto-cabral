@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&amp;family=Inter:wght@300;400;600&amp;family=Josefin+Sans:wght@300;400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-low": "#f8f3eb",
+              "secondary": "#795900",
+              "primary-container": "#1a3a6b",
+              "on-tertiary-fixed": "#1d1c17",
+              "inverse-primary": "#abc7ff",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-container": "#89a5dd",
+              "surface-tint": "#415e91",
+              "inverse-on-surface": "#f5f0e8",
+              "on-surface-variant": "#43474f",
+              "surface-container-highest": "#e7e2da",
+              "on-surface": "#1d1c17",
+              "surface-container-high": "#ece8e0",
+              "on-primary-fixed-variant": "#284678",
+              "on-primary-fixed": "#001b3f",
+              "on-tertiary-container": "#a8a59e",
+              "surface-dim": "#ded9d2",
+              "secondary-fixed": "#ffdf9f",
+              "on-tertiary": "#ffffff",
+              "on-background": "#1d1c17",
+              "tertiary": "#272520",
+              "primary": "#002451",
+              "outline-variant": "#c4c6d0",
+              "on-tertiary-fixed-variant": "#494741",
+              "on-secondary-fixed": "#261a00",
+              "on-primary": "#ffffff",
+              "error": "#ba1a1a",
+              "surface-variant": "#e7e2da",
+              "on-secondary": "#ffffff",
+              "primary-fixed-dim": "#abc7ff",
+              "secondary-container": "#fece65",
+              "surface-container": "#f2ede5",
+              "background": "#fef9f1",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed-variant": "#5b4300",
+              "secondary-fixed-dim": "#eec058",
+              "on-error": "#ffffff",
+              "surface-bright": "#fef9f1",
+              "surface": "#fef9f1",
+              "outline": "#747780",
+              "error-container": "#ffdad6",
+              "tertiary-container": "#3d3b35",
+              "on-secondary-container": "#755700",
+              "inverse-surface": "#32302b",
+              "tertiary-fixed-dim": "#cac6be",
+              "tertiary-fixed": "#e7e2da",
+              "primary-fixed": "#d7e2ff"
+            },
+            fontFamily: {
+              "headline": ["Playfair Display", "serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Josefin Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .page-curl {
+            box-shadow: -10px 0 30px -15px rgba(0,0,0,0.1) inset;
+        }
+        .nautical-texture {
+            background-image: radial-gradient(#d4a84322 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border-b border-white/20 dark:border-slate-800/20 shadow-sm backdrop-saturate-150">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<span class="text-2xl font-bold tracking-tighter text-[#1A3A6B] dark:text-[#F5F0E8] font-headline">Porto Cabral BC</span>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-[#1A3A6B] dark:text-[#F5F0E8] opacity-80 hover:opacity-100 transition-opacity font-headline tracking-wide uppercase text-sm" href="#">Experience</a>
+<a class="text-[#D4A843] font-bold border-b-2 border-[#D4A843] pb-1 font-headline tracking-wide uppercase text-sm" href="#">Menu</a>
+<a class="text-[#1A3A6B] dark:text-[#F5F0E8] opacity-80 hover:opacity-100 transition-opacity font-headline tracking-wide uppercase text-sm" href="#">Reservations</a>
+<a class="text-[#1A3A6B] dark:text-[#F5F0E8] opacity-80 hover:opacity-100 transition-opacity font-headline tracking-wide uppercase text-sm" href="#">Gallery</a>
+<a class="text-[#1A3A6B] dark:text-[#F5F0E8] opacity-80 hover:opacity-100 transition-opacity font-headline tracking-wide uppercase text-sm" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#D4A843] cursor-pointer">language</span>
+<button class="md:hidden material-symbols-outlined text-[#1A3A6B]">menu</button>
+</div>
+</div>
+</nav>
+<main class="min-h-screen pt-24 pb-12 flex items-center justify-center nautical-texture overflow-hidden">
+<!-- Flipbook Container -->
+<div class="relative w-full max-w-6xl mx-auto px-4 lg:px-0 flex flex-col md:flex-row gap-0 shadow-2xl rounded-sm overflow-hidden bg-surface-container-lowest">
+<!-- Spine Shadow Effect -->
+<div class="absolute left-1/2 top-0 bottom-0 w-8 -ml-4 bg-gradient-to-r from-black/5 via-black/10 to-black/5 z-10 hidden md:block"></div>
+<!-- Left Page: The Captain's Ledger -->
+<section class="flex-1 p-12 lg:p-20 bg-surface-container-lowest relative border-r border-surface-dim">
+<div class="absolute top-8 left-8">
+<span class="material-symbols-outlined text-secondary/20 text-6xl">anchor</span>
+</div>
+<header class="mb-16 text-center relative">
+<h2 class="font-headline text-5xl md:text-7xl text-secondary mb-4 italic">Peixes</h2>
+<div class="flex justify-center items-center gap-4 text-secondary/40">
+<div class="h-px w-12 bg-secondary/30"></div>
+<span class="material-symbols-outlined text-2xl">sailing</span>
+<div class="h-px w-12 bg-secondary/30"></div>
+</div>
+</header>
+<div class="space-y-10">
+<article class="group">
+<div class="flex justify-between items-baseline gap-4 mb-1">
+<h3 class="font-headline text-xl text-primary font-bold">Bacalhau às Natas</h3>
+<div class="flex-1 border-b border-dotted border-surface-dim mb-1"></div>
+<span class="font-label text-secondary font-semibold">R$289</span>
+</div>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300 italic">Desfiado com natas frescas e batatas douradas.</p>
+</article>
+<article class="group">
+<div class="flex justify-between items-baseline gap-4 mb-1">
+<h3 class="font-headline text-xl text-primary font-bold">Bacalhau à Portuguesa</h3>
+<div class="flex-1 border-b border-dotted border-surface-dim mb-1"></div>
+<span class="font-label text-secondary font-semibold">R$289</span>
+</div>
+</article>
+<article class="group">
+<div class="flex justify-between items-baseline gap-4 mb-1">
+<h3 class="font-headline text-xl text-primary font-bold">Bacalhau na Crosta de Grão de Bico</h3>
+<div class="flex-1 border-b border-dotted border-surface-dim mb-1"></div>
+<span class="font-label text-secondary font-semibold">R$289</span>
+</div>
+</article>
+<article class="group">
+<div class="flex justify-between items-baseline gap-4 mb-1">
+<h3 class="font-headline text-xl text-primary font-bold">Congrio com Castanha e Banana</h3>
+<div class="flex-1 border-b border-dotted border-surface-dim mb-1"></div>
+<span class="font-label text-secondary font-semibold">R$269</span>
+</div>
+</article>
+<article class="group">
+<div class="flex justify-between items-baseline gap-4 mb-1">
+<h3 class="font-headline text-xl text-primary font-bold">Peixe a Pomodoro</h3>
+<div class="flex-1 border-b border-dotted border-surface-dim mb-1"></div>
+<span class="font-label text-secondary font-semibold">R$259</span>
+</div>
+</article>
+</div>
+<!-- Footer Illustration -->
+<div class="mt-20 flex justify-center opacity-30">
+<img alt="Nautical fish illustration" class="w-32 h-32 object-contain grayscale" data-alt="Vintage nautical hand-drawn fish illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG2uqRVPCxADzhXunrBz-m67xGgBfuEiYO50gcULZWswvBuAHv_dMr5s29knGDB9QTEeX_45uQesdpkx2Hbx1wXhe5qhuqv0NzTm8wnHM5bODSQMcDyuiKo8fZbRUF3hqJvc8PHaQjNRYkOL8UnDBQt6JuH_JlKstcoC6tEPVcejrtiqLxWV697zrIS_JJAXWpXWqpgpiVoOqEEqERPgNpoBFMkPMd2WNQ80sbxzl5WpnanDewiWsMcsATv6e-OhoLqG7-JGO6WQ64"/>
+</div>
+</section>
+<!-- Right Page: The Culinary Signature -->
+<section class="flex-1 p-12 lg:p-20 bg-surface-container-lowest relative page-curl">
+<div class="absolute top-8 right-8 text-secondary/10">
+<span class="text-sm font-label uppercase tracking-[0.3em]">Log No. 042</span>
+</div>
+<div class="space-y-16">
+<!-- Complex Option 1 -->
+<article>
+<h3 class="font-headline text-2xl text-primary mb-4 pb-2 border-b border-secondary/20">Peixe à Belle Meunière</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center bg-surface-container-low px-4 py-3 rounded-sm">
+<span class="font-label text-sm uppercase tracking-wider text-on-surface">Congrio</span>
+<span class="font-label text-secondary font-bold">R$269</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-low px-4 py-3 rounded-sm">
+<span class="font-label text-sm uppercase tracking-wider text-on-surface">Salmão | Linguado</span>
+<span class="font-label text-secondary font-bold">R$259</span>
+</div>
+</div>
+</article>
+<!-- Complex Option 2 -->
+<article>
+<h3 class="font-headline text-2xl text-primary mb-4 pb-2 border-b border-secondary/20">Peixe Almirante do Porto</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center bg-surface-container-low px-4 py-3 rounded-sm">
+<span class="font-label text-sm uppercase tracking-wider text-on-surface">Congrio</span>
+<span class="font-label text-secondary font-bold">R$269</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-low px-4 py-3 rounded-sm">
+<span class="font-label text-sm uppercase tracking-wider text-on-surface">Salmão | Linguado</span>
+<span class="font-label text-secondary font-bold">R$259</span>
+</div>
+</div>
+</article>
+<!-- Complex Option 3 -->
+<article>
+<h3 class="font-headline text-2xl text-primary mb-4 pb-2 border-b border-secondary/20">Peixe à Fiorentina</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center bg-surface-container-low px-4 py-3 rounded-sm">
+<span class="font-label text-sm uppercase tracking-wider text-on-surface">Congrio</span>
+<span class="font-label text-secondary font-bold">R$269</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-low px-4 py-3 rounded-sm">
+<span class="font-label text-sm uppercase tracking-wider text-on-surface">Salmão | Linguado</span>
+<span class="font-label text-secondary font-bold">R$259</span>
+</div>
+</div>
+</article>
+</div>
+<!-- Side Dish Highlight -->
+<div class="mt-16 p-6 border border-secondary/10 bg-surface-container-high rounded-lg relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 text-secondary/5 rotate-12">
+<span class="material-symbols-outlined text-8xl">dinner_dining</span>
+</div>
+<p class="font-label text-xs uppercase tracking-widest text-secondary mb-2">Acompanhamentos</p>
+<p class="font-headline text-lg text-primary italic">Arroz branco e pirão de peixe</p>
+</div>
+<!-- Bottom Decoration -->
+<div class="mt-12 flex items-center gap-2 opacity-20">
+<div class="h-px flex-1 bg-primary"></div>
+<span class="material-symbols-outlined text-sm">sailing</span>
+<div class="h-px flex-1 bg-primary"></div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-[#1A3A6B] dark:bg-[#002451] flex flex-col md:flex-row justify-between items-center w-full px-12 py-16 gap-8">
+<div class="flex flex-col gap-4">
+<span class="text-[#F5F0E8] font-headline italic text-lg tracking-widest">Porto Cabral BC</span>
+<p class="text-[#D4A843] font-body text-xs tracking-widest uppercase">© 2024 Porto Cabral BC. The Maritime Curator Experience.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-[#F5F0E8] opacity-60 hover:text-[#D4A843] transition-all font-body text-xs tracking-widest uppercase" href="#">Privacy Policy</a>
+<a class="text-[#F5F0E8] opacity-60 hover:text-[#D4A843] transition-all font-body text-xs tracking-widest uppercase" href="#">Terms of Service</a>
+<a class="text-[#F5F0E8] opacity-60 hover:text-[#D4A843] transition-all font-body text-xs tracking-widest uppercase" href="#">Press Kit</a>
+<a class="text-[#F5F0E8] opacity-60 hover:text-[#D4A843] transition-all font-body text-xs tracking-widest uppercase" href="#">Careers</a>
+</div>
+</footer>
+</body></html>
