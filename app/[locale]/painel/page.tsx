@@ -714,6 +714,11 @@ function EditHistory() {
       <SectionHeader title="Nossa História" onSave={save} saving={saving} dirty={dirty}/>
       <LangTabs lang={lang} setLang={setLang}/>
       <div style={{display:'grid',gap:'1.25rem'}}>
+        <ImageUploader
+          label="Foto da Seção Nossa História (lado esquerdo)"
+          value={data.image_url??''}
+          onChange={url=>update(p=>({...p,image_url:url}))}
+        />
         {F('title','Título (\\n = quebra de linha)',2)}
         {F('p1','Parágrafo 1',3)}
         {F('p2','Parágrafo 2',3)}

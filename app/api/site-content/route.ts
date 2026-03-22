@@ -15,7 +15,9 @@ export async function GET(req: Request) {
     if (key) {
       const [row] = await db.select().from(siteContent).where(eq(siteContent.key, key))
       if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-      return NextResponse.json({ key: row.key, value: row.value, updated_at: row.updated_at })
+      // Garante que value é sempre objeto (Drizzle pode retornar jsonb como string)
+      const value = typeof row.value === 'string' ? JSON.parse(row.value) : row.value
+      return NextResponse.json({ key: row.key, value, updated_at: row.updated_at })
     }
     const rows = await db.select().from(siteContent)
     return NextResponse.json({ content: rows })

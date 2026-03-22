@@ -38,7 +38,7 @@ type DishItem    = { title_pt:string; title_en:string; title_es:string; desc_pt:
 type PillarItem  = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string }
 type DishesData  = { section_title_pt:string; section_title_en:string; section_title_es:string; items: DishItem[] }
 type PillarsData = { title_pt:string; title_en:string; title_es:string; eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; items: PillarItem[] }
-type HistoryData = { title_pt:string; title_en:string; title_es:string; p1_pt:string; p1_en:string; p1_es:string; p2_pt:string; p2_en:string; p2_es:string; quote_pt:string; quote_en:string; quote_es:string; quote_author_pt:string; quote_author_en:string; quote_author_es:string }
+type HistoryData = { title_pt:string; title_en:string; title_es:string; p1_pt:string; p1_en:string; p1_es:string; p2_pt:string; p2_en:string; p2_es:string; quote_pt:string; quote_en:string; quote_es:string; quote_author_pt:string; quote_author_en:string; quote_author_es:string; image_url?:string }
 type LocationData= { title_pt:string; title_en:string; title_es:string; eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; desc_pt:string; desc_en:string; desc_es:string; maps_url:string }
 
 const DISHES_FB: DishesData = { section_title_pt:'Iguarias do Mar', section_title_en:'Treasures of the Sea', section_title_es:'Delicias del Mar', items:[
@@ -199,11 +199,19 @@ export default function HomePage() {
           <div className="w-full lg:w-1/2 flex-shrink-0">
             <div className="relative rounded-2xl overflow-hidden"
               style={{ aspectRatio: '4/3', background: 'linear-gradient(135deg,#0a1e3d 0%,#1a3a6b 50%,#0d2545 100%)' }}>
-              <div className="absolute inset-0 opacity-[0.07]"
-                style={{ backgroundImage: 'radial-gradient(rgba(212,168,67,1) 1.5px,transparent 1.5px)', backgroundSize: '28px 28px' }} />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[#D4A843]/25"><IconAncora size={220} strokeWidth={0.6} /></span>
-              </div>
+              {historyData.image_url ? (
+                <img src={historyData.image_url} alt="Nossa História"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ filter: 'brightness(0.85)' }}/>
+              ) : (
+                <>
+                  <div className="absolute inset-0 opacity-[0.07]"
+                    style={{ backgroundImage: 'radial-gradient(rgba(212,168,67,1) 1.5px,transparent 1.5px)', backgroundSize: '28px 28px' }} />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[#D4A843]/25"><IconAncora size={220} strokeWidth={0.6} /></span>
+                  </div>
+                </>
+              )}
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="inline-flex items-center gap-3 px-5 py-3 rounded-lg"
                   style={{ background: 'rgba(0,10,30,0.7)', border: '1px solid rgba(212,168,67,0.25)', backdropFilter: 'blur(12px)' }}>

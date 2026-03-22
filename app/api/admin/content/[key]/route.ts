@@ -10,7 +10,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ key: st
     const db = getDb()
     const [row] = await db.select().from(siteContent).where(eq(siteContent.key, key))
     if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    return NextResponse.json({ key: row.key, value: row.value, updated_at: row.updated_at })
+    const value = typeof row.value === 'string' ? JSON.parse(row.value) : row.value
+    return NextResponse.json({ key: row.key, value, updated_at: row.updated_at })
   } catch (e) { console.error(e); return NextResponse.json({ error: 'Erro' }, { status: 500 }) }
 }
 
