@@ -34,9 +34,11 @@ export function useSiteContent<T>(key: string, fallback: T): T {
         return r.json()
       })
       .then(d => {
-        if (d?.value) {
-          cache[key] = { value: d.value, ts: Date.now() }
-          setData(d.value as T)
+        if (d?.value !== undefined && d?.value !== null) {
+          // Garante parse caso a API retorne value como string
+          const val = typeof d.value === 'string' ? JSON.parse(d.value) : d.value
+          cache[key] = { value: val, ts: Date.now() }
+          setData(val as T)
         }
       })
       .catch(() => {
