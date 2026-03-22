@@ -570,53 +570,82 @@ function EditHero() {
 function ImageUploader({value,onChange,label}:{value:string;onChange:(url:string)=>void;label:string}) {
   const [uploading,setUploading] = useState(false)
   const [err,setErr] = useState('')
+  const [preview,setPreview] = useState(value)
 
   async function handleFile(e:React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if(!file) return
+    // Valida tamanho (máx 2MB)
+    if(file.size > 2*1024*1024) { setErr('Imagem muito grande. Máx 2MB.'); return }
     setUploading(true); setErr('')
     const reader = new FileReader()
     reader.onload = async () => {
+      const dataUri = reader.result as string
+      setPreview(dataUri) // preview imediato
       try {
         const res = await fetch('/api/admin/upload',{
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({data:reader.result,filename:file.name}),
+          body:JSON.stringify({data:dataUri, filename:file.name}),
         })
         const json = await res.json()
-        if(!res.ok) throw new Error(json.error)
-        onChange(json.url)
+        if(!res.ok) throw new Error(json.error ?? 'Erro no upload')
+        onChange(json.url) // /api/img/<key>
       } catch(ex:unknown) {
         setErr(ex instanceof Error ? ex.message : 'Erro no upload')
+        setPreview(value) // volta preview anterior
       } finally { setUploading(false) }
     }
     reader.readAsDataURL(file)
   }
 
+  const displayUrl = preview || value
+
   return (
     <div>
       <label style={labelSt}>{label}</label>
-      <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
-        {value ? (
-          <div style={{position:'relative',width:80,height:80,borderRadius:8,overflow:'hidden',flexShrink:0,border:'1px solid rgba(212,168,67,0.3)'}}>
-            <img src={value} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
-            <button onClick={()=>onChange('')}
-              style={{position:'absolute',top:2,right:2,background:'rgba(0,0,0,0.7)',border:'none',color:'#fff',borderRadius:4,width:20,height:20,cursor:'pointer',fontSize:11,display:'flex',alignItems:'center',justifyContent:'center'}}>
-              ✕
-            </button>
-          </div>
-        ) : (
-          <div style={{width:80,height:80,borderRadius:8,border:'2px dashed rgba(212,168,67,0.2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-            <span style={{color:'rgba(212,168,67,0.3)',fontSize:24}}>+</span>
-          </div>
-        )}
-        <div style={{flex:1,minWidth:160}}>
-          <label style={{display:'block',padding:'8px 14px',borderRadius:8,border:'1px solid rgba(212,168,67,0.25)',background:'rgba(212,168,67,0.08)',color:GOLD,fontFamily:"'Josefin Sans',sans-serif",fontSize:10,fontWeight:700,letterSpacing:'.1em',cursor:'pointer',textAlign:'center',textTransform:'uppercase'}}>
-            {uploading?'⏳ Enviando…':'↑ Fazer Upload'}
-            <input type="file" accept="image/*" style={{display:'none'}} onChange={handleFile} disabled={uploading}/>
+      <div style={{display:'flex',gap:12,alignItems:'flex-start',flexWrap:'wrap'}}>
+        {/* Preview */}
+        <div style={{width:90,height:90,borderRadius:10,overflow:'hidden',flexShrink:0,
+          border:`2px ${displayUrl?'solid rgba(212,168,67,0.4)':'dashed rgba(212,168,67,0.2)'}`,
+          background:'rgba(0,0,0,0.2)',display:'flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
+          {displayUrl ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={displayUrl} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+              <button onClick={()=>{onChange('');setPreview('')}}
+                style={{position:'absolute',top:3,right:3,background:'rgba(0,0,0,0.75)',
+                  border:'none',color:'#fff',borderRadius:4,width:18,height:18,
+                  cursor:'pointer',fontSize:10,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                ✕
+              </button>
+            </>
+          ) : (
+            <span style={{color:'rgba(212,168,67,0.25)',fontSize:28,lineHeight:1}}>+</span>
+          )}
+        </div>
+        {/* Botão upload */}
+        <div style={{flex:1,minWidth:160,display:'flex',flexDirection:'column',gap:6,justifyContent:'center'}}>
+          <label style={{
+            display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+            padding:'10px 16px',borderRadius:8,cursor:uploading?'wait':'pointer',
+            border:'1px solid rgba(212,168,67,0.3)',background:'rgba(212,168,67,0.08)',
+            color:GOLD,fontFamily:"'Josefin Sans',sans-serif",fontSize:10,
+            fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',
+            opacity:uploading?0.6:1,transition:'all .15s',
+          }}>
+            <span style={{fontSize:14}}>{uploading?'⏳':'↑'}</span>
+            {uploading?'Salvando no banco…':'Fazer Upload da Foto'}
+            <input type="file" accept="image/jpeg,image/png,image/webp" style={{display:'none'}}
+              onChange={handleFile} disabled={uploading}/>
           </label>
-          {value && <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(212,168,67,0.4)',marginTop:4,letterSpacing:'.04em',wordBreak:'break-all'}}>{value.split('/').pop()}</p>}
-          {err && <p style={{color:'#fca5a5',fontSize:10,marginTop:4}}>{err}</p>}
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.25)',
+            letterSpacing:'.06em',margin:0}}>JPG, PNG ou WEBP · Máx 2MB · Salvo no banco</p>
+          {value && !err && <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,
+            color:'rgba(212,168,67,0.5)',margin:0,letterSpacing:'.04em',wordBreak:'break-all'}}>
+            ✔ {value}
+          </p>}
+          {err && <p style={{color:'#fca5a5',fontSize:10,margin:0,fontFamily:"'Josefin Sans',sans-serif"}}>⚠️ {err}</p>}
         </div>
       </div>
     </div>

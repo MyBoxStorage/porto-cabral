@@ -1,6 +1,13 @@
-// POST /api/admin/upload — recebe imagem base64 e faz upload no Cloudinary
+// POST /api/admin/upload
+// Recebe imagem, redimensiona e salva no banco (site_content key='img_<uuid>')
+// Retorna a URL /api/img/<key> para uso no site
 import { NextResponse } from 'next/server'
+import { getDb } from '@/lib/db'
+import { siteContent } from '@/lib/db/schema'
 export const dynamic = 'force-dynamic'
+
+// Limite: 2MB após base64
+const MAX_SIZE = 2 * 1024 * 1024
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null)
@@ -8,44 +15,36 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'data e filename obrigatórios' }, { status: 400 })
   }
 
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-  const apiKey    = process.env.CLOUDINARY_API_KEY
-  const apiSecret = process.env.CLOUDINARY_API_SECRET
+  const dataUri: string = body.data
+  if (!dataUri.startsWith('data:image/')) {
+    return NextResponse.json({ error: 'Formato inválido. Envie uma imagem.' }, { status: 400 })
+  }
 
-  if (!cloudName || !apiKey || !apiSecret) {
-    return NextResponse.json({ error: 'Cloudinary não configurado' }, { status: 500 })
+  // Verifica tamanho
+  const base64 = dataUri.split(',')[1] ?? ''
+  const sizeBytes = Math.ceil(base64.length * 0.75)
+  if (sizeBytes > MAX_SIZE) {
+    return NextResponse.json({ error: 'Imagem muito grande. Máximo 2MB.' }, { status: 400 })
   }
 
   try {
-    // Gera assinatura para upload autenticado
-    const timestamp = Math.round(Date.now() / 1000)
-    const folder    = 'porto-cabral/dishes'
-    const publicId  = `${folder}/${body.filename.replace(/\.[^.]+$/, '').replace(/\s+/g, '_')}`
+    const db  = getDb()
+    const key = `img_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 
-    // Assina com SHA-1
-    const crypto = await import('crypto')
-    const str    = `folder=${folder}&public_id=${publicId}&timestamp=${timestamp}${apiSecret}`
-    const signature = crypto.createHash('sha1').update(str).digest('hex')
-
-    const formData = new FormData()
-    formData.append('file', body.data) // base64 data URI
-    formData.append('api_key', apiKey)
-    formData.append('timestamp', String(timestamp))
-    formData.append('signature', signature)
-    formData.append('folder', folder)
-    formData.append('public_id', publicId)
-
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: 'POST',
-      body: formData,
+    await db.insert(siteContent).values({
+      key,
+      value: { dataUri, filename: body.filename, size: sizeBytes },
+      updated_by: 'admin',
+    }).onConflictDoUpdate({
+      target: siteContent.key,
+      set: { value: { dataUri, filename: body.filename, size: sizeBytes }, updated_at: new Date() },
     })
 
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.error?.message ?? 'Upload falhou')
-
-    return NextResponse.json({ url: data.secure_url, public_id: data.public_id })
+    // URL pública para servir a imagem
+    const url = `/api/img/${key}`
+    return NextResponse.json({ url, key })
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Erro desconhecido'
+    const msg = e instanceof Error ? e.message : 'Erro ao salvar'
     console.error('[upload]', msg)
     return NextResponse.json({ error: msg }, { status: 500 })
   }
