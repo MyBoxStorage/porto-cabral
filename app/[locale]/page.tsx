@@ -69,10 +69,14 @@ export default function HomePage() {
   const secReserva  = useFadeUp()
 
   // Conteúdo dinâmico do banco — fallback para hardcode até carregar
-  const dishesData  = useSiteContent<DishesData>('dishes', DISHES_FB)
-  const pillarsData = useSiteContent<PillarsData>('pillars', PILLARS_FB)
+  const _dishes   = useSiteContent<DishesData>('dishes', DISHES_FB)
+  const _pillars  = useSiteContent<PillarsData>('pillars', PILLARS_FB)
   const historyData = useSiteContent<HistoryData>('history', HISTORY_FB)
   const locationData= useSiteContent<LocationData>('location', LOCATION_FB)
+
+  // Garante que items nunca é undefined mesmo se o banco retornar objeto incompleto
+  const dishesData  = { ...DISHES_FB,  ..._dishes,  items: _dishes?.items?.length  ? _dishes.items  : DISHES_FB.items  }
+  const pillarsData = { ...PILLARS_FB, ..._pillars, items: _pillars?.items?.length ? _pillars.items : PILLARS_FB.items }
 
   // Helpers de locale
   const d = <K extends string>(obj: Record<string,unknown>, base: K) =>

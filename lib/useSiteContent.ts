@@ -2,27 +2,48 @@
 'use client'
 import { useState, useEffect } from 'react'
 
-const cache: Record<string, { value: unknown; ts: number }> = {}
-const TTL = 30_000 // 30s em dev, pode subir em prod
+type CacheEntry = { value: unknown; ts: number } | { error: true; ts: number }
+const cache: Record<string, CacheEntry> = {}
+const TTL       = 60_000  // 60s para dados válidos
+const ERROR_TTL = 300_000 // 5min para não tentar novamente após erro
 
 export function useSiteContent<T>(key: string, fallback: T): T {
   const [data, setData] = useState<T>(fallback)
 
   useEffect(() => {
     const now = Date.now()
-    if (cache[key] && now - cache[key].ts < TTL) {
-      setData(cache[key].value as T)
+    const cached = cache[key]
+
+    // Se tem cache válido (sucesso), usa ele
+    if (cached && !('error' in cached) && now - cached.ts < TTL) {
+      setData(cached.value as T)
       return
     }
+
+    // Se falhou recentemente, não tenta de novo (evita loop)
+    if (cached && 'error' in cached && now - cached.ts < ERROR_TTL) {
+      return
+    }
+
+    // Marca que está tentando para evitar chamadas duplicadas
+    cache[key] = { error: true, ts: now }
+
     fetch(`/api/site-content?key=${key}`)
-      .then(r => r.ok ? r.json() : null)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
       .then(d => {
         if (d?.value) {
           cache[key] = { value: d.value, ts: Date.now() }
           setData(d.value as T)
         }
       })
-      .catch(() => {/* usa fallback */})
+      .catch(() => {
+        // Mantém o cache de erro com timestamp atual para não tentar de novo tão cedo
+        cache[key] = { error: true, ts: Date.now() }
+        // Usa o fallback silenciosamente
+      })
   }, [key])
 
   return data

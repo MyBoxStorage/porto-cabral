@@ -258,7 +258,7 @@ function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
           <div style={{position:'absolute',inset:0,opacity:.03,backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none'}}/>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 .5rem'}}>Por Status</p>
           <h3 style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontStyle:'italic',color:GOLD,margin:'0 0 1rem'}}>Reservas</h3>
-          {stats.by_status.map(s=>(
+          {(stats.by_status??[]).map(s=>(
             <div key={s.status} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'.55rem 0',borderBottom:'1px solid rgba(212,168,67,0.08)'}}>
               <Badge status={s.status}/>
               <span style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:GOLD,fontWeight:600}}>{Number(s.total)}</span>
@@ -271,7 +271,7 @@ function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
           <div style={{position:'absolute',inset:0,opacity:.03,backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none'}}/>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 .5rem'}}>Últimas</p>
           <h3 style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontStyle:'italic',color:GOLD,margin:'0 0 1rem'}}>Reservas Recentes</h3>
-          {stats.recent_reservations.map(r=>(
+          {(stats.recent_reservations??[]).map(r=>(
             <div key={r.id} style={{padding:'.55rem 0',borderBottom:'1px solid rgba(212,168,67,0.08)',display:'flex',justifyContent:'space-between',alignItems:'center',gap:12}}>
               <div style={{minWidth:0}}>
                 <p style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD,margin:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.name}</p>
