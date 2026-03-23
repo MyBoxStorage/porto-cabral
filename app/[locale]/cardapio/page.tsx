@@ -594,6 +594,10 @@ const CSS = `
     border-radius: 16px;
     overflow: hidden;
     position: relative;
+    /* altura fixa padronizada — garante cards do mesmo tamanho independente do numero de itens */
+    height: 78vh;
+    display: flex;
+    flex-direction: column;
     transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                 opacity 0.35s ease;
     transform: scale(0.92);
@@ -613,6 +617,8 @@ const CSS = `
     padding: 1.4rem 1.4rem 1.1rem;
     position: relative;
     border-bottom: 1px solid rgba(201,168,76,.18);
+    /* flex-shrink: 0 garante que o header nunca encolhe */
+    flex-shrink: 0;
   }
   .mc-header::before {
     content: '';
@@ -688,6 +694,18 @@ const CSS = `
   .mc-body {
     background: #f4e8ca;
     padding: 1rem 1.1rem 1rem;
+    /* flex: 1 preenche o espaco restante apos o header; overflow-y permite scroll nos itens */
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* scrollbar fina e discreta no tom da marca */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(180,130,40,.35) transparent;
+  }
+  .mc-body::-webkit-scrollbar { width: 3px; }
+  .mc-body::-webkit-scrollbar-thumb {
+    background: rgba(180,130,40,.35);
+    border-radius: 2px;
   }
   .mc-note {
     font-family: 'Josefin Sans', sans-serif;
@@ -769,6 +787,8 @@ const CSS = `
     padding: .65rem 1.1rem .9rem;
     border-top: 1px solid rgba(130,85,18,.1);
     text-align: center;
+    /* flex-shrink: 0 garante que o rodape nunca encolhe, sempre visivel */
+    flex-shrink: 0;
   }
   .mc-footer-text {
     font-family: 'Josefin Sans', sans-serif;
