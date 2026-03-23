@@ -30,23 +30,79 @@ function loadEnvLocal() {
   return out
 }
 
+function withPooler6543(url) {
+  try {
+    const u = new URL(url.replace(/^postgresql:/, 'http:'))
+    if (u.port === '5432' || u.port === '') {
+      u.port = '6543'
+    }
+    return 'postgresql:' + u.toString().replace(/^http:/, '')
+  } catch {
+    return url
+  }
+}
+
+function ensureSslMode(url) {
+  if (!/[?&]sslmode=/.test(url)) {
+    return url + (url.includes('?') ? '&' : '?') + 'sslmode=require'
+  }
+  return url
+}
+
 const env = loadEnvLocal()
-const url = env.PC_DATABASE_URL || env.DATABASE_URI
-if (!url) {
+const baseUrl = env.PC_DATABASE_URL || env.DATABASE_URI
+if (!baseUrl) {
   console.error('Defina PC_DATABASE_URL ou DATABASE_URI no .env.local')
   process.exit(1)
 }
 
 const sqlPath = join(root, 'supabase/migrations/003_site_content_videos.sql')
-const sql = readFileSync(sqlPath, 'utf8')
+const full = readFileSync(sqlPath, 'utf8')
+const chunks = full
+  .split(';')
+  .map((s) => s.replace(/--[^\n]*/g, '').trim())
+  .filter((s) => s.length > 0)
 
-const db = postgres(url, { max: 1, prepare: false, ssl: 'require' })
-try {
-  await db.unsafe(sql)
-  console.log('OK: 003_site_content_videos.sql aplicado no Postgres.')
-} catch (e) {
-  console.error('Erro ao executar SQL:', e.message)
-  process.exit(1)
-} finally {
-  await db.end()
+async function runWithUrl(url) {
+  const db = postgres(url, { max: 1, prepare: false, ssl: 'require' })
+  try {
+    for (const chunk of chunks) {
+      await db.unsafe(chunk + ';')
+    }
+  } finally {
+    await db.end()
+  }
 }
+
+const forcePooler = process.argv.includes('--pooler')
+const urlsToTry = forcePooler
+  ? [ensureSslMode(withPooler6543(baseUrl))]
+  : [ensureSslMode(baseUrl), ensureSslMode(withPooler6543(baseUrl))]
+
+let lastErr
+for (let i = 0; i < urlsToTry.length; i++) {
+  const u = urlsToTry[i]
+  const label = u.includes(':6543') ? 'pooler :6543' : 'direto :5432'
+  try {
+    if (urlsToTry.length > 1) console.log(`Tentando Postgres (${label})…`)
+    await runWithUrl(u)
+    console.log('OK: 003_site_content_videos.sql aplicado no Postgres.')
+    process.exit(0)
+  } catch (e) {
+    lastErr = e
+    const timeout =
+      e?.code === 'ETIMEDOUT' ||
+      (e?.name === 'AggregateError' &&
+        e?.errors?.some((x) => x?.code === 'ETIMEDOUT'))
+    if (timeout && i < urlsToTry.length - 1) {
+      console.warn(`Timeout em ${label}; tentando pooler…`)
+      continue
+    }
+    break
+  }
+}
+
+console.error('Erro ao executar SQL:', lastErr?.message || lastErr)
+if (lastErr?.code) console.error('code:', lastErr.code)
+if (lastErr?.detail) console.error('detail:', lastErr.detail)
+process.exit(1)
