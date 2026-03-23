@@ -216,7 +216,7 @@ const CSS = `
 
 /* ── HERO HEADER ── */
 .pf-hero{
-  background:linear-gradient(170deg,#030c1a 0%,#071628 45%,#0d2040 80%,#0a1830 100%);
+  background:linear-gradient(170deg,#005fa3 0%,#0074bf 45%,#0087d9 80%,#006ab3 100%);
   padding:7rem 1.5rem 5rem;
   text-align:center;
   position:relative;
@@ -226,32 +226,33 @@ const CSS = `
 .pf-hero::before{
   content:'';position:absolute;inset:0;pointer-events:none;
   background-image:
-    radial-gradient(circle at 15% 50%,rgba(201,168,76,.06) 0%,transparent 50%),
-    radial-gradient(circle at 85% 50%,rgba(201,168,76,.06) 0%,transparent 50%),
-    radial-gradient(circle at 50% 0%,rgba(26,95,168,.35) 0%,transparent 60%),
-    radial-gradient(circle,rgba(201,168,76,.03) 1px,transparent 1px);
+    radial-gradient(circle at 15% 50%,rgba(201,168,76,.07) 0%,transparent 50%),
+    radial-gradient(circle at 85% 50%,rgba(201,168,76,.07) 0%,transparent 50%),
+    radial-gradient(circle at 50% 0%,rgba(0,40,90,.3) 0%,transparent 60%),
+    radial-gradient(circle,rgba(255,255,255,.025) 1px,transparent 1px);
   background-size:auto,auto,auto,28px 28px;
 }
-/* Linha dourada na base do hero fazendo transição com as tabs */
+/* Linha dourada na base do hero fazendo transição com as tabs navy */
 .pf-hero::after{
   content:'';position:absolute;bottom:0;left:0;right:0;
   height:1px;
-  background:linear-gradient(90deg,transparent 0%,rgba(201,168,76,.5) 30%,rgba(201,168,76,.8) 50%,rgba(201,168,76,.5) 70%,transparent 100%);
+  background:linear-gradient(90deg,transparent 0%,rgba(201,168,76,.6) 30%,rgba(201,168,76,.9) 50%,rgba(201,168,76,.6) 70%,transparent 100%);
 }
 .pf-hero-inner{position:relative;z-index:1}
 .pf-hero-eyebrow{
   font-family:'Josefin Sans',sans-serif;
   font-size:.52rem;letter-spacing:.6em;text-transform:uppercase;
-  color:rgba(201,168,76,.6);
+  color:rgba(201,168,76,.9);
+  font-weight:700;
   margin:0 0 1.8rem;
   display:flex;align-items:center;justify-content:center;gap:1.2rem;
 }
 .pf-hero-eyebrow::before,.pf-hero-eyebrow::after{
   content:'';display:block;height:1px;width:3.5rem;
-  background:linear-gradient(90deg,transparent,rgba(201,168,76,.5));
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.8));
 }
 .pf-hero-eyebrow::after{
-  background:linear-gradient(90deg,rgba(201,168,76,.5),transparent);
+  background:linear-gradient(90deg,rgba(201,168,76,.8),transparent);
 }
 .pf-hero-title{
   font-family:'Playfair Display',serif;
@@ -280,7 +281,8 @@ const CSS = `
 .pf-hero-sub{
   font-family:'Cormorant Garamond',serif;
   font-size:1.15rem;font-style:italic;
-  color:rgba(255,255,255,.38);
+  color:rgba(255,255,255,.65);
+  font-weight:600;
   letter-spacing:.03em;
 }
 /* Seta scroll-down */
