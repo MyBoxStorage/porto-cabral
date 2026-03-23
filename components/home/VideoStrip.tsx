@@ -20,7 +20,7 @@ const CARD_W  = 320
 const CARD_H  = 480
 const GAP     = 20
 const STEP    = CARD_W + GAP
-const SPEED   = 0.378 // ~15 segundos por card a 60fps (340px / 900frames)
+const SPEED   = 0.09 // ~60 segundos por card a 60fps — bem lento e contemplativo
 const DRAG_SENS = 1.2
 
 /* ── VideoCard ── */
