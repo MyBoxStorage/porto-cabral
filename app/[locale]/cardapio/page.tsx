@@ -515,6 +515,39 @@ const CSS = `
   transition:all .24s;
 }
 .pf-dot.on .pf-dot-inner{width:20px;border-radius:3px;background:#c9a84c}
+/* ── SWIPE HINT (mobile) ── */
+@keyframes hint-slide {
+  0%   { transform: translateX(0);    opacity: .9; }
+  40%  { transform: translateX(28px); opacity: .5; }
+  70%  { transform: translateX(-8px); opacity: .8; }
+  100% { transform: translateX(0);    opacity: .9; }
+}
+.pf-hint {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(201,168,76,.3);
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  padding: 7px 16px;
+  pointer-events: none;
+  z-index: 20;
+  animation: hint-slide 1.6s ease-in-out infinite;
+}
+.pf-hint-icon { font-size: 1rem; line-height: 1; }
+.pf-hint-text {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: .5rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,.8);
+  white-space: nowrap;
+}
 .pf-folio{
   font-family:'Cormorant Garamond',serif;
   font-style:italic;font-size:.86rem;
@@ -522,39 +555,62 @@ const CSS = `
 }
 `
 
+/* ─── Tipos internos do PageFlip que usamos via cast ─── */
+type PF = {
+  loadFromHTML: (p: HTMLDivElement[]) => void
+  on: (e: string, cb: (e: { data: number }) => void) => void
+  destroy?: () => void
+  turnToPage: (p: number) => void
+  flipPrev: () => void
+  flipNext: () => void
+  // API de drag interativo (user flip)
+  startUserFlipping: (pos: { x: number; y: number }) => void
+  updateUserFlipping: (pos: { x: number; y: number }) => void
+  stopUserFlipping: () => void
+  // estado interno
+  getPageCount: () => number
+  getCurrentPageIndex: () => number
+}
+
 export default function CardapioPage() {
-  const bookRef = useRef<HTMLDivElement>(null)
-  const flipRef = useRef<unknown>(null)
-  const [cur, setCur] = useState(0)
-  const [ready, setReady] = useState(false)
+  const bookRef    = useRef<HTMLDivElement>(null)
+  const wrapRef    = useRef<HTMLDivElement>(null)
+  const flipRef    = useRef<PF | null>(null)
+  const [cur, setCur]       = useState(0)
+  const [ready, setReady]   = useState(false)
+  const [showHint, setShowHint] = useState(false)
   const total = SECTIONS.length
 
+  /* ── Inicialização do PageFlip ── */
   useEffect(() => {
-    let pf: unknown = null
+    let pf: PF | null = null
     let cancelled = false
     async function init() {
       if (!bookRef.current) return
-      // evita dupla montagem no React StrictMode
       if (bookRef.current.childElementCount > 0) return
       try {
         const { PageFlip } = await import('page-flip')
         const el = bookRef.current
         const isMobile = window.innerWidth < 768
         pf = new PageFlip(el, {
-          width: isMobile ? 320 : 430, height: isMobile ? 520 : 610,
+          width:  isMobile ? 320 : 430,
+          height: isMobile ? 520 : 610,
           size: 'stretch',
           minWidth: 280, maxWidth: 480,
           minHeight: 400, maxHeight: 720,
           maxShadowOpacity: 0.6,
           showCover: false,
+          // Desativa scroll support nativo da lib — vamos controlar manualmente
           mobileScrollSupport: false,
-          flippingTime: 700,
+          flippingTime: 650,
           usePortrait: true,
           autoSize: true,
           clickEventForward: false,
-          swipeDistance: 25,
+          // swipeDistance baixo = responde cedo ao gesto
+          swipeDistance: isMobile ? 10 : 25,
           useMouseEvents: true,
-        })
+        }) as unknown as PF
+
         const pages: HTMLDivElement[] = []
         SECTIONS.forEach((s, i) => {
           const cover = document.createElement('div')
@@ -566,25 +622,121 @@ export default function CardapioPage() {
           content.innerHTML = contentHTML(s)
           pages.push(content)
         })
-        ;(pf as { loadFromHTML: (p: HTMLDivElement[]) => void }).loadFromHTML(pages)
-        ;(pf as { on: (e: string, cb: (e: { data: number }) => void) => void }).on('flip', e => {
+        pf.loadFromHTML(pages)
+        pf.on('flip', (e) => {
           setCur(Math.floor(e.data / 2))
+          setShowHint(false) // esconde hint após primeiro flip
         })
-        if (cancelled) { try { (pf as { destroy?: () => void })?.destroy?.() } catch {}; return }
+
+        if (cancelled) { try { pf.destroy?.() } catch {}; return }
         flipRef.current = pf
+        // Mostra hint de swipe no mobile apenas uma vez
+        if (window.innerWidth < 768) setShowHint(true)
         setReady(true)
       } catch (err) { console.error('PageFlip:', err) }
     }
     init()
-    return () => { cancelled = true; try { (pf as { destroy?: () => void })?.destroy?.() } catch {} }
+    return () => { cancelled = true; try { flipRef.current?.destroy?.() } catch {} }
   }, [total])
 
-  function goTo(i: number) {
-    (flipRef.current as { turnToPage: (p: number) => void } | null)?.turnToPage(i * 2)
-    setCur(i)
-  }
-  function prev() { (flipRef.current as { flipPrev: () => void } | null)?.flipPrev() }
-  function next() { (flipRef.current as { flipNext: () => void } | null)?.flipNext() }
+  /* ── Touch drag interativo no mobile ──
+     Intercepta touchstart/move/end no wrapper do livro.
+     Calcula se o gesto é predominantemente horizontal (virar)
+     ou vertical (scroll de página) e age de acordo.
+     Usa a API startUserFlipping/updateUserFlipping/stopUserFlipping
+     do PageFlip para que a página "cole no dedo" em tempo real.
+  ── */
+  useEffect(() => {
+    const wrap = wrapRef.current
+    if (!wrap) return
+
+    let startX = 0
+    let startY = 0
+    let isFlipping = false   // true → gesto horizontal capturado
+    let isScrolling = false  // true → gesto vertical, deixa o browser rolar
+    let decided = false      // true → direção já decidida
+
+    function getPos(e: TouchEvent) {
+      const t = e.touches[0] ?? e.changedTouches[0]
+      // Coordenada relativa ao wrapper do livro
+      const rect = wrap.getBoundingClientRect()
+      return {
+        x: t.clientX - rect.left,
+        y: t.clientY - rect.top,
+      }
+    }
+
+    function onTouchStart(e: TouchEvent) {
+      const t = e.touches[0]
+      startX = t.clientX
+      startY = t.clientY
+      isFlipping = false
+      isScrolling = false
+      decided = false
+    }
+
+    function onTouchMove(e: TouchEvent) {
+      const pf = flipRef.current
+      if (!pf) return
+
+      const t = e.touches[0]
+      const dx = t.clientX - startX
+      const dy = t.clientY - startY
+
+      // Aguarda 8px para decidir direção (evita micro-tremores)
+      if (!decided && Math.abs(dx) < 8 && Math.abs(dy) < 8) return
+
+      if (!decided) {
+        decided = true
+        // Gesto mais horizontal → vira página
+        if (Math.abs(dx) > Math.abs(dy) * 0.8) {
+          isFlipping = true
+          isScrolling = false
+          // Inicia o drag interativo no ponto de toque
+          pf.startUserFlipping(getPos(e))
+        } else {
+          // Gesto mais vertical → scroll normal
+          isScrolling = true
+          isFlipping = false
+        }
+      }
+
+      if (isFlipping) {
+        // Impede scroll da página enquanto vira
+        e.preventDefault()
+        pf.updateUserFlipping(getPos(e))
+      }
+      // Se isScrolling, não chama preventDefault → browser rola normalmente
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+      const pf = flipRef.current
+      if (!pf) return
+      if (isFlipping) {
+        pf.stopUserFlipping()
+      }
+      isFlipping = false
+      isScrolling = false
+      decided = false
+    }
+
+    // passive: false permite o preventDefault dentro do move
+    wrap.addEventListener('touchstart', onTouchStart, { passive: true })
+    wrap.addEventListener('touchmove',  onTouchMove,  { passive: false })
+    wrap.addEventListener('touchend',   onTouchEnd,   { passive: true })
+    wrap.addEventListener('touchcancel',onTouchEnd,   { passive: true })
+
+    return () => {
+      wrap.removeEventListener('touchstart', onTouchStart)
+      wrap.removeEventListener('touchmove',  onTouchMove)
+      wrap.removeEventListener('touchend',   onTouchEnd)
+      wrap.removeEventListener('touchcancel',onTouchEnd)
+    }
+  }, [ready]) // re-bind após ready (flipRef.current estará preenchido)
+
+  function goTo(i: number) { flipRef.current?.turnToPage(i * 2); setCur(i) }
+  function prev() { flipRef.current?.flipPrev() }
+  function next() { flipRef.current?.flipNext() }
 
   return (
     <div className="pf-wrap pt-[72px]">
@@ -633,10 +785,18 @@ export default function CardapioPage() {
         )}
 
         <div
+          ref={wrapRef}
           className="pf-book-wrap"
           style={{ opacity: ready ? 1 : 0, transition: 'opacity .5s' }}
         >
           <div ref={bookRef} />
+          {/* Hint de swipe — mobile only, some após primeiro flip */}
+          {showHint && (
+            <div className="pf-hint">
+              <span className="pf-hint-icon">👆</span>
+              <span className="pf-hint-text">Arraste para virar</span>
+            </div>
+          )}
         </div>
 
         {/* ── CONTROLES ── */}
