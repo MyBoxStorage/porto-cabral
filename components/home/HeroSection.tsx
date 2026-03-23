@@ -1,9 +1,8 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useSiteContent } from '@/lib/useSiteContent'
 
-// Fallback hardcoded
 const VIDEO_FALLBACK = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4'
 
 type HeroData = {
@@ -21,9 +20,12 @@ const HERO_FB: HeroData = {
   video_mobile: VIDEO_FALLBACK,
 }
 
-function VideoItem({ src, preload = 'none' }: { src: string; preload?: string }) {
+/* ─────────────────────────────────────────────
+   Hook: pausa/retoma video baseado em visibilidade
+   Threshold baixo (0.1) para o hero que ocupa 100vh
+───────────────────────────────────────────── */
+function useVideoVisibility(threshold = 0.1) {
   const ref = useRef<HTMLVideoElement>(null)
-
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -32,11 +34,40 @@ function VideoItem({ src, preload = 'none' }: { src: string; preload?: string })
         if (entry.isIntersecting) el.play().catch(() => {})
         else el.pause()
       },
-      { threshold: 0.1 }
+      { threshold }
     )
     obs.observe(el)
     return () => obs.disconnect()
-  }, [])
+  }, [threshold])
+  return ref
+}
+
+/* ─────────────────────────────────────────────
+   VideoItem — carrega apenas quando liberado pelo pai
+   'unlocked' = pai ja carregou o video anterior
+───────────────────────────────────────────── */
+function VideoItem({
+  src,
+  eager = false,
+  unlocked = true,
+  onReady,
+}: {
+  src: string
+  eager?: boolean
+  unlocked?: boolean
+  onReady?: () => void
+}) {
+  const ref = useVideoVisibility(0.1)
+  const [preload, setPreload] = useState<string>(eager ? 'auto' : 'none')
+
+  // Quando desbloqueado pelo pai, libera o preload
+  useEffect(() => {
+    if (unlocked && !eager) setPreload('metadata')
+  }, [unlocked, eager])
+
+  const handleCanPlay = useCallback(() => {
+    onReady?.()
+  }, [onReady])
 
   return (
     <video
@@ -46,6 +77,7 @@ function VideoItem({ src, preload = 'none' }: { src: string; preload?: string })
       loop
       playsInline
       preload={preload}
+      onCanPlay={handleCanPlay}
       style={{
         width: '100%',
         height: '100%',
@@ -58,10 +90,18 @@ function VideoItem({ src, preload = 'none' }: { src: string; preload?: string })
   )
 }
 
+/* ─────────────────────────────────────────────
+   HeroSection
+───────────────────────────────────────────── */
 export function HeroSection() {
   const t = useTranslations('home')
   const locale = useLocale()
   const [isMobile, setIsMobile] = useState(false)
+
+  // Controle de sequenciamento: video 2 so carrega apos video 1 estar pronto
+  // video 3 so carrega apos video 2 estar pronto
+  const [v2Unlocked, setV2Unlocked] = useState(false)
+  const [v3Unlocked, setV3Unlocked] = useState(false)
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -73,12 +113,11 @@ export function HeroSection() {
   const raw = useSiteContent<HeroData>('hero', HERO_FB)
   const hero: HeroData = { ...HERO_FB, ...raw }
 
-  const d1 = hero.video_desktop_1 || VIDEO_FALLBACK
-  const d2 = hero.video_desktop_2 || ''
-  const d3 = hero.video_desktop_3 || ''
-  const mob = hero.video_mobile || VIDEO_FALLBACK
+  const d1  = hero.video_desktop_1 || VIDEO_FALLBACK
+  const d2  = hero.video_desktop_2 || ''
+  const d3  = hero.video_desktop_3 || ''
+  const mob = hero.video_mobile    || VIDEO_FALLBACK
 
-  // Desktop: quantos videos validos temos
   const desktopVideos = [d1, d2, d3].filter(Boolean)
 
   return (
@@ -86,20 +125,35 @@ export function HeroSection() {
       className="relative w-full overflow-hidden flex items-center justify-center"
       style={{ height: '100dvh' }}
     >
-      {/* Camada de video */}
+      {/* Camada de vídeo */}
       <div className="absolute inset-0 z-0">
         {isMobile ? (
-          // Mobile — 1 video
-          <VideoItem src={mob} preload="auto" />
+          <VideoItem src={mob} eager />
         ) : (
-          // Desktop — até 3 videos portrait lado a lado
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {desktopVideos.map((src, i) => (
-              <div
-                key={i}
-                style={{ flex: 1, height: '100%', overflow: 'hidden' }}
-              >
-                <VideoItem src={src} preload={i === 0 ? 'auto' : 'none'} />
+              <div key={i} style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
+                {i === 0 && (
+                  <VideoItem
+                    src={src}
+                    eager
+                    unlocked
+                    onReady={() => setV2Unlocked(true)}
+                  />
+                )}
+                {i === 1 && (
+                  <VideoItem
+                    src={src}
+                    unlocked={v2Unlocked}
+                    onReady={() => setV3Unlocked(true)}
+                  />
+                )}
+                {i === 2 && (
+                  <VideoItem
+                    src={src}
+                    unlocked={v3Unlocked}
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -145,10 +199,7 @@ export function HeroSection() {
         >
           <span
             className="flex-1 h-px"
-            style={{
-              background:
-                'linear-gradient(90deg,transparent,rgba(212,168,67,0.55))',
-            }}
+            style={{ background: 'linear-gradient(90deg,transparent,rgba(212,168,67,0.55))' }}
           />
           <span
             className="font-display text-pc-gold"
@@ -158,10 +209,7 @@ export function HeroSection() {
           </span>
           <span
             className="flex-1 h-px"
-            style={{
-              background:
-                'linear-gradient(90deg,rgba(212,168,67,0.55),transparent)',
-            }}
+            style={{ background: 'linear-gradient(90deg,rgba(212,168,67,0.55),transparent)' }}
           />
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full px-4 sm:px-0">
@@ -187,14 +235,9 @@ export function HeroSection() {
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce opacity-60">
         <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          width="28" height="28" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor"
+          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
           className="text-white"
         >
           <path d="M6 9l6 6 6-6" />
