@@ -14,11 +14,15 @@ export function getDb(): Db {
     throw new Error('PC_DATABASE_URL is not configured')
   }
   if (!_db) {
-    _client = postgres(connectionString, {
+    // Troca porta 5432 (Session mode) por 6543 (Transaction mode)
+    // Transaction mode suporta muitas conexões simultâneas em serverless
+    const txUrl = connectionString.replace(':5432/', ':6543/')
+    _client = postgres(txUrl, {
       max: 1,
       prepare: false,
       ssl: 'require',
-      connect_timeout: 10,
+      connect_timeout: 15,
+      idle_timeout: 20,
     })
     _db = drizzle(_client, { schema })
   }
