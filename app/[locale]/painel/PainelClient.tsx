@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 /* ══ TYPES ══════════════════════════════════════════════════════ */
 type Reservation = {
@@ -69,6 +69,73 @@ const G = `
   .pc-card{animation:fadeIn .3s ease}
   .pc-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
 `
+
+/* ══ SORTABLE LIST ══════════════════════════════════════════════════
+   Componente reutilizavel de reordenacao drag-and-drop sem dependencias.
+   Uso: <SortableList items={arr} onReorder={newArr => update(...)} renderItem={(item,i,handle) => ...} />
+   O 'handle' e um <div> que deve ser colocado como alca de arrastar.
+══════════════════════════════════════════════════════════════════ */
+function SortableList<T>({ items, onReorder, renderItem }: {
+  items: T[]
+  onReorder: (newItems: T[]) => void
+  renderItem: (item: T, index: number, handle: React.ReactNode) => React.ReactNode
+}) {
+  const dragIdx  = useRef<number | null>(null)
+  const overIdx  = useRef<number | null>(null)
+  const [dragging, setDragging] = useState<number | null>(null)
+  const [over,     setOver]     = useState<number | null>(null)
+
+  function onDragStart(i: number) { dragIdx.current = i; setDragging(i) }
+  function onDragEnter(i: number) { overIdx.current = i; setOver(i) }
+  function onDragEnd() {
+    const from = dragIdx.current
+    const to   = overIdx.current
+    if (from !== null && to !== null && from !== to) {
+      const next = [...items]
+      const [moved] = next.splice(from, 1)
+      next.splice(to, 0, moved)
+      onReorder(next)
+    }
+    dragIdx.current = null; overIdx.current = null
+    setDragging(null); setOver(null)
+  }
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:8}}>
+      {items.map((item, i) => {
+        const isDragging = dragging === i
+        const isOver     = over === i && dragging !== null && dragging !== i
+        const handle = (
+          <div
+            draggable
+            onDragStart={e => { e.stopPropagation(); onDragStart(i) }}
+            onDragEnd={e => { e.stopPropagation(); onDragEnd() }}
+            style={{
+              cursor:'grab', padding:'4px 8px', color:'rgba(212,168,67,0.5)',
+              fontSize:16, lineHeight:1, flexShrink:0, userSelect:'none',
+              transition:'color .15s',
+            }}
+            title="Arrastar para reordenar"
+          >⠿</div>
+        )
+        return (
+          <div
+            key={i}
+            onDragOver={e => { e.preventDefault(); onDragEnter(i) }}
+            style={{
+              opacity: isDragging ? 0.4 : 1,
+              outline: isOver ? `2px dashed ${GOLD}` : 'none',
+              borderRadius: 10,
+              transition: 'opacity .2s, outline .15s',
+            }}
+          >
+            {renderItem(item, i, handle)}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 /* ══ SHARED STYLES ════════════════════════════════════════════════ */
 const inp: React.CSSProperties = {
@@ -683,29 +750,35 @@ function EditDishes() {
         <label style={labelSt}>Título da Seção ({lang.toUpperCase()})</label>
         <input className="pc-input" style={inp} value={(data as Record<string,unknown>)[`section_title_${lang}`] as string??''} onChange={e=>update(p=>({...p,[`section_title_${lang}`]:e.target.value}))}/>
       </div>
-      {data.items?.map((item,i)=>(
-        <div key={i} style={{border:'1px solid rgba(212,168,67,0.12)',borderRadius:10,padding:'1rem',marginBottom:12,background:'rgba(255,255,255,0.03)'}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'.75rem'}}>
-            <span style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD}}>Prato {i+1} — {(item as Record<string,unknown>)[`title_pt`] as string}</span>
-            <button onClick={()=>update(p=>({...p,items:p.items.filter((_,j)=>j!==i)}))}
-              style={{padding:'4px 12px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:10,fontWeight:700,cursor:'pointer',fontFamily:"'Josefin Sans',sans-serif",letterSpacing:'.06em'}}>
-              ✕ Remover
-            </button>
+      <SortableList
+        items={data.items??[]}
+        onReorder={newItems=>update(p=>({...p,items:newItems}))}
+        renderItem={(item,i,handle)=>(
+          <div style={{border:'1px solid rgba(212,168,67,0.12)',borderRadius:10,padding:'1rem',background:'rgba(255,255,255,0.03)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'.75rem'}}>
+              <div style={{display:'flex',alignItems:'center',gap:4}}>
+                {handle}
+                <span style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD}}>Prato {i+1} — {(item as Record<string,unknown>)[`title_pt`] as string}</span>
+              </div>
+              <button onClick={()=>update(p=>({...p,items:p.items.filter((_,j)=>j!==i)}))}
+                style={{padding:'4px 12px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:10,fontWeight:700,cursor:'pointer',fontFamily:"'Josefin Sans',sans-serif",letterSpacing:'.06em'}}>
+                ✕ Remover
+              </button>
+            </div>
+            <div style={{marginBottom:'1rem'}}>
+              <ImageUploader
+                label="Foto do Prato (aparece no card da home)"
+                value={item.image_url??''}
+                onChange={url=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,image_url:url}:it)}))}
+              />
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+              <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`title_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`title_${lang}`]:e.target.value}:it)}))}/></div>
+              <div><label style={labelSt}>Descrição ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`desc_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`desc_${lang}`]:e.target.value}:it)}))}/></div>
+            </div>
           </div>
-          {/* Upload de foto */}
-          <div style={{marginBottom:'1rem'}}>
-            <ImageUploader
-              label="Foto do Prato (aparece no card da home)"
-              value={item.image_url??''}
-              onChange={url=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,image_url:url}:it)}))}
-            />
-          </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
-            <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`title_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`title_${lang}`]:e.target.value}:it)}))}/></div>
-            <div><label style={labelSt}>Descrição ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`desc_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`desc_${lang}`]:e.target.value}:it)}))}/></div>
-          </div>
-        </div>
-      ))}
+        )}
+      />
       <button onClick={()=>update(p=>({...p,items:[...p.items,{title_pt:'',title_en:'',title_es:'',desc_pt:'',desc_en:'',desc_es:''}]}))}
         style={{...ghostBtn,width:'100%',justifyContent:'center',marginTop:8,color:GOLD,borderColor:'rgba(212,168,67,0.2)'}}>
         ✦ Adicionar Prato
@@ -880,27 +953,32 @@ function TabCardapio() {
       </div>
 
       {/* seções */}
-      <div style={{display:'flex',flexDirection:'column',gap:12}}>
-        {sec.map((section,si)=>(
-          <div key={section.id} style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,
+      <SortableList
+        items={sec}
+        onReorder={newSecs=>update(p=>({...p,sections:newSecs}))}
+        renderItem={(section,si,secHandle)=>(
+          <div style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,
             borderRadius:14,border:`1px solid ${openSection===section.id?'rgba(212,168,67,0.35)':'rgba(212,168,67,0.1)'}`,
             overflow:'hidden',transition:'border .2s'}}>
             {/* header da seção */}
-            <button onClick={()=>setOpenSection(openSection===section.id?null:section.id)}
-              style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'space-between',
-                padding:'1rem 1.25rem',background:'transparent',border:'none',cursor:'pointer'}}>
-              <div style={{display:'flex',alignItems:'center',gap:12}}>
-                <span style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:16,color:GOLD}}>{section.title}</span>
-                <span style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,.3)',
-                  letterSpacing:'.12em',textTransform:'uppercase',background:'rgba(212,168,67,0.06)',
-                  padding:'3px 10px',borderRadius:99,border:'1px solid rgba(212,168,67,0.1)'}}>
-                  {section.items?.length??0} itens
+            <div style={{display:'flex',alignItems:'center'}}>
+              <div style={{paddingLeft:'0.75rem'}}>{secHandle}</div>
+              <button onClick={()=>setOpenSection(openSection===section.id?null:section.id)}
+                style={{flex:1,display:'flex',alignItems:'center',justifyContent:'space-between',
+                  padding:'1rem 1.25rem',background:'transparent',border:'none',cursor:'pointer'}}>
+                <div style={{display:'flex',alignItems:'center',gap:12}}>
+                  <span style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:16,color:GOLD}}>{section.title}</span>
+                  <span style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,.3)',
+                    letterSpacing:'.12em',textTransform:'uppercase',background:'rgba(212,168,67,0.06)',
+                    padding:'3px 10px',borderRadius:99,border:'1px solid rgba(212,168,67,0.1)'}}>
+                    {section.items?.length??0} itens
+                  </span>
+                </div>
+                <span style={{color:GOLD,fontSize:12,fontFamily:"'Josefin Sans',sans-serif",letterSpacing:'.08em'}}>
+                  {openSection===section.id?'▲ Fechar':'▼ Expandir'}
                 </span>
-              </div>
-              <span style={{color:GOLD,fontSize:12,fontFamily:"'Josefin Sans',sans-serif",letterSpacing:'.08em'}}>
-                {openSection===section.id?'▲ Fechar':'▼ Expandir'}
-              </span>
-            </button>
+              </button>
+            </div>
 
             {/* conteúdo expandido */}
             {openSection===section.id&&(
@@ -921,11 +999,14 @@ function TabCardapio() {
 
                 {/* itens */}
                 <p style={{...labelSt,marginBottom:'0.75rem'}}>Itens do Cardápio</p>
-                <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                  {(section.items??[]).map((item,ii)=>(
-                    <div key={ii} style={{background:'rgba(255,255,255,0.03)',borderRadius:10,
+                <SortableList
+                  items={section.items??[]}
+                  onReorder={newItems=>update(p=>({...p,sections:p.sections.map((s,i)=>i===si?{...s,items:newItems}:s)}))}
+                  renderItem={(item,ii,handle)=>(
+                    <div style={{background:'rgba(255,255,255,0.03)',borderRadius:10,
                       padding:'1rem',border:'1px solid rgba(212,168,67,0.08)'}}>
-                      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 2fr auto',gap:'0.75rem',alignItems:'start'}}>
+                      <div style={{display:'grid',gridTemplateColumns:'auto 2fr 1fr 2fr auto',gap:'0.75rem',alignItems:'start'}}>
+                        <div style={{paddingTop:18}}>{handle}</div>
                         <div>
                           <label style={{...labelSt,fontSize:9}}>Nome</label>
                           <input className="pc-input" style={{...inp,fontSize:12}} value={item.name}
@@ -948,8 +1029,8 @@ function TabCardapio() {
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  )}
+                />
                 <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,i)=>i===si?{...s,items:[...(s.items??[]),{name:'',price:'',desc:''}]}:s)}))}
                   style={{...ghostBtn,width:'100%',justifyContent:'center',marginTop:10,
                     color:GOLD,borderColor:'rgba(212,168,67,0.2)',fontSize:11}}>
@@ -958,8 +1039,8 @@ function TabCardapio() {
               </div>
             )}
           </div>
-        ))}
-      </div>
+        )}
+      />
     </div>
   )
 }
