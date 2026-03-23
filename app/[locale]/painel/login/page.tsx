@@ -124,7 +124,7 @@ export default function PainelLoginPage() {
             fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase',
             color: 'rgba(212,168,67,0.35)', textDecoration: 'none',
           }}>
-            <- Voltar ao site
+            ← Voltar ao site
           </a>
         </div>
 
