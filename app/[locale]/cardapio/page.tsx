@@ -563,15 +563,8 @@ type PF = {
   turnToPage: (p: number) => void
   flipPrev: (corner?: string) => void
   flipNext: (corner?: string) => void
-  // API real de drag interativo (page-flip v2 público)
-  startUserTouch: (pos: { x: number; y: number }) => void
-  userMove: (pos: { x: number; y: number }, isTouch: boolean) => void
-  userStop: (pos: { x: number; y: number }, swipeDone?: boolean) => void
-  getState: () => string
-  // estado interno
   getPageCount: () => number
   getCurrentPageIndex: () => number
-  getRender: () => { getRect: () => { left: number; top: number } }
 }
 
 export default function CardapioPage() {
@@ -602,15 +595,15 @@ export default function CardapioPage() {
           minHeight: 380, maxHeight: 700,
           maxShadowOpacity: 0.7,
           showCover: false,
-          // mobileScrollSupport: true = lib detecta swipe vs scroll nativamente
-          // e só cancela o scroll depois de confirmar gesto horizontal (>10px)
-          mobileScrollSupport: true,
-          flippingTime: isMobile ? 380 : 650,
+          // Mobile: desativamos o sistema de touch interno da lib —
+          // nosso handler próprio cuida do swipe (veja useEffect abaixo).
+          // Desktop: mantém mouse events normais.
+          mobileScrollSupport: false,
+          flippingTime: isMobile ? 420 : 650,
           usePortrait: true,
           autoSize: true,
           clickEventForward: false,
-          // swipeDistance = distância mínima para disparar o flip por swipe
-          swipeDistance: isMobile ? 5 : 25,
+          swipeDistance: 999, // threshold alto — lib nunca dispara por swipe próprio
           useMouseEvents: true,
         }) as unknown as PF
 
@@ -642,39 +635,102 @@ export default function CardapioPage() {
     return () => { cancelled = true; try { flipRef.current?.destroy?.() } catch {} }
   }, [total])
 
-  /* ── Touch drag interativo no mobile ──
-     Usa a API real do page-flip v2:
-       startUserTouch(pos)      → registra ponto de início do drag
-       userMove(pos, isTouch)   → arrasta a página em tempo real (página cola no dedo)
-       userStop(pos, swipeDone) → finaliza; lib decide se completa ou reverte com inércia
+  /* ── Handler de swipe mobile próprio ──────────────────────────────────
+     Lógica:
+       • touchstart → salva posição inicial + checa se toque está dentro de .plist
+       • touchmove  → acumula Δx e Δy
+                      - se |Δy| > |Δx| nos primeiros 8px: scroll vertical → não interfere
+                      - se |Δx| ≥ 12px e |Δx| > |Δy|: gesto horizontal confirmado
+                          → chama preventDefault() para travar o scroll da página
+                          → seta flag flipLocked = true
+       • touchend   → se flipLocked: Δx > 0 → flipPrev(), Δx < 0 → flipNext()
+                      → reseta tudo
 
-     A lib já tem seu próprio onTouchStart/Move/End interno (mobileScrollSupport:true).
-     Aqui NÃO adicionamos listeners duplicados — apenas garantimos que a lib receba
-     as coordenadas corretas relativas ao seu elemento de referência (.stf__block).
-
-     Por que funciona melhor com mobileScrollSupport:true:
-       - A lib espera 250ms (swipeTimeout) antes de chamar startUserTouch para distinguir
-         tap de drag — depois disso a página já segue o dedo (fold mode) em tempo real.
-       - Se |dx| > 10px antes do timeout, chama startUserTouch imediatamente.
-       - Quando o usuário solta, userStop() verifica velocidade + deslocamento e decide
-         completar ou reverter o flip com animação cubic-bezier interna.
-
-     A única coisa que adicionamos aqui: garantir que o hint desapareça no primeiro
-     toque, já que o evento 'flip' só dispara quando a virada é concluída.
-  ── */
+     Toque que começa dentro de .plist → apenas scroll interno, nunca vira página.
+     Desktop → este handler nunca é registrado (isMobile guard).
+  ──────────────────────────────────────────────────────────────────── */
   useEffect(() => {
     if (!ready) return
+    if (typeof window === 'undefined') return
+    if (window.innerWidth >= 768) return   // desktop: não instala nada
+
     const wrap = wrapRef.current
     if (!wrap) return
 
-    function onFirstTouch() {
+    let startX = 0
+    let startY = 0
+    let flipLocked = false
+    let scrollLocked = false
+    let startedInList = false
+
+    function onTouchStart(e: TouchEvent) {
+      const t = e.touches[0]
+      startX = t.clientX
+      startY = t.clientY
+      flipLocked = false
+      scrollLocked = false
+      // Verifica se o toque começou dentro de um .plist (lista de itens com scroll)
+      startedInList = !!(e.target as Element).closest('.plist')
       setShowHint(false)
-      wrap!.removeEventListener('touchstart', onFirstTouch)
     }
 
-    wrap.addEventListener('touchstart', onFirstTouch, { passive: true, once: true })
+    function onTouchMove(e: TouchEvent) {
+      if (startedInList) return   // dentro da lista: scroll livre, nunca vira
+      const t = e.touches[0]
+      const dx = t.clientX - startX
+      const dy = t.clientY - startY
+      const adx = Math.abs(dx)
+      const ady = Math.abs(dy)
+
+      if (scrollLocked) return    // já decidiu que é scroll vertical
+
+      if (!flipLocked) {
+        // Ainda na zona de ambiguidade — espera acumular pixels suficientes
+        if (adx < 8 && ady < 8) return
+
+        if (ady > adx) {
+          // Predominantemente vertical → scroll nativo
+          scrollLocked = true
+          return
+        }
+
+        if (adx >= 12) {
+          // Predominantemente horizontal → bloqueia scroll e prepara flip
+          flipLocked = true
+        }
+      }
+
+      if (flipLocked) {
+        // Impede o browser de fazer scroll enquanto o usuário swipa para virar
+        e.preventDefault()
+      }
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+      if (!flipLocked) return
+      const t = e.changedTouches[0]
+      const dx = t.clientX - startX
+
+      // Threshold mínimo de 30px para confirmar o flip (evita flip acidental)
+      if (Math.abs(dx) < 30) { flipLocked = false; return }
+
+      if (dx > 0) {
+        flipRef.current?.flipPrev()
+      } else {
+        flipRef.current?.flipNext()
+      }
+      flipLocked = false
+    }
+
+    // passive:false obrigatório no touchmove para poder chamar preventDefault()
+    wrap.addEventListener('touchstart', onTouchStart, { passive: true })
+    wrap.addEventListener('touchmove',  onTouchMove,  { passive: false })
+    wrap.addEventListener('touchend',   onTouchEnd,   { passive: true })
+
     return () => {
-      wrap.removeEventListener('touchstart', onFirstTouch)
+      wrap.removeEventListener('touchstart', onTouchStart)
+      wrap.removeEventListener('touchmove',  onTouchMove)
+      wrap.removeEventListener('touchend',   onTouchEnd)
     }
   }, [ready])
 
