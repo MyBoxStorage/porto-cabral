@@ -561,15 +561,17 @@ type PF = {
   on: (e: string, cb: (e: { data: number }) => void) => void
   destroy?: () => void
   turnToPage: (p: number) => void
-  flipPrev: () => void
-  flipNext: () => void
-  // API de drag interativo (user flip)
-  startUserFlipping: (pos: { x: number; y: number }) => void
-  updateUserFlipping: (pos: { x: number; y: number }) => void
-  stopUserFlipping: () => void
+  flipPrev: (corner?: string) => void
+  flipNext: (corner?: string) => void
+  // API real de drag interativo (page-flip v2 público)
+  startUserTouch: (pos: { x: number; y: number }) => void
+  userMove: (pos: { x: number; y: number }, isTouch: boolean) => void
+  userStop: (pos: { x: number; y: number }, swipeDone?: boolean) => void
+  getState: () => string
   // estado interno
   getPageCount: () => number
   getCurrentPageIndex: () => number
+  getRender: () => { getRect: () => { left: number; top: number } }
 }
 
 export default function CardapioPage() {
@@ -593,21 +595,22 @@ export default function CardapioPage() {
         const el = bookRef.current
         const isMobile = window.innerWidth < 768
         pf = new PageFlip(el, {
-          width:  isMobile ? 320 : 430,
-          height: isMobile ? 520 : 610,
+          width:  isMobile ? 300 : 430,
+          height: isMobile ? 500 : 610,
           size: 'stretch',
-          minWidth: 280, maxWidth: 480,
-          minHeight: 400, maxHeight: 720,
-          maxShadowOpacity: 0.6,
+          minWidth: 260, maxWidth: 460,
+          minHeight: 380, maxHeight: 700,
+          maxShadowOpacity: 0.7,
           showCover: false,
-          // Desativa scroll support nativo da lib — vamos controlar manualmente
-          mobileScrollSupport: false,
-          flippingTime: 650,
+          // mobileScrollSupport: true = lib detecta swipe vs scroll nativamente
+          // e só cancela o scroll depois de confirmar gesto horizontal (>10px)
+          mobileScrollSupport: true,
+          flippingTime: isMobile ? 380 : 650,
           usePortrait: true,
           autoSize: true,
           clickEventForward: false,
-          // swipeDistance baixo = responde cedo ao gesto
-          swipeDistance: isMobile ? 10 : 25,
+          // swipeDistance = distância mínima para disparar o flip por swipe
+          swipeDistance: isMobile ? 5 : 25,
           useMouseEvents: true,
         }) as unknown as PF
 
@@ -640,91 +643,40 @@ export default function CardapioPage() {
   }, [total])
 
   /* ── Touch drag interativo no mobile ──
-     Intercepta touchstart/move/end no wrapper do livro.
-     Calcula se o gesto é predominantemente horizontal (virar)
-     ou vertical (scroll de página) e age de acordo.
-     Usa a API startUserFlipping/updateUserFlipping/stopUserFlipping
-     do PageFlip para que a página "cole no dedo" em tempo real.
+     Usa a API real do page-flip v2:
+       startUserTouch(pos)      → registra ponto de início do drag
+       userMove(pos, isTouch)   → arrasta a página em tempo real (página cola no dedo)
+       userStop(pos, swipeDone) → finaliza; lib decide se completa ou reverte com inércia
+
+     A lib já tem seu próprio onTouchStart/Move/End interno (mobileScrollSupport:true).
+     Aqui NÃO adicionamos listeners duplicados — apenas garantimos que a lib receba
+     as coordenadas corretas relativas ao seu elemento de referência (.stf__block).
+
+     Por que funciona melhor com mobileScrollSupport:true:
+       - A lib espera 250ms (swipeTimeout) antes de chamar startUserTouch para distinguir
+         tap de drag — depois disso a página já segue o dedo (fold mode) em tempo real.
+       - Se |dx| > 10px antes do timeout, chama startUserTouch imediatamente.
+       - Quando o usuário solta, userStop() verifica velocidade + deslocamento e decide
+         completar ou reverter o flip com animação cubic-bezier interna.
+
+     A única coisa que adicionamos aqui: garantir que o hint desapareça no primeiro
+     toque, já que o evento 'flip' só dispara quando a virada é concluída.
   ── */
   useEffect(() => {
+    if (!ready) return
     const wrap = wrapRef.current
     if (!wrap) return
 
-    let startX = 0
-    let startY = 0
-    let isFlipping = false   // true → gesto horizontal capturado
-    let decided = false      // true → direção já decidida
-
-    function getPos(e: TouchEvent) {
-      const t = e.touches[0] ?? e.changedTouches[0]
-      // Coordenada relativa ao wrapper do livro
-      const rect = wrap!.getBoundingClientRect()
-      return {
-        x: t.clientX - rect.left,
-        y: t.clientY - rect.top,
-      }
+    function onFirstTouch() {
+      setShowHint(false)
+      wrap!.removeEventListener('touchstart', onFirstTouch)
     }
 
-    function onTouchStart(e: TouchEvent) {
-      const t = e.touches[0]
-      startX = t.clientX
-      startY = t.clientY
-      isFlipping = false
-      decided = false
-    }
-
-    function onTouchMove(e: TouchEvent) {
-      const pf = flipRef.current
-      if (!pf) return
-
-      const t = e.touches[0]
-      const dx = t.clientX - startX
-      const dy = t.clientY - startY
-
-      // Aguarda 8px para decidir direção (evita micro-tremores)
-      if (!decided && Math.abs(dx) < 8 && Math.abs(dy) < 8) return
-
-      if (!decided) {
-        decided = true
-        // Gesto mais horizontal → vira página
-        if (Math.abs(dx) > Math.abs(dy) * 0.8) {
-          isFlipping = true
-          // Inicia o drag interativo no ponto de toque
-          pf.startUserFlipping(getPos(e))
-        }
-        // Gesto mais vertical → não faz nada, browser rola normalmente
-      }
-
-      if (isFlipping) {
-        // Impede scroll da página enquanto vira
-        e.preventDefault()
-        pf.updateUserFlipping(getPos(e))
-      }
-    }
-
-    function onTouchEnd(_e: TouchEvent): void {
-      const pf = flipRef.current
-      if (!pf) return
-      if (isFlipping) {
-        pf.stopUserFlipping()
-      }
-      isFlipping = false
-      decided = false
-    }
-
-    // passive: false permite o preventDefault dentro do move
-    wrap.addEventListener('touchstart', onTouchStart, { passive: true })
-    wrap.addEventListener('touchmove',  onTouchMove,  { passive: false })
-    wrap.addEventListener('touchend',   onTouchEnd,   { passive: true })
-    wrap.addEventListener('touchcancel',onTouchEnd,   { passive: true })
-
+    wrap.addEventListener('touchstart', onFirstTouch, { passive: true, once: true })
     return () => {
-      wrap.removeEventListener('touchstart', onTouchStart)
-      wrap.removeEventListener('touchmove',  onTouchMove)
-      wrap.removeEventListener('touchend',   onTouchEnd)
-      wrap.removeEventListener('touchcancel',onTouchEnd)
+      wrap.removeEventListener('touchstart', onFirstTouch)
     }
-  }, [ready]) // re-bind após ready (flipRef.current estará preenchido)
+  }, [ready])
 
   function goTo(i: number) { flipRef.current?.turnToPage(i * 2); setCur(i) }
   function prev() { flipRef.current?.flipPrev() }
