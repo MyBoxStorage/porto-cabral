@@ -689,12 +689,10 @@ export default function CardapioPage() {
         // Gesto mais horizontal → vira página
         if (Math.abs(dx) > Math.abs(dy) * 0.8) {
           isFlipping = true
-          isScrolling = false
           // Inicia o drag interativo no ponto de toque
           pf.startUserFlipping(getPos(e))
-        } else {
-          // Gesto mais vertical → scroll normal, não faz nada
         }
+        // Gesto mais vertical → não faz nada, browser rola normalmente
       }
 
       if (isFlipping) {
@@ -702,10 +700,9 @@ export default function CardapioPage() {
         e.preventDefault()
         pf.updateUserFlipping(getPos(e))
       }
-      // Se isScrolling, não chama preventDefault → browser rola normalmente
     }
 
-    function onTouchEnd(_e: TouchEvent) {
+    function onTouchEnd(_e: TouchEvent): void {
       const pf = flipRef.current
       if (!pf) return
       if (isFlipping) {
