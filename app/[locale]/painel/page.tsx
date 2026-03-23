@@ -21,7 +21,6 @@ type Stats = {
   recent_reservations: Reservation[]
 }
 type DishItem   = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string; image_url?:string }
-type PillarItem = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string }
 
 /* ══ DESIGN TOKENS ═══════════════════════════════════════════════ */
 const NAVY   = '#002451'
@@ -727,33 +726,6 @@ function EditHistory() {
         {F('quote','Citação do Fundador (sem aspas)',3)}
         {F('quote_author','Assinatura da Citação')}
       </div>
-    </EdCard>
-  )
-}
-
-/* ─── Pillars ──────────────────────── */
-type PillarsContent={title_pt:string;title_en:string;title_es:string;eyebrow_pt:string;eyebrow_en:string;eyebrow_es:string;items:PillarItem[]}
-function EditPillars() {
-  const {data,update,save,saving,dirty,toast,clearToast} = useContent<PillarsContent>('pillars')
-  const [lang,setLang] = useState('pt')
-  if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
-  return (
-    <EdCard toast={toast} onClearToast={clearToast}>
-      <SectionHeader title="3 Pilares" onSave={save} saving={saving} dirty={dirty}/>
-      <LangTabs lang={lang} setLang={setLang}/>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1.5rem'}}>
-        <div><label style={labelSt}>Eyebrow</label><input className="pc-input" style={inp} value={(data as Record<string,unknown>)[`eyebrow_${lang}`] as string??''} onChange={e=>update(p=>({...p,[`eyebrow_${lang}`]:e.target.value}))}/></div>
-        <div><label style={labelSt}>Título da Seção</label><input className="pc-input" style={inp} value={(data as Record<string,unknown>)[`title_${lang}`] as string??''} onChange={e=>update(p=>({...p,[`title_${lang}`]:e.target.value}))}/></div>
-      </div>
-      {data.items?.map((item,i)=>(
-        <div key={i} style={{border:'1px solid rgba(212,168,67,0.12)',borderRadius:10,padding:'1rem',marginBottom:12,background:'rgba(255,255,255,0.03)'}}>
-          <p style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD,marginBottom:'.75rem'}}>Pilar {i+1}</p>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
-            <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`title_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`title_${lang}`]:e.target.value}:it)}))}/></div>
-            <div><label style={labelSt}>Descrição ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`desc_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`desc_${lang}`]:e.target.value}:it)}))}/></div>
-          </div>
-        </div>
-      ))}
     </EdCard>
   )
 }
