@@ -978,10 +978,13 @@ export default function CardapioPage() {
   const [ready, setReady] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  // Carrega do banco com fallback para o hardcoded (garante que nunca fica vazio)
-  const menuData = useSiteContent<{ sections: Section[] }>('menu_full', { sections: SECTIONS })
+  // Carrega do banco — inicia com null para saber quando os dados reais chegaram
+  const menuData = useSiteContent<{ sections: Section[] } | null>('menu_full', null)
+  // Enquanto nao carregou do banco, usa SECTIONS hardcoded SEM iniciar o PageFlip
   const sections: Section[] = menuData?.sections?.length ? menuData.sections : SECTIONS
   const total = sections.length
+  // So inicia o PageFlip quando os dados definitivos estiverem prontos
+  const dataReady = menuData !== null
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -992,11 +995,14 @@ export default function CardapioPage() {
 
   useEffect(() => {
     if (isMobile) return
+    // Aguarda os dados do banco chegarem antes de inicializar o PageFlip
+    if (!dataReady) return
     let pf: PF | null = null
     let cancelled = false
     async function init() {
       if (!bookRef.current) return
-      if (bookRef.current.childElementCount > 0) return
+      // Limpa paginas antigas antes de reinicializar
+      bookRef.current.innerHTML = ''
       try {
         const { PageFlip } = await import('page-flip')
         const el = bookRef.current
@@ -1036,7 +1042,7 @@ export default function CardapioPage() {
     }
     init()
     return () => { cancelled = true; try { flipRef.current?.destroy?.() } catch {} }
-  }, [isMobile, total])
+  }, [isMobile, dataReady, sections, total])
 
   function goTo(i: number) {
     setCur(i)
