@@ -22,7 +22,8 @@ export async function GET(req: Request) {
     const rows = await db.select().from(siteContent)
     return NextResponse.json({ content: rows })
   } catch (e) {
-    console.error(e)
-    return NextResponse.json({ error: 'Erro' }, { status: 500 })
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('[site-content]', msg)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

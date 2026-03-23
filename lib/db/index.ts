@@ -14,7 +14,12 @@ export function getDb(): Db {
     throw new Error('PC_DATABASE_URL is not configured')
   }
   if (!_db) {
-    _client = postgres(connectionString, { max: 1, prepare: false })
+    _client = postgres(connectionString, {
+      max: 1,
+      prepare: false,
+      ssl: 'require',
+      connect_timeout: 10,
+    })
     _db = drizzle(_client, { schema })
   }
   return _db
