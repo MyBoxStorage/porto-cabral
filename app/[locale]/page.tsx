@@ -4,9 +4,9 @@ import { useTranslations, useLocale } from 'next-intl'
 import { useSiteContent } from '@/lib/useSiteContent'
 import { ReservationForm } from '@/components/home/ReservationForm'
 import { Testimonials } from '@/components/home/Testimonials'
+import { VideoStrip } from '@/components/home/VideoStrip'
 import {
-  IconAncora, IconOnda, IconHorizonte,
-  IconTridente, IconBussola, IconCarta,
+  IconAncora, IconBussola, IconCarta,
 } from '@/components/icons'
 
 /* Fade-up on scroll */
@@ -31,13 +31,9 @@ const VIDEOS = [
   'https://res.cloudinary.com/djhevgyvi/video/upload/v1774203528/video_banner_rapido_2_vio4zz.mp4',
 ]
 
-const PILLAR_ICONS = [IconOnda, IconHorizonte, IconTridente]
-
 // Fallbacks tipados
 type DishItem    = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string; image_url?:string }
-type PillarItem  = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string }
 type DishesData  = { section_title_pt:string; section_title_en:string; section_title_es:string; items: DishItem[] }
-type PillarsData = { title_pt:string; title_en:string; title_es:string; eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; items: PillarItem[] }
 type HistoryData = { title_pt:string; title_en:string; title_es:string; p1_pt:string; p1_en:string; p1_es:string; p2_pt:string; p2_en:string; p2_es:string; quote_pt:string; quote_en:string; quote_es:string; quote_author_pt:string; quote_author_en:string; quote_author_es:string; image_url?:string }
 type LocationData= { title_pt:string; title_en:string; title_es:string; eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; desc_pt:string; desc_en:string; desc_es:string; maps_url:string }
 
@@ -49,11 +45,6 @@ const DISHES_FB: DishesData = { section_title_pt:'Iguarias do Mar', section_titl
   {title_pt:'Tartare de Atum e Salmão',title_en:'Tuna & Salmon Tartare',title_es:'Tartare de Atún y Salmón',desc_pt:'Base de abacate, cream cheese, crispy de alho-poró e chips de batata doce.',desc_en:'Avocado base, cream cheese, crispy leek and sweet potato chips.',desc_es:'Base de aguacate, queso crema, crujiente de puerro y chips de batata.',image_url:''},
   {title_pt:'Camarão à Romana',title_en:'Roman-style Shrimp',title_es:'Camarones a la Romana',desc_pt:'Empanados com queijo parmesão. Uma entrada clássica do Porto.',desc_en:'Breaded with parmesan cheese. A classic Porto starter.',desc_es:'Empanados con queso parmesano. Una entrada clásica del Porto.',image_url:''},
 ]}
-const PILLARS_FB: PillarsData = { title_pt:'Três razões para vir', title_en:'Three reasons to visit', title_es:'Tres razones para venir', eyebrow_pt:'A Experiência Completa', eyebrow_en:'The Complete Experience', eyebrow_es:'La Experiencia Completa', items:[
-  {title_pt:'Sobre o Mar',title_en:'Over the Sea',title_es:'Sobre el Mar',desc_pt:'Sinta a brisa do oceano e o balanço suave sobre as águas da Barra Sul.',desc_en:'Feel the ocean breeze over the waters.',desc_es:'Siente la brisa del océano.'},
-  {title_pt:'Melhor Sunset',title_en:'Best Sunset',title_es:'Mejor Atardecer',desc_pt:'O pôr do sol mais icônico de Balneário Camboriú.',desc_en:'The most iconic sunset in Balneário Camboriú.',desc_es:'El atardecer más icónico.'},
-  {title_pt:'Alta Gastronomia',title_en:'Fine Dining',title_es:'Alta Gastronomía',desc_pt:'Ingredientes frescos do oceano e técnicas contemporâneas.',desc_en:'Fresh ocean ingredients and contemporary techniques.',desc_es:'Ingredientes frescos del océano.'},
-]}
 const HISTORY_FB: HistoryData = { title_pt:'Nossa História:\nO Legado dos Mares', title_en:'Our Story:\nThe Legacy of the Seas', title_es:'Nuestra Historia:\nEl Legado de los Mares', p1_pt:'Fundado por Edson Cabral, o Porto Cabral BC nasceu de uma paixão visceral pelo mar e pela hospitalidade.', p1_en:'Founded by Edson Cabral, Porto Cabral BC was born from a visceral passion for the sea.', p1_es:'Fundado por Edson Cabral, Porto Cabral BC nació de una pasión visceral por el mar.', p2_pt:'Cada detalhe foi pensado para proporcionar uma imersão total no luxo náutico.', p2_en:'Every detail was designed to provide a total immersion in nautical luxury.', p2_es:'Cada detalle fue pensado para proporcionar una inmersión total en el lujo náutico.', quote_pt:'O Porto Cabral não é apenas um restaurante, é o meu convite pessoal.', quote_en:'Porto Cabral is not just a restaurant, it is my personal invitation.', quote_es:'Porto Cabral no es solo un restaurante, es mi invitación personal.', quote_author_pt:'— Edson Cabral, Fundador', quote_author_en:'— Edson Cabral, Founder', quote_author_es:'— Edson Cabral, Fundador' }
 const LOCATION_FB: LocationData = { title_pt:'Localização\nPrivilegiada', title_en:'Prime\nLocation', title_es:'Ubicación\nPrivilegiada', eyebrow_pt:'Como nos encontrar', eyebrow_en:'How to find us', eyebrow_es:'Cómo encontrarnos', desc_pt:'No Molhe da Barra Sul — o ponto mais exclusivo de Balneário Camboriú.', desc_en:'At the Molhe da Barra Sul — the most exclusive point.', desc_es:'En el Molhe da Barra Sul — el punto más exclusivo.', maps_url:'https://maps.google.com/?q=-26.9982,-48.6358' }
 
@@ -64,19 +55,15 @@ export default function HomePage() {
 
   const secDishes   = useFadeUp()
   const secHistory  = useFadeUp()
-  const secPillars  = useFadeUp()
   const secLocation = useFadeUp()
   const secReserva  = useFadeUp()
 
-  // Conteúdo dinâmico do banco — fallback para hardcode até carregar
-  const _dishes   = useSiteContent<DishesData>('dishes', DISHES_FB)
-  const _pillars  = useSiteContent<PillarsData>('pillars', PILLARS_FB)
+  // Conteúdo dinâmico do banco
+  const _dishes     = useSiteContent<DishesData>('dishes', DISHES_FB)
   const historyData = useSiteContent<HistoryData>('history', HISTORY_FB)
   const locationData= useSiteContent<LocationData>('location', LOCATION_FB)
 
-  // Garante que items nunca é undefined mesmo se o banco retornar objeto incompleto
-  const dishesData  = { ...DISHES_FB,  ..._dishes,  items: _dishes?.items?.length  ? _dishes.items  : DISHES_FB.items  }
-  const pillarsData = { ...PILLARS_FB, ..._pillars, items: _pillars?.items?.length ? _pillars.items : PILLARS_FB.items }
+  const dishesData  = { ...DISHES_FB, ..._dishes, items: _dishes?.items?.length ? _dishes.items : DISHES_FB.items }
 
   // Helpers de locale
   const d = <K extends string>(obj: Record<string,unknown>, base: K) =>
@@ -249,38 +236,9 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════
-          3 PILARES
+          VIDEO STRIP
           ══════════════════════════════════════════ */}
-      <section className="py-28 px-6 md:px-12" style={{ background: '#002451' }}>
-        <div ref={secPillars} className="fade-up max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="font-accent text-[10px] tracking-[0.4em] uppercase text-[#D4A843]/60 mb-3">
-              {d(pillarsData as Record<string,unknown>, 'eyebrow')}
-            </p>
-            <h2 className="font-display italic text-4xl md:text-5xl text-white">{d(pillarsData as Record<string,unknown>, 'title')}</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {pillarsData.items.map((pillar, i) => {
-              const Icon = PILLAR_ICONS[i]
-              return (
-                <div key={i} className={`fade-up delay-${i + 1} group flex flex-col items-center text-center`}>
-                  <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 text-[#D4A843]
-                    transition-all duration-500 group-hover:scale-110"
-                    style={{ background:'rgba(255,255,255,0.05)', border:'1px solid rgba(212,168,67,0.25)', boxShadow:'0 0 0 0 rgba(212,168,67,0)' }}
-                    onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 0 6px rgba(212,168,67,0.12)')}
-                    onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 0 0 rgba(212,168,67,0)')}>
-                    <Icon size={34} strokeWidth={1.25} />
-                  </div>
-                  <p className="font-accent text-[10px] tracking-[0.3em] uppercase text-[#D4A843]/40 mb-2">{String(i+1).padStart(2,'0')}</p>
-                  <h3 className="font-display text-2xl text-white mb-3">{d(pillar as Record<string,unknown>, 'title')}</h3>
-                  <div className="w-8 h-px bg-[#D4A843]/40 mb-3" />
-                  <p className="text-slate-400 leading-relaxed text-sm">{d(pillar as Record<string,unknown>, 'desc')}</p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+      <VideoStrip locale={locale} />
 
       {/* ══════════════════════════════════════════
           DEPOIMENTOS

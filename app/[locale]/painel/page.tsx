@@ -43,6 +43,8 @@ const TABS = [
   {id:'reservas', icon:'◷',label:'Reservas'},
   {id:'clientes', icon:'◉',label:'Clientes'},
   {id:'conteudo', icon:'◎',label:'Conteúdo'},
+  {id:'videos',   icon:'▶',label:'Film Strip'},
+  {id:'videos',   icon:'▶',label:'Vídeos'},
   {id:'cardapio', icon:'◆',label:'Cardápio'},
   {id:'site',     icon:'◈',label:'Configurações'},
 ]
@@ -486,12 +488,12 @@ function TabClientes() {
 
 /* ══ TAB: CONTEÚDO ══════════════════════════════════════════════ */
 function TabConteudo() {
-  const [section,setSection] = useState<'hero'|'dishes'|'history'|'pillars'|'location'>('hero')
+  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'>('hero')
   const sections: {id:typeof section;label:string;icon:string}[] = [
     {id:'hero',    label:'Hero Banner',       icon:'▶'},
     {id:'dishes',  label:'Pratos Destaque',   icon:'◆'},
     {id:'history', label:'Nossa História',    icon:'◎'},
-    {id:'pillars', label:'3 Pilares',         icon:'▲'},
+    {id:'videos',  label:'Film Strip',        icon:'🎬'},
     {id:'location',label:'Localização',       icon:'◉'},
   ]
   return (
@@ -517,7 +519,7 @@ function TabConteudo() {
           {section==='hero'     && <EditHero/>}
           {section==='dishes'   && <EditDishes/>}
           {section==='history'  && <EditHistory/>}
-          {section==='pillars'  && <EditPillars/>}
+          {section==='videos'   && <EditVideos/>}
           {section==='location' && <EditLocation/>}
         </div>
       </div>
@@ -752,6 +754,82 @@ function EditPillars() {
           </div>
         </div>
       ))}
+    </EdCard>
+  )
+}
+
+/* ─── Videos (Film Strip) ─────────── */
+type VideoItem = { url:string; label_pt?:string }
+type VideosContent = { eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; title_pt:string; title_en:string; title_es:string; items:VideoItem[] }
+function EditVideos() {
+  const {data,update,save,saving,dirty,toast,clearToast} = useContent<VideosContent>('videos')
+  const [lang,setLang] = useState('pt')
+  if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
+  const items = data.items ?? []
+  return (
+    <EdCard toast={toast} onClearToast={clearToast}>
+      <SectionHeader title="Film Strip — Vídeos" onSave={save} saving={saving} dirty={dirty}/>
+      <LangTabs lang={lang} setLang={setLang}/>
+      {/* eyebrow + título */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1.5rem'}}>
+        <div><label style={labelSt}>Eyebrow ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as Record<string,string>)[`eyebrow_${lang}`]??''} onChange={e=>update(p=>({...p,[`eyebrow_${lang}`]:e.target.value}))}/></div>
+        <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as Record<string,string>)[`title_${lang}`]??''} onChange={e=>update(p=>({...p,[`title_${lang}`]:e.target.value}))}/></div>
+      </div>
+      {/* info */}
+      <div style={{background:'rgba(212,168,67,0.06)',border:'1px solid rgba(212,168,67,0.15)',borderRadius:10,padding:'1rem',marginBottom:'1.5rem',display:'flex',gap:12,alignItems:'flex-start'}}>
+        <span style={{fontSize:18,flexShrink:0}}>🎬</span>
+        <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,0.5)',letterSpacing:'.05em',lineHeight:1.7,margin:0}}>
+          Cole o link direto do vídeo no Cloudinary (ex: <strong style={{color:GOLD}}>https://res.cloudinary.com/.../video.mp4</strong>). Cada vídeo adicionado aparece automaticamente no carrossel da home. Ordem de exibição = ordem da lista abaixo.
+        </p>
+      </div>
+      {/* lista de vídeos */}
+      <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:'1rem'}}>
+        {items.map((item,i)=>(
+          <div key={i} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(212,168,67,0.1)',borderRadius:10,padding:'1rem'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'.75rem'}}>
+              <span style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:13,color:GOLD}}>Vídeo {i+1}</span>
+              <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                {/* mover p/ cima */}
+                {i>0&&<button onClick={()=>{const a=[...items];[a[i-1],a[i]]=[a[i],a[i-1]];update(p=>({...p,items:a}))}}
+                  style={{padding:'3px 8px',borderRadius:5,border:'1px solid rgba(212,168,67,0.2)',background:'transparent',color:GOLD,fontSize:11,cursor:'pointer'}}>↑</button>}
+                {/* mover p/ baixo */}
+                {i<items.length-1&&<button onClick={()=>{const a=[...items];[a[i],a[i+1]]=[a[i+1],a[i]];update(p=>({...p,items:a}))}}
+                  style={{padding:'3px 8px',borderRadius:5,border:'1px solid rgba(212,168,67,0.2)',background:'transparent',color:GOLD,fontSize:11,cursor:'pointer'}}>↓</button>}
+                <button onClick={()=>update(p=>({...p,items:p.items.filter((_,j)=>j!==i)}))}
+                  style={{padding:'4px 10px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:10,cursor:'pointer'}}>✕</button>
+              </div>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:'0.75rem'}}>
+              <div>
+                <label style={labelSt}>URL do Vídeo (Cloudinary .mp4)</label>
+                <input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}}
+                  value={item.url??''} placeholder="https://res.cloudinary.com/..."
+                  onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,url:e.target.value}:it)}))}/>
+              </div>
+              <div>
+                <label style={labelSt}>Label (opcional)</label>
+                <input className="pc-input" style={inp} value={item.label_pt??''} placeholder="ex: Ambiente, Pratos..."
+                  onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,label_pt:e.target.value}:it)}))}/>
+              </div>
+            </div>
+            {/* preview thumbnail */}
+            {item.url&&(
+              <div style={{marginTop:'.75rem',display:'flex',alignItems:'center',gap:10}}>
+                <video src={item.url} muted playsInline preload="metadata"
+                  style={{width:72,height:72,objectFit:'cover',borderRadius:8,border:'1px solid rgba(212,168,67,0.2)',flexShrink:0}}/>
+                <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(212,168,67,0.45)',letterSpacing:'.06em',margin:0,wordBreak:'break-all'}}>
+                  ✔ URL configurada
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      {/* adicionar novo */}
+      <button onClick={()=>update(p=>({...p,items:[...(p.items??[]),{url:'',label_pt:''}]}))}
+        style={{...ghostBtn,width:'100%',justifyContent:'center',color:GOLD,borderColor:'rgba(212,168,67,0.25)',fontSize:11}}>
+        + Adicionar Vídeo
+      </button>
     </EdCard>
   )
 }
