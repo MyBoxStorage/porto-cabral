@@ -15,31 +15,49 @@ const videoStyle: React.CSSProperties = {
 }
 
 function HeroVideos() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null)
   const [secondaryReady, setSecondaryReady] = useState(false)
-  const isMobile = useRef(false)
+  const primaryRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    isMobile.current = window.matchMedia('(max-width: 767px)').matches
+    const mobile = window.matchMedia('(max-width: 767px)').matches
+    setIsMobile(mobile)
+
+    // No mobile: forçar preload=none no vídeo primário para reduzir consumo de memória.
+    // autoPlay continua funcionando — o browser carrega apenas o suficiente para iniciar.
+    if (mobile && primaryRef.current) {
+      primaryRef.current.preload = 'none'
+    }
   }, [])
 
   const handlePrimaryReady = () => {
-    requestAnimationFrame(() => setSecondaryReady(true))
+    // Só carrega os vídeos secundários no desktop
+    if (!isMobile) requestAnimationFrame(() => setSecondaryReady(true))
   }
 
+  // Enquanto isMobile não foi determinado (SSR), renderizar apenas o painel primário
+  // para evitar hydration mismatch e não montar os vídeos desnecessariamente
   return (
     <div className="absolute inset-0 z-0 flex">
-      {/* Painel 1 — ocupa 100% no mobile, 1/3 no desktop */}
+      {/* Painel 1 — único vídeo no mobile, 1/3 no desktop */}
       <div className="relative w-full md:flex-1 overflow-hidden">
-        <video autoPlay muted loop playsInline preload="auto"
-          className="absolute inset-0 w-full h-full" style={videoStyle}
-          onCanPlayThrough={handlePrimaryReady}>
+        <video
+          ref={primaryRef}
+          autoPlay muted loop playsInline
+          // desktop: preload=auto para carregar logo; mobile: será sobrescrito para 'none' no useEffect
+          preload="auto"
+          className="absolute inset-0 w-full h-full"
+          style={videoStyle}
+          onCanPlayThrough={handlePrimaryReady}
+        >
           <source src={VIDEOS[0]} type="video/mp4" />
         </video>
       </div>
 
-      {/* Painéis 2 e 3 — ocultos no mobile, lazy no desktop */}
-      {VIDEOS.slice(1).map((src, idx) => (
-        <div key={idx + 1} className="relative flex-1 overflow-hidden hidden md:block">
+      {/* Painéis 2 e 3 — NÃO montados no mobile (isMobile===true).
+          No desktop (isMobile===false) são lazy: só carregam após o vídeo primário. */}
+      {isMobile === false && VIDEOS.slice(1).map((src, idx) => (
+        <div key={idx + 1} className="relative flex-1 overflow-hidden">
           <video muted loop playsInline preload="none"
             className="absolute inset-0 w-full h-full" style={videoStyle}
             ref={(el) => {
