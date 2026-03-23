@@ -183,9 +183,9 @@ export default function HomePage() {
           ══════════════════════════════════════════ */}
       <section className="py-32 px-6 md:px-12 overflow-hidden" style={{ background: '#f2ede5' }}>
         <div ref={secHistory} className="fade-up max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
-          <div className="w-full lg:w-1/2 flex-shrink-0">
-            <div className="relative rounded-2xl overflow-hidden"
-              style={{ aspectRatio: '4/3', background: 'linear-gradient(135deg,#0a1e3d 0%,#1a3a6b 50%,#0d2545 100%)' }}>
+          <div className="w-full lg:w-2/5 flex-shrink-0 flex justify-center">
+            <div className="relative rounded-2xl overflow-hidden w-full max-w-[380px]"
+              style={{ aspectRatio: '4/5', background: 'linear-gradient(135deg,#0a1e3d 0%,#1a3a6b 50%,#0d2545 100%)' }}>
               {historyData.image_url ? (
                 <img src={historyData.image_url} alt="Nossa História"
                   className="absolute inset-0 w-full h-full object-cover"
