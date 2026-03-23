@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { getMenuSectionIcon } from '@/components/icons/menu-icons'
 
 type Item = { name: string; price: string; desc?: string; tag?: 'vegano' | 'sem-lactose' | 'destaque' }
@@ -138,6 +138,10 @@ const SECTIONS: Section[] = [
   ]},
 ]
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   DESKTOP — funções de HTML do page-flip (sem alteração)
+───────────────────────────────────────────────────────────────────────────── */
+
 function coverHTML(s: Section, i: number, total: number) {
   const iconSvg = getMenuSectionIcon(i, '#c9a84c', 44)
   return `<div class="ci">
@@ -196,11 +200,18 @@ function contentHTML(s: Section) {
   </div>`
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   CSS — desktop (page-flip) + mobile (carrossel nativo)
+───────────────────────────────────────────────────────────────────────────── */
+
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap');
 
 /* ── BASE ── */
 .pf-wrap *{box-sizing:border-box}
+
+/* visibilidade: carrossel mobile oculto por padrão, deck visível por padrão */
+.pf-mobile-carousel { display: none; }
 
 /* ── HERO HEADER ── */
 .pf-hero{
@@ -257,6 +268,7 @@ const CSS = `
   color:rgba(255,255,255,.35);
 }
 
+/* ── TABS ── */
 .pf-tabs{
   background:rgba(242,229,196,.98);
   backdrop-filter:blur(12px);
@@ -279,283 +291,536 @@ const CSS = `
 .pf-tab:hover{color:#5c3200}
 .pf-tab.on{color:#5c3200;font-weight:600;border-bottom-color:#c9a84c}
 
-/* ── DECK (palco do livro) ── */
-.pf-deck{
-  background:#130b02;
-  background-image:
-    repeating-linear-gradient(90deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 118px,rgba(255,255,255,.018) 119px,rgba(255,255,255,.018) 120px),
-    repeating-linear-gradient(0deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 118px,rgba(255,255,255,.012) 119px,rgba(255,255,255,.012) 120px);
-  padding:3.5rem 1rem 5rem;
-  display:flex;flex-direction:column;align-items:center;
-}
-.pf-book-wrap{width:100%;max-width:940px;position:relative}
-.pf-book-wrap::after{
-  content:'';position:absolute;
-  bottom:-22px;left:6%;right:6%;height:44px;
-  background:radial-gradient(ellipse,rgba(0,0,0,.7) 0%,transparent 70%);
-  pointer-events:none;
+/* ═══════════════════════════════════════════════════════════════════════════
+   DESKTOP — page-flip (sem alteração)
+═══════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  .pf-deck{
+    background:#130b02;
+    background-image:
+      repeating-linear-gradient(90deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 118px,rgba(255,255,255,.018) 119px,rgba(255,255,255,.018) 120px),
+      repeating-linear-gradient(0deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 118px,rgba(255,255,255,.012) 119px,rgba(255,255,255,.012) 120px);
+    padding:3.5rem 1rem 5rem;
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .pf-book-wrap{width:100%;max-width:940px;position:relative}
+  .pf-book-wrap::after{
+    content:'';position:absolute;
+    bottom:-22px;left:6%;right:6%;height:44px;
+    background:radial-gradient(ellipse,rgba(0,0,0,.7) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .page{background:#f4e8ca;overflow:hidden}
+  .page-cover{background:#071628!important}
+
+  .ci{
+    width:100%;height:100%;
+    display:flex;align-items:center;justify-content:center;
+    padding:2rem;position:relative;overflow:hidden;
+  }
+  .ci::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle,rgba(201,168,76,.055) 1px,transparent 1px);
+    background-size:22px 22px;
+  }
+  .cc{position:absolute;width:60px;height:60px}
+  .cc.tl{top:0;left:0;
+    background:linear-gradient(135deg,rgba(201,168,76,.25) 0%,rgba(201,168,76,.08) 60%,transparent 100%);
+    clip-path:polygon(0 0,100% 0,0 100%)}
+  .cc.tr{top:0;right:0;
+    background:linear-gradient(225deg,rgba(201,168,76,.25) 0%,rgba(201,168,76,.08) 60%,transparent 100%);
+    clip-path:polygon(0 0,100% 0,100% 100%)}
+  .cc.bl{bottom:0;left:0;
+    background:linear-gradient(45deg,rgba(201,168,76,.25) 0%,rgba(201,168,76,.08) 60%,transparent 100%);
+    clip-path:polygon(0 0,0 100%,100% 100%)}
+  .cc.br{bottom:0;right:0;
+    background:linear-gradient(315deg,rgba(201,168,76,.25) 0%,rgba(201,168,76,.08) 60%,transparent 100%);
+    clip-path:polygon(100% 0,100% 100%,0 100%)}
+
+  .cb{
+    position:relative;z-index:1;
+    border:1px solid rgba(201,168,76,.3);
+    padding:2.2rem 2rem;text-align:center;
+    background:rgba(0,0,0,.22);width:100%;
+  }
+  .cb::before{
+    content:'';position:absolute;
+    top:6px;left:6px;right:6px;bottom:6px;
+    border:1px solid rgba(201,168,76,.1);
+    pointer-events:none;
+  }
+  .cf{
+    font-family:'Josefin Sans',sans-serif;
+    font-size:.5rem;letter-spacing:.44em;text-transform:uppercase;
+    color:rgba(201,168,76,.45);margin:0 0 1rem;
+  }
+  .ci-icon{margin:0 0 1rem;display:flex;justify-content:center;align-items:center}
+  .ct{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(1.15rem,3.2vw,1.7rem);
+    font-style:italic;font-weight:400;
+    color:#c9a84c;margin:0 0 .55rem;line-height:1.2;
+  }
+  .cd{
+    height:1px;margin:.85rem auto;
+    background:linear-gradient(90deg,transparent,rgba(201,168,76,.7),transparent);
+    max-width:160px;
+  }
+  .cs{
+    font-family:'Cormorant Garamond',serif;
+    font-size:.82rem;font-style:italic;
+    color:rgba(255,255,255,.4);margin:0 0 1.3rem;line-height:1.55;
+  }
+  .cl{
+    font-family:'Josefin Sans',sans-serif;
+    font-size:.46rem;letter-spacing:.3em;text-transform:uppercase;
+    color:rgba(201,168,76,.32);
+  }
+
+  .pi{
+    width:100%;height:100%;
+    display:flex;flex-direction:column;
+    padding:2.2rem 2rem 1.4rem;
+    position:relative;overflow:hidden;
+  }
+  .pi::before{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse at 10% 14%,rgba(255,255,255,.58) 0%,transparent 38%),
+      radial-gradient(ellipse at 90% 86%,rgba(150,110,50,.06) 0%,transparent 38%),
+      repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(150,100,25,.055) 28px);
+  }
+  .pi::after{
+    content:'';position:absolute;top:0;left:0;bottom:0;width:14px;pointer-events:none;
+    background:linear-gradient(90deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.03) 55%,transparent 100%);
+  }
+
+  .ph{flex-shrink:0;text-align:center;margin-bottom:1.3rem;position:relative;z-index:1}
+  .pe{
+    font-family:'Josefin Sans',sans-serif;
+    font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;
+    color:rgba(110,72,14,.48);margin:0 0 .28rem;
+  }
+  .pt{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(1.35rem,3.8vw,2rem);
+    font-style:italic;font-weight:400;
+    color:#18100a;margin:0 0 .5rem;line-height:1.1;
+  }
+  .pr{display:flex;align-items:center;justify-content:center;gap:.55rem}
+  .prl{height:1px;width:2.2rem;background:rgba(140,90,22,.22)}
+  .prs{color:rgba(140,90,22,.38);font-size:.65rem;line-height:1}
+
+  .pnote{
+    flex-shrink:0;
+    font-family:'Josefin Sans',sans-serif;
+    font-size:.47rem;letter-spacing:.16em;text-transform:uppercase;
+    color:rgba(110,72,14,.4);
+    text-align:center;
+    border-top:1px solid rgba(130,85,18,.12);
+    border-bottom:1px solid rgba(130,85,18,.12);
+    padding:.38rem 0;margin:0 0 .95rem;
+    position:relative;z-index:1;
+  }
+
+  .plist{
+    flex:1;overflow-y:auto;
+    position:relative;z-index:1;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(180,130,40,.3) transparent;
+  }
+  .plist::-webkit-scrollbar{width:3px}
+  .plist::-webkit-scrollbar-thumb{background:rgba(180,130,40,.3);border-radius:2px}
+
+  .mi{padding:.52rem 0;border-bottom:1px solid rgba(130,85,18,.09)}
+  .mi:last-child{border-bottom:none}
+  .mh{
+    background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);
+    margin:0 -.2rem;padding:.52rem .2rem;border-radius:2px;
+  }
+  .mr{display:flex;align-items:baseline;width:100%;gap:4px}
+  .mn{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(.8rem,1.9vw,.9rem);
+    font-weight:700;color:#18100a;flex-shrink:0;line-height:1.3;
+  }
+  .mt{
+    font-family:'Josefin Sans',sans-serif;
+    font-size:.44rem;letter-spacing:.05em;text-transform:uppercase;
+    padding:2px 6px;border-radius:10px;flex-shrink:0;
+  }
+  .tv{background:#d4edda;color:#1d5e2a}
+  .tl{background:#d1ecf1;color:#0c5460}
+  .td{background:rgba(201,168,76,.18);color:#7a4500;border:1px solid rgba(201,168,76,.32)}
+  .mdots{
+    flex:1;border-bottom:1.5px dotted rgba(110,72,14,.22);
+    margin:0 6px;position:relative;top:-3px;min-width:10px;
+  }
+  .mp{
+    font-family:'Josefin Sans',sans-serif;
+    font-size:clamp(.74rem,1.8vw,.84rem);
+    font-weight:600;color:#7a4500;flex-shrink:0;letter-spacing:.01em;
+  }
+  .md{
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(.84rem,1.9vw,.97rem);
+    font-style:italic;color:rgba(52,32,6,.56);
+    margin:.09rem 0 0;line-height:1.4;padding-right:.4rem;
+  }
+
+  .pf{
+    flex-shrink:0;
+    padding-top:.65rem;
+    border-top:1px solid rgba(130,85,18,.1);
+    margin-top:.4rem;text-align:center;
+    position:relative;z-index:1;
+  }
+  .pft{
+    font-family:'Josefin Sans',sans-serif;
+    font-size:.44rem;letter-spacing:.18em;text-transform:uppercase;
+    color:rgba(100,65,10,.38);
+  }
+  .curl{
+    position:absolute;bottom:0;right:0;z-index:2;pointer-events:none;
+    width:0;height:0;border-style:solid;
+    border-width:0 0 44px 44px;
+    border-color:transparent transparent #ddc99e transparent;
+    filter:drop-shadow(-2px -2px 3px rgba(0,0,0,.14));
+  }
+
+  .pf-nav{
+    display:flex;align-items:center;justify-content:center;
+    gap:1.6rem;margin-top:2rem;
+  }
+  .pf-btn{
+    width:3rem;height:3rem;border-radius:50%;
+    background:rgba(201,168,76,.1);
+    border:1px solid rgba(201,168,76,.4);
+    color:#c9a84c;font-size:1.45rem;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .2s;font-family:serif;line-height:1;
+  }
+  .pf-btn:hover:not(:disabled){background:rgba(201,168,76,.2);transform:scale(1.08)}
+  .pf-btn:disabled{opacity:.18;cursor:default}
+  .pf-nav-center{display:flex;flex-direction:column;align-items:center;gap:.55rem}
+  .pf-dots{display:flex;gap:2px;align-items:center;flex-wrap:wrap;justify-content:center}
+  .pf-dot{
+    width:44px;height:44px;
+    display:flex;align-items:center;justify-content:center;
+    border:none;cursor:pointer;background:transparent;padding:0;
+  }
+  .pf-dot-inner{
+    width:5px;height:5px;border-radius:50%;
+    background:rgba(201,168,76,.28);
+    transition:all .24s;
+  }
+  .pf-dot.on .pf-dot-inner{width:20px;border-radius:3px;background:#c9a84c}
+
+  @keyframes hint-slide {
+    0%   { transform: translateX(0);    opacity: .9; }
+    40%  { transform: translateX(28px); opacity: .5; }
+    70%  { transform: translateX(-8px); opacity: .8; }
+    100% { transform: translateX(0);    opacity: .9; }
+  }
+  .pf-hint {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(201,168,76,.3);
+    backdrop-filter: blur(8px);
+    border-radius: 100px;
+    padding: 7px 16px;
+    pointer-events: none;
+    z-index: 20;
+    animation: hint-slide 1.6s ease-in-out infinite;
+  }
+  .pf-hint-icon { font-size: 1rem; line-height: 1; }
+  .pf-hint-text {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: .5rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,.8);
+    white-space: nowrap;
+  }
+  .pf-folio{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;font-size:.86rem;
+    color:rgba(201,168,76,.62);text-align:center;margin:0;
+  }
 }
 
-/* ── PÁGINAS ── */
-.page{background:#f4e8ca;overflow:hidden}
-.page-cover{background:#071628!important}
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE — carrossel nativo com scroll-snap
+   Filosofia: zero page-flip, zero conflito de touch, scroll nativo do browser.
+   Visual: cards com efeito de profundidade (scale + opacity) nas laterais.
+═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  /* mostra carrossel, oculta page-flip */
+  .pf-mobile-carousel { display: block; }
+  .pf-deck { display: none !important; }
 
-/* ── CAPA DA SEÇÃO ── */
-.ci{
-  width:100%;height:100%;
-  display:flex;align-items:center;justify-content:center;
-  padding:2rem;position:relative;overflow:hidden;
-}
-.ci::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(circle,rgba(201,168,76,.055) 1px,transparent 1px);
-  background-size:22px 22px;
-}
-/* Cantos ornamentais */
-.cc{position:absolute;width:60px;height:60px}
-.cc.tl{top:0;left:0;
-  background:linear-gradient(135deg,rgba(201,168,76,.25) 0%,rgba(201,168,76,.08) 60%,transparent 100%);
-  clip-path:polygon(0 0,100% 0,0 100%)}
-.cc.tr{top:0;right:0;
-  background:linear-gradient(225deg,rgba(201,168,76,.25) 0%,rgba(201,168,76,.08) 60%,transparent 100%);
-  clip-path:polygon(0 0,100% 0,100% 100%)}
-.cc.bl{bottom:0;left:0;
-  background:linear-gradient(45deg,rgba(201,168,76,.25) 0%,rgba(201,168,76,.08) 60%,transparent 100%);
-  clip-path:polygon(0 0,0 100%,100% 100%)}
-.cc.br{bottom:0;right:0;
-  background:linear-gradient(315deg,rgba(201,168,76,.25) 0%,rgba(201,168,76,.08) 60%,transparent 100%);
-  clip-path:polygon(100% 0,100% 100%,0 100%)}
+  /* ── WRAPPER DO CARROSSEL ── */
+  .mc-wrap {
+    background: #0a1020;
+    padding: 1.5rem 0 2.5rem;
+    position: relative;
+  }
 
-.cb{
-  position:relative;z-index:1;
-  border:1px solid rgba(201,168,76,.3);
-  padding:2.2rem 2rem;text-align:center;
-  background:rgba(0,0,0,.22);width:100%;
-}
-/* Pontos nos cantos da moldura interna */
-.cb::before{
-  content:'';position:absolute;
-  top:6px;left:6px;right:6px;bottom:6px;
-  border:1px solid rgba(201,168,76,.1);
-  pointer-events:none;
-}
-.cf{
-  font-family:'Josefin Sans',sans-serif;
-  font-size:.5rem;letter-spacing:.44em;text-transform:uppercase;
-  color:rgba(201,168,76,.45);margin:0 0 1rem;
-}
-.ci-icon{margin:0 0 1rem;display:flex;justify-content:center;align-items:center}
-.ct{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.15rem,3.2vw,1.7rem);
-  font-style:italic;font-weight:400;
-  color:#c9a84c;margin:0 0 .55rem;line-height:1.2;
-}
-.cd{
-  height:1px;margin:.85rem auto;
-  background:linear-gradient(90deg,transparent,rgba(201,168,76,.7),transparent);
-  max-width:160px;
-}
-.cs{
-  font-family:'Cormorant Garamond',serif;
-  font-size:.82rem;font-style:italic;
-  color:rgba(255,255,255,.4);margin:0 0 1.3rem;line-height:1.55;
-}
-.cl{
-  font-family:'Josefin Sans',sans-serif;
-  font-size:.46rem;letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(201,168,76,.32);
-}
+  /* ── TRILHO DE SCROLL (scroll-snap container) ── */
+  .mc-track {
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+    padding: 1rem calc((100vw - 82vw) / 2);
+  }
+  .mc-track::-webkit-scrollbar { display: none; }
 
-/* ── PÁGINA DE CONTEÚDO ── */
-.pi{
-  width:100%;height:100%;
-  display:flex;flex-direction:column;
-  padding:2.2rem 2rem 1.4rem;
-  position:relative;overflow:hidden;
-}
-/* Textura de papel */
-.pi::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse at 10% 14%,rgba(255,255,255,.58) 0%,transparent 38%),
-    radial-gradient(ellipse at 90% 86%,rgba(150,110,50,.06) 0%,transparent 38%),
-    repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(150,100,25,.055) 28px);
-}
-/* Lombada */
-.pi::after{
-  content:'';position:absolute;top:0;left:0;bottom:0;width:14px;pointer-events:none;
-  background:linear-gradient(90deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.03) 55%,transparent 100%);
-}
+  /* ── CARD ── */
+  .mc-card {
+    flex: 0 0 82vw;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    margin: 0 2vw;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.35s ease;
+    transform: scale(0.92);
+    opacity: 0.55;
+    will-change: transform, opacity;
+    box-shadow: 0 8px 40px rgba(0,0,0,.55);
+  }
+  .mc-card.mc-active {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 12px 60px rgba(0,0,0,.7), 0 0 0 1px rgba(201,168,76,.15);
+  }
 
-/* Cabeçalho */
-.ph{flex-shrink:0;text-align:center;margin-bottom:1.3rem;position:relative;z-index:1}
-.pe{
-  font-family:'Josefin Sans',sans-serif;
-  font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(110,72,14,.48);margin:0 0 .28rem;
-}
-.pt{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.35rem,3.8vw,2rem);
-  font-style:italic;font-weight:400;
-  color:#18100a;margin:0 0 .5rem;line-height:1.1;
-}
-.pr{display:flex;align-items:center;justify-content:center;gap:.55rem}
-.prl{height:1px;width:2.2rem;background:rgba(140,90,22,.22)}
-.prs{color:rgba(140,90,22,.38);font-size:.65rem;line-height:1}
+  /* ── HEADER DO CARD ── */
+  .mc-header {
+    background: linear-gradient(180deg, #071628 0%, #0a1f3a 100%);
+    padding: 1.4rem 1.4rem 1.1rem;
+    position: relative;
+    border-bottom: 1px solid rgba(201,168,76,.18);
+  }
+  .mc-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(201,168,76,.04) 1px, transparent 1px);
+    background-size: 18px 18px;
+    pointer-events: none;
+  }
+  .mc-header::after {
+    content: '';
+    position: absolute;
+    top: 8px; left: 8px; right: 8px; bottom: 0;
+    border-top: 1px solid rgba(201,168,76,.12);
+    border-left: 1px solid rgba(201,168,76,.08);
+    border-right: 1px solid rgba(201,168,76,.08);
+    border-radius: 8px 8px 0 0;
+    pointer-events: none;
+  }
+  .mc-logbook {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: .46rem;
+    letter-spacing: .44em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,.4);
+    margin: 0 0 .7rem;
+    position: relative;
+    z-index: 1;
+  }
+  .mc-icon-row {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    position: relative;
+    z-index: 1;
+  }
+  .mc-icon-wrap {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    font-weight: 400;
+    color: #c9a84c;
+    line-height: 1.2;
+    margin: 0;
+  }
+  .mc-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: .8rem;
+    font-style: italic;
+    color: rgba(255,255,255,.32);
+    margin: .55rem 0 0;
+    line-height: 1.45;
+    position: relative;
+    z-index: 1;
+  }
+  .mc-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,.5), transparent);
+    margin: .9rem 0 0;
+    position: relative;
+    z-index: 1;
+  }
 
-/* Nota de acompanhamentos */
-.pnote{
-  flex-shrink:0;
-  font-family:'Josefin Sans',sans-serif;
-  font-size:.47rem;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(110,72,14,.4);
-  text-align:center;
-  border-top:1px solid rgba(130,85,18,.12);
-  border-bottom:1px solid rgba(130,85,18,.12);
-  padding:.38rem 0;margin:0 0 .95rem;
-  position:relative;z-index:1;
-}
+  /* ── CORPO DO CARD ── */
+  .mc-body {
+    background: #f4e8ca;
+    padding: 1rem 1.1rem 1rem;
+  }
+  .mc-note {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: .44rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(110,72,14,.42);
+    text-align: center;
+    border-top: 1px solid rgba(130,85,18,.1);
+    border-bottom: 1px solid rgba(130,85,18,.1);
+    padding: .38rem 0;
+    margin: 0 0 .85rem;
+  }
+  .mc-item {
+    padding: .55rem 0;
+    border-bottom: 1px solid rgba(130,85,18,.08);
+  }
+  .mc-item:last-child { border-bottom: none; }
+  .mc-item-hl {
+    background: linear-gradient(90deg, rgba(201,168,76,.07), transparent);
+    margin: 0 -.2rem;
+    padding: .55rem .2rem;
+    border-radius: 3px;
+  }
+  .mc-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    width: 100%;
+  }
+  .mc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: .88rem;
+    font-weight: 700;
+    color: #18100a;
+    flex-shrink: 0;
+    line-height: 1.3;
+  }
+  .mc-tag {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: .42rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  .mc-tv { background: #d4edda; color: #1d5e2a; }
+  .mc-tl { background: #d1ecf1; color: #0c5460; }
+  .mc-td { background: rgba(201,168,76,.18); color: #7a4500; border: 1px solid rgba(201,168,76,.32); }
+  .mc-dots {
+    flex: 1;
+    border-bottom: 1.5px dotted rgba(110,72,14,.2);
+    margin: 0 5px;
+    position: relative;
+    top: -3px;
+    min-width: 8px;
+  }
+  .mc-price {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #7a4500;
+    flex-shrink: 0;
+    letter-spacing: .01em;
+  }
+  .mc-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: .92rem;
+    font-style: italic;
+    color: rgba(52,32,6,.52);
+    margin: .1rem 0 0;
+    line-height: 1.4;
+  }
 
-/* Lista de itens */
-.plist{
-  flex:1;overflow-y:auto;
-  position:relative;z-index:1;
-  scrollbar-width:thin;
-  scrollbar-color:rgba(180,130,40,.3) transparent;
-}
-.plist::-webkit-scrollbar{width:3px}
-.plist::-webkit-scrollbar-thumb{background:rgba(180,130,40,.3);border-radius:2px}
+  /* ── RODAPÉ DO CARD ── */
+  .mc-footer {
+    background: #f4e8ca;
+    padding: .65rem 1.1rem .9rem;
+    border-top: 1px solid rgba(130,85,18,.1);
+    text-align: center;
+  }
+  .mc-footer-text {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: .42rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: rgba(100,65,10,.35);
+  }
 
-.mi{padding:.52rem 0;border-bottom:1px solid rgba(130,85,18,.09)}
-.mi:last-child{border-bottom:none}
-/* Destaque Chef indica */
-.mh{
-  background:linear-gradient(90deg,rgba(201,168,76,.08),transparent);
-  margin:0 -.2rem;padding:.52rem .2rem;border-radius:2px;
-}
-.mr{display:flex;align-items:baseline;width:100%;gap:4px}
-.mn{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(.8rem,1.9vw,.9rem);
-  font-weight:700;color:#18100a;flex-shrink:0;line-height:1.3;
-}
-.mt{
-  font-family:'Josefin Sans',sans-serif;
-  font-size:.44rem;letter-spacing:.05em;text-transform:uppercase;
-  padding:2px 6px;border-radius:10px;flex-shrink:0;
-}
-.tv{background:#d4edda;color:#1d5e2a}
-.tl{background:#d1ecf1;color:#0c5460}
-.td{background:rgba(201,168,76,.18);color:#7a4500;border:1px solid rgba(201,168,76,.32)}
-.mdots{
-  flex:1;border-bottom:1.5px dotted rgba(110,72,14,.22);
-  margin:0 6px;position:relative;top:-3px;min-width:10px;
-}
-.mp{
-  font-family:'Josefin Sans',sans-serif;
-  font-size:clamp(.74rem,1.8vw,.84rem);
-  font-weight:600;color:#7a4500;flex-shrink:0;letter-spacing:.01em;
-}
-.md{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(.84rem,1.9vw,.97rem);
-  font-style:italic;color:rgba(52,32,6,.56);
-  margin:.09rem 0 0;line-height:1.4;padding-right:.4rem;
-}
+  /* ── PIPS DE PROGRESSO ── */
+  .mc-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 1.4rem;
+    padding: 0 1rem;
+  }
+  .mc-pip-btn {
+    padding: 8px 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  .mc-pip {
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(201,168,76,.22);
+    transition: all 0.3s ease;
+  }
+  .mc-pip.mc-pip-active {
+    background: #c9a84c;
+    width: 24px !important;
+  }
 
-/* Rodapé da página */
-.pf{
-  flex-shrink:0;
-  padding-top:.65rem;
-  border-top:1px solid rgba(130,85,18,.1);
-  margin-top:.4rem;text-align:center;
-  position:relative;z-index:1;
-}
-.pft{
-  font-family:'Josefin Sans',sans-serif;
-  font-size:.44rem;letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(100,65,10,.38);
-}
-/* Dobra de canto */
-.curl{
-  position:absolute;bottom:0;right:0;z-index:2;pointer-events:none;
-  width:0;height:0;border-style:solid;
-  border-width:0 0 44px 44px;
-  border-color:transparent transparent #ddc99e transparent;
-  filter:drop-shadow(-2px -2px 3px rgba(0,0,0,.14));
-}
-
-/* ── NAVEGAÇÃO INFERIOR ── */
-.pf-nav{
-  display:flex;align-items:center;justify-content:center;
-  gap:1.6rem;margin-top:2rem;
-}
-.pf-btn{
-  width:3rem;height:3rem;border-radius:50%;
-  background:rgba(201,168,76,.1);
-  border:1px solid rgba(201,168,76,.4);
-  color:#c9a84c;font-size:1.45rem;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .2s;font-family:serif;line-height:1;
-}
-.pf-btn:hover:not(:disabled){background:rgba(201,168,76,.2);transform:scale(1.08)}
-.pf-btn:disabled{opacity:.18;cursor:default}
-.pf-nav-center{display:flex;flex-direction:column;align-items:center;gap:.55rem}
-.pf-dots{display:flex;gap:2px;align-items:center;flex-wrap:wrap;justify-content:center}
-.pf-dot{
-  width:44px;height:44px;
-  display:flex;align-items:center;justify-content:center;
-  border:none;cursor:pointer;background:transparent;padding:0;
-}
-.pf-dot-inner{
-  width:5px;height:5px;border-radius:50%;
-  background:rgba(201,168,76,.28);
-  transition:all .24s;
-}
-.pf-dot.on .pf-dot-inner{width:20px;border-radius:3px;background:#c9a84c}
-/* ── SWIPE HINT (mobile) ── */
-@keyframes hint-slide {
-  0%   { transform: translateX(0);    opacity: .9; }
-  40%  { transform: translateX(28px); opacity: .5; }
-  70%  { transform: translateX(-8px); opacity: .8; }
-  100% { transform: translateX(0);    opacity: .9; }
-}
-.pf-hint {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(0,0,0,.55);
-  border: 1px solid rgba(201,168,76,.3);
-  backdrop-filter: blur(8px);
-  border-radius: 100px;
-  padding: 7px 16px;
-  pointer-events: none;
-  z-index: 20;
-  animation: hint-slide 1.6s ease-in-out infinite;
-}
-.pf-hint-icon { font-size: 1rem; line-height: 1; }
-.pf-hint-text {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: .5rem;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: rgba(201,168,76,.8);
-  white-space: nowrap;
-}
-.pf-folio{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;font-size:.86rem;
-  color:rgba(201,168,76,.62);text-align:center;margin:0;
+  /* ── LABEL DA SEÇÃO ATIVA ── */
+  .mc-section-label {
+    text-align: center;
+    margin-top: .7rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: .9rem;
+    color: rgba(201,168,76,.6);
+    letter-spacing: .04em;
+  }
 }
 `
 
-/* ─── Tipos internos do PageFlip que usamos via cast ─── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   TIPOS internos do PageFlip
+───────────────────────────────────────────────────────────────────────────── */
 type PF = {
   loadFromHTML: (p: HTMLDivElement[]) => void
   on: (e: string, cb: (e: { data: number }) => void) => void
@@ -567,17 +832,163 @@ type PF = {
   getCurrentPageIndex: () => number
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   COMPONENTE MOBILE — card de seção
+───────────────────────────────────────────────────────────────────────────── */
+function MobileCard({ section, index, isActive }: { section: Section; index: number; isActive: boolean }) {
+  const iconSvg = getMenuSectionIcon(index, '#c9a84c', 36)
+  const hasNote = section.subtitle.includes('acompanham')
+  const total = SECTIONS.length
+
+  return (
+    <div className={`mc-card${isActive ? ' mc-active' : ''}`}>
+      <div className="mc-header">
+        <p className="mc-logbook">
+          Logbook N.º {String(index + 1).padStart(2, '0')} · {String(total).padStart(2, '0')}
+        </p>
+        <div className="mc-icon-row">
+          <div className="mc-icon-wrap" dangerouslySetInnerHTML={{ __html: iconSvg }} />
+          <h2 className="mc-title">{section.title}</h2>
+        </div>
+        <p className="mc-subtitle">{section.subtitle}</p>
+        <div className="mc-divider" />
+      </div>
+
+      <div className="mc-body">
+        {hasNote && (
+          <div className="mc-note">
+            Os pratos acompanham arroz branco e pirão de peixe
+          </div>
+        )}
+        {section.items.map((item, j) => {
+          const tagClass = item.tag === 'vegano' ? 'mc-tv'
+            : item.tag === 'sem-lactose' ? 'mc-tl'
+            : item.tag === 'destaque' ? 'mc-td'
+            : ''
+          const tagLabel = item.tag === 'vegano' ? 'Vegano'
+            : item.tag === 'sem-lactose' ? 'Sem lactose'
+            : item.tag === 'destaque' ? 'Chef indica'
+            : ''
+          return (
+            <div key={j} className={`mc-item${item.tag === 'destaque' ? ' mc-item-hl' : ''}`}>
+              <div className="mc-row">
+                <span className="mc-name">{item.name}</span>
+                {tagClass && <span className={`mc-tag ${tagClass}`}>{tagLabel}</span>}
+                <span className="mc-dots" />
+                <span className="mc-price">R$&nbsp;{item.price}</span>
+              </div>
+              {item.desc && <div className="mc-desc">{item.desc}</div>}
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="mc-footer">
+        <p className="mc-footer-text">
+          Os pratos servem 2 pessoas · Taxa de serviço 10% · Couvert artístico
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   COMPONENTE MOBILE — carrossel completo
+───────────────────────────────────────────────────────────────────────────── */
+function MobileCarousel({ cur, onChangeCur }: { cur: number; onChangeCur: (i: number) => void }) {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const total = SECTIONS.length
+
+  const scrollTo = useCallback((index: number) => {
+    const track = trackRef.current
+    if (!track) return
+    const card = track.children[index] as HTMLElement
+    if (!card) return
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+  }, [])
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    let rafId: number
+    const onScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(() => {
+        const trackRect = track.getBoundingClientRect()
+        const centerX = trackRect.left + trackRect.width / 2
+        let closest = 0
+        let closestDist = Infinity
+        Array.from(track.children).forEach((child, i) => {
+          const rect = (child as HTMLElement).getBoundingClientRect()
+          const cardCenter = rect.left + rect.width / 2
+          const dist = Math.abs(cardCenter - centerX)
+          if (dist < closestDist) { closestDist = dist; closest = i }
+        })
+        if (closest !== cur) onChangeCur(closest)
+      })
+    }
+    track.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      track.removeEventListener('scroll', onScroll)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+  }, [cur, onChangeCur])
+
+  useEffect(() => {
+    scrollTo(cur)
+  }, [cur, scrollTo])
+
+  return (
+    <div className="mc-wrap">
+      <div className="mc-track" ref={trackRef}>
+        {SECTIONS.map((s, i) => (
+          <MobileCard key={s.id} section={s} index={i} isActive={i === cur} />
+        ))}
+      </div>
+      <div className="mc-progress">
+        {SECTIONS.map((_, i) => (
+          <button
+            key={i}
+            className="mc-pip-btn"
+            onClick={() => { onChangeCur(i); scrollTo(i) }}
+            aria-label={`Ir para ${SECTIONS[i].title}`}
+          >
+            <span
+              className={`mc-pip${i === cur ? ' mc-pip-active' : ''}`}
+              style={{ width: i === cur ? 24 : 6 }}
+            />
+          </button>
+        ))}
+      </div>
+      <p className="mc-section-label">
+        {SECTIONS[cur]?.title} · {cur + 1}/{total}
+      </p>
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PÁGINA PRINCIPAL
+───────────────────────────────────────────────────────────────────────────── */
 export default function CardapioPage() {
   const bookRef    = useRef<HTMLDivElement>(null)
   const wrapRef    = useRef<HTMLDivElement>(null)
   const flipRef    = useRef<PF | null>(null)
-  const [cur, setCur]       = useState(0)
-  const [ready, setReady]   = useState(false)
+  const [cur, setCur]     = useState(0)
+  const [ready, setReady] = useState(false)
   const [showHint, setShowHint] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const total = SECTIONS.length
 
-  /* ── Inicialização do PageFlip ── */
   useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) return
     let pf: PF | null = null
     let cancelled = false
     async function init() {
@@ -586,24 +997,19 @@ export default function CardapioPage() {
       try {
         const { PageFlip } = await import('page-flip')
         const el = bookRef.current
-        const isMobile = window.innerWidth < 768
         pf = new PageFlip(el, {
-          width:  isMobile ? 300 : 430,
-          height: isMobile ? 500 : 610,
+          width: 430, height: 610,
           size: 'stretch',
           minWidth: 260, maxWidth: 460,
           minHeight: 380, maxHeight: 700,
           maxShadowOpacity: 0.7,
           showCover: false,
-          // Mobile: desativamos o sistema de touch interno da lib —
-          // nosso handler próprio cuida do swipe (veja useEffect abaixo).
-          // Desktop: mantém mouse events normais.
           mobileScrollSupport: false,
-          flippingTime: isMobile ? 420 : 650,
+          flippingTime: 650,
           usePortrait: true,
           autoSize: true,
           clickEventForward: false,
-          swipeDistance: 999, // threshold alto — lib nunca dispara por swipe próprio
+          swipeDistance: 30,
           useMouseEvents: true,
         }) as unknown as PF
 
@@ -619,133 +1025,27 @@ export default function CardapioPage() {
           pages.push(content)
         })
         pf.loadFromHTML(pages)
-        pf.on('flip', (e) => {
-          setCur(Math.floor(e.data / 2))
-          setShowHint(false) // esconde hint após primeiro flip
-        })
-
+        pf.on('flip', (e) => { setCur(Math.floor(e.data / 2)); setShowHint(false) })
         if (cancelled) { try { pf.destroy?.() } catch {}; return }
         flipRef.current = pf
-        // Mostra hint de swipe no mobile apenas uma vez
-        if (window.innerWidth < 768) setShowHint(true)
         setReady(true)
       } catch (err) { console.error('PageFlip:', err) }
     }
     init()
     return () => { cancelled = true; try { flipRef.current?.destroy?.() } catch {} }
-  }, [total])
+  }, [isMobile, total])
 
-  /* ── Handler de swipe mobile próprio ──────────────────────────────────
-     Lógica:
-       • touchstart → salva posição inicial + checa se toque está dentro de .plist
-       • touchmove  → acumula Δx e Δy
-                      - se |Δy| > |Δx| nos primeiros 8px: scroll vertical → não interfere
-                      - se |Δx| ≥ 12px e |Δx| > |Δy|: gesto horizontal confirmado
-                          → chama preventDefault() para travar o scroll da página
-                          → seta flag flipLocked = true
-       • touchend   → se flipLocked: Δx > 0 → flipPrev(), Δx < 0 → flipNext()
-                      → reseta tudo
-
-     Toque que começa dentro de .plist → apenas scroll interno, nunca vira página.
-     Desktop → este handler nunca é registrado (isMobile guard).
-  ──────────────────────────────────────────────────────────────────── */
-  useEffect(() => {
-    if (!ready) return
-    if (typeof window === 'undefined') return
-    if (window.innerWidth >= 768) return   // desktop: não instala nada
-
-    const wrap = wrapRef.current
-    if (!wrap) return
-
-    let startX = 0
-    let startY = 0
-    let flipLocked = false
-    let scrollLocked = false
-    let startedInList = false
-
-    function onTouchStart(e: TouchEvent) {
-      const t = e.touches[0]
-      startX = t.clientX
-      startY = t.clientY
-      flipLocked = false
-      scrollLocked = false
-      // Verifica se o toque começou dentro de um .plist (lista de itens com scroll)
-      startedInList = !!(e.target as Element).closest('.plist')
-      setShowHint(false)
-    }
-
-    function onTouchMove(e: TouchEvent) {
-      // Dentro da lista de itens ou já decidido como scroll → browser controla tudo
-      if (startedInList || scrollLocked) return
-
-      const t = e.touches[0]
-      const dx = t.clientX - startX
-      const dy = t.clientY - startY
-      const adx = Math.abs(dx)
-      const ady = Math.abs(dy)
-
-      if (!flipLocked) {
-        // Zona de ambiguidade — aguarda acumular pixels suficientes para decidir
-        if (adx < 6 && ady < 6) return
-
-        // Para virar página: horizontal precisa ser pelo menos 2x o vertical
-        // Para fazer scroll: vertical maior que horizontal já basta
-        if (ady > adx * 0.5) {
-          // Tem componente vertical relevante → scroll nativo
-          scrollLocked = true
-          return
-        }
-
-        if (adx >= 8 && adx > ady * 2) {
-          // Claramente horizontal (2x mais horizontal que vertical) → flip
-          flipLocked = true
-        } else {
-          return
-        }
-      }
-
-      // Só chega aqui se flipLocked === true
-      // preventDefault() bloqueia o scroll da página apenas nesse caso
-      e.preventDefault()
-    }
-
-    function onTouchEnd(e: TouchEvent) {
-      if (!flipLocked) return
-      const t = e.changedTouches[0]
-      const dx = t.clientX - startX
-
-      // Threshold mínimo de 30px para confirmar o flip (evita flip acidental)
-      if (Math.abs(dx) < 30) { flipLocked = false; return }
-
-      if (dx > 0) {
-        flipRef.current?.flipPrev()
-      } else {
-        flipRef.current?.flipNext()
-      }
-      flipLocked = false
-    }
-
-    // passive:false obrigatório no touchmove para poder chamar preventDefault()
-    wrap.addEventListener('touchstart', onTouchStart, { passive: true })
-    wrap.addEventListener('touchmove',  onTouchMove,  { passive: false })
-    wrap.addEventListener('touchend',   onTouchEnd,   { passive: true })
-
-    return () => {
-      wrap.removeEventListener('touchstart', onTouchStart)
-      wrap.removeEventListener('touchmove',  onTouchMove)
-      wrap.removeEventListener('touchend',   onTouchEnd)
-    }
-  }, [ready])
-
-  function goTo(i: number) { flipRef.current?.turnToPage(i * 2); setCur(i) }
-  function prev() { flipRef.current?.flipPrev() }
-  function next() { flipRef.current?.flipNext() }
+  function goTo(i: number) {
+    setCur(i)
+    if (!isMobile) flipRef.current?.turnToPage(i * 2)
+  }
+  function prev() { if (!isMobile) flipRef.current?.flipPrev() }
+  function next() { if (!isMobile) flipRef.current?.flipNext() }
 
   return (
     <div className="pf-wrap pt-[72px]">
       <style>{CSS}</style>
 
-      {/* ── HERO HEADER ── */}
       <header className="pf-hero">
         <div className="pf-hero-inner">
           <p className="pf-hero-eyebrow">Porto Cabral BC · Gastronomia Flutuante</p>
@@ -759,41 +1059,30 @@ export default function CardapioPage() {
         </div>
       </header>
 
-      {/* ── TABS DE NAVEGAÇÃO ── */}
       <nav className="pf-tabs" aria-label="Seções do cardápio">
         <div className="pf-ti">
           {SECTIONS.map((s, i) => (
-            <button
-              key={s.id}
-              className={`pf-tab${i === cur ? ' on' : ''}`}
-              onClick={() => goTo(i)}
-            >
+            <button key={s.id} className={`pf-tab${i === cur ? ' on' : ''}`} onClick={() => goTo(i)}>
               {s.title}
             </button>
           ))}
         </div>
       </nav>
 
-      {/* ── DECK DO LIVRO ── */}
+      {/* MOBILE: carrossel nativo */}
+      <div className="pf-mobile-carousel">
+        <MobileCarousel cur={cur} onChangeCur={setCur} />
+      </div>
+
+      {/* DESKTOP: page-flip */}
       <div className="pf-deck">
         {!ready && (
-          <div style={{
-            color: 'rgba(201,168,76,.55)',
-            fontFamily: "'Cormorant Garamond',serif",
-            fontStyle: 'italic', fontSize: '1.1rem',
-            padding: '5rem', textAlign: 'center',
-          }}>
+          <div style={{ color:'rgba(201,168,76,.55)', fontFamily:"'Cormorant Garamond',serif", fontStyle:'italic', fontSize:'1.1rem', padding:'5rem', textAlign:'center' }}>
             Abrindo o logbook...
           </div>
         )}
-
-        <div
-          ref={wrapRef}
-          className="pf-book-wrap"
-          style={{ opacity: ready ? 1 : 0, transition: 'opacity .5s' }}
-        >
+        <div ref={wrapRef} className="pf-book-wrap" style={{ opacity: ready ? 1 : 0, transition: 'opacity .5s' }}>
           <div ref={bookRef} />
-          {/* Hint de swipe — mobile only, some após primeiro flip */}
           {showHint && (
             <div className="pf-hint">
               <span className="pf-hint-icon">👆</span>
@@ -801,32 +1090,19 @@ export default function CardapioPage() {
             </div>
           )}
         </div>
-
-        {/* ── CONTROLES ── */}
         <div className="pf-nav">
-          <button className="pf-btn" onClick={prev} disabled={cur === 0} aria-label="Anterior">
-            ‹
-          </button>
+          <button className="pf-btn" onClick={prev} disabled={cur === 0} aria-label="Anterior">‹</button>
           <div className="pf-nav-center">
-            <p className="pf-folio">
-              {SECTIONS[cur]?.title} · Folio {cur + 1} de {total}
-            </p>
+            <p className="pf-folio">{SECTIONS[cur]?.title} · Folio {cur + 1} de {total}</p>
             <div className="pf-dots">
               {SECTIONS.map((_, i) => (
-                <button
-                  key={i}
-                  className={`pf-dot${i === cur ? ' on' : ''}`}
-                  onClick={() => goTo(i)}
-                  aria-label={`Ir para ${SECTIONS[i].title}`}
-                >
+                <button key={i} className={`pf-dot${i === cur ? ' on' : ''}`} onClick={() => goTo(i)} aria-label={`Ir para ${SECTIONS[i].title}`}>
                   <span className="pf-dot-inner" />
                 </button>
               ))}
             </div>
           </div>
-          <button className="pf-btn" onClick={next} disabled={cur === total - 1} aria-label="Próximo">
-            ›
-          </button>
+          <button className="pf-btn" onClick={next} disabled={cur === total - 1} aria-label="Próximo">›</button>
         </div>
       </div>
     </div>
