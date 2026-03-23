@@ -307,8 +307,9 @@ const CSS = `
   position:sticky;top:0;z-index:40;
   scrollbar-width:none;
   box-shadow:0 4px 24px rgba(0,0,0,.45);
-  /* necessario para o ::before com position:absolute funcionar */
-  position:sticky;
+  display:flex;
+  justify-content:center;
+  position:relative;
 }
 .pf-tabs::before{
   content:'';
@@ -321,13 +322,16 @@ const CSS = `
   display:flex;min-width:max-content;
   padding:0 2rem;
   gap:.25rem;
+  /* centraliza as tabs no container */
+  margin:0 auto;
 }
 .pf-tab{
   padding:1.1rem 1.35rem;
   border:none;background:transparent;
   font-family:'Josefin Sans',sans-serif;
   font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(201,168,76,.45);
+  font-weight:700;
+  color:rgba(201,168,76,.6);
   cursor:pointer;
   border-bottom:2px solid transparent;
   white-space:nowrap;
@@ -341,7 +345,7 @@ const CSS = `
 }
 .pf-tab.on{
   color:#c9a84c;
-  font-weight:600;
+  font-weight:800;
   border-bottom-color:#c9a84c;
   background:rgba(201,168,76,.07);
 }

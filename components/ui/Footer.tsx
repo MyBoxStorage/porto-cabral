@@ -24,7 +24,7 @@ export async function Footer() {
   ]
 
   return (
-    <footer className="w-full text-slate-400 bg-pc-navy-night">
+    <footer className="w-full text-slate-400 bg-pc-navy">
       <div className="h-px w-full" style={{ background: 'linear-gradient(90deg,transparent,rgba(212,168,67,0.4),transparent)' }} />
 
       <div className="max-w-7xl mx-auto px-4 md:px-12 pt-14 md:pt-20 pb-10">
