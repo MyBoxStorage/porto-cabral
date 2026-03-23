@@ -653,13 +653,12 @@ export default function CardapioPage() {
     let startX = 0
     let startY = 0
     let isFlipping = false   // true → gesto horizontal capturado
-    let isScrolling = false  // true → gesto vertical, deixa o browser rolar
     let decided = false      // true → direção já decidida
 
     function getPos(e: TouchEvent) {
       const t = e.touches[0] ?? e.changedTouches[0]
       // Coordenada relativa ao wrapper do livro
-      const rect = wrap.getBoundingClientRect()
+      const rect = wrap!.getBoundingClientRect()
       return {
         x: t.clientX - rect.left,
         y: t.clientY - rect.top,
@@ -671,7 +670,6 @@ export default function CardapioPage() {
       startX = t.clientX
       startY = t.clientY
       isFlipping = false
-      isScrolling = false
       decided = false
     }
 
@@ -695,9 +693,7 @@ export default function CardapioPage() {
           // Inicia o drag interativo no ponto de toque
           pf.startUserFlipping(getPos(e))
         } else {
-          // Gesto mais vertical → scroll normal
-          isScrolling = true
-          isFlipping = false
+          // Gesto mais vertical → scroll normal, não faz nada
         }
       }
 
@@ -709,14 +705,13 @@ export default function CardapioPage() {
       // Se isScrolling, não chama preventDefault → browser rola normalmente
     }
 
-    function onTouchEnd(e: TouchEvent) {
+    function onTouchEnd(_e: TouchEvent) {
       const pf = flipRef.current
       if (!pf) return
       if (isFlipping) {
         pf.stopUserFlipping()
       }
       isFlipping = false
-      isScrolling = false
       decided = false
     }
 
