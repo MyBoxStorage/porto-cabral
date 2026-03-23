@@ -18,23 +18,21 @@ export default function PainelLoginPage() {
     setError(null)
     try {
       const result = await signIn('credentials', { email, password, redirect: false })
-      console.log('[painel-login] result:', JSON.stringify(result))
       if (!result) {
         setError('Sem resposta do servidor. Tente novamente.')
         setLoading(false)
         return
       }
       if (result.error) {
-        setError(`Erro: ${result.error}`)
+        setError('Email ou senha invalidos.')
         setLoading(false)
         return
       }
-      // Redireciona para o painel — o Server Component verifica se eh admin
-      router.push(`/${locale}/painel`)
-      router.refresh()
+      // Navegacao completa para garantir que a sessao seja lida pelo servidor
+      window.location.href = `/${locale}/painel`
     } catch (err) {
       console.error('[painel-login] excecao:', err)
-      setError('Erro inesperado. Verifique o console.')
+      setError('Erro inesperado. Tente novamente.')
       setLoading(false)
     }
   }
