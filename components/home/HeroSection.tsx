@@ -1,23 +1,21 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 
-// Vídeo original (desktop — qualidade máxima)
-const VIDEO_DESKTOP = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4'
-
-// Vídeo mobile — mesma fonte, transformado pelo Cloudinary na URL:
-//   w_480        → reduz resolução para 480px de largura
-//   q_auto:low   → qualidade adaptativa baixa (~300–500kbps vs ~4–8Mbps original)
-//   br_400k      → bitrate máximo de 400kbps
-//   f_mp4        → força mp4 com codec h264 compatível
-//   vc_h264      → codec explícito para máxima compatibilidade iOS/Android
-const VIDEO_MOBILE = 'https://res.cloudinary.com/djhevgyvi/video/upload/w_480,q_auto:low,br_400k,f_mp4,vc_h264/v1774204726/BANNER_LENTO_1_idcad3.mp4'
-
 const VIDEOS_DESKTOP = [
-  VIDEO_DESKTOP,
+  'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4',
   'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204724/BANNER_LENTO_2_uzz8l5.mp4',
   'https://res.cloudinary.com/djhevgyvi/video/upload/v1774203528/video_banner_rapido_2_vio4zz.mp4',
 ]
+
+// Cloudinary gera JPEG do frame 2s do vídeo automaticamente via URL transform:
+//   so_2      → frame no segundo 2
+//   w_900     → largura 900px (suficiente para mobile retina)
+//   q_auto    → qualidade adaptativa (~60–80KB)
+//   f_jpg     → formato JPEG
+const HERO_MOBILE_IMG =
+  'https://res.cloudinary.com/djhevgyvi/video/upload/so_2,w_900,q_auto,f_jpg/v1774204726/BANNER_LENTO_1_idcad3.jpg'
 
 const videoStyle: React.CSSProperties = {
   objectFit: 'cover',
@@ -28,37 +26,41 @@ const videoStyle: React.CSSProperties = {
 function HeroVideos() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null)
   const [secondaryReady, setSecondaryReady] = useState(false)
-  const primaryRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    const mobile = window.matchMedia('(max-width: 767px)').matches
-    setIsMobile(mobile)
+    setIsMobile(window.matchMedia('(max-width: 767px)').matches)
   }, [])
 
   const handlePrimaryReady = () => {
     if (!isMobile) requestAnimationFrame(() => setSecondaryReady(true))
   }
 
-  // Fonte correta por device
-  const primarySrc = isMobile === true ? VIDEO_MOBILE : VIDEO_DESKTOP
+  // Mobile: imagem estática extraída do vídeo pelo Cloudinary — zero CPU de decodificação
+  if (isMobile === true) {
+    return (
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={HERO_MOBILE_IMG}
+          alt="Porto Cabral BC — Gastronomia Flutuante"
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: 'cover', objectPosition: 'center', filter: 'brightness(0.5)' }}
+        />
+      </div>
+    )
+  }
 
+  // Desktop: 3 vídeos side-by-side com lazy load nos secundários
   return (
     <div className="absolute inset-0 z-0 flex">
-      {/* Painel 1 — único no mobile (versão leve), 1/3 no desktop */}
       <div className="relative w-full md:flex-1 overflow-hidden">
-        <video
-          ref={primaryRef}
-          key={primarySrc}
-          autoPlay muted loop playsInline preload="auto"
-          className="absolute inset-0 w-full h-full"
-          style={videoStyle}
-          onCanPlayThrough={handlePrimaryReady}
-        >
-          <source src={primarySrc} type="video/mp4" />
+        <video autoPlay muted loop playsInline preload="auto"
+          className="absolute inset-0 w-full h-full" style={videoStyle}
+          onCanPlayThrough={handlePrimaryReady}>
+          <source src={VIDEOS_DESKTOP[0]} type="video/mp4" />
         </video>
       </div>
-
-      {/* Painéis 2 e 3 — apenas desktop, lazy */}
       {isMobile === false && VIDEOS_DESKTOP.slice(1).map((src, idx) => (
         <div key={idx + 1} className="relative flex-1 overflow-hidden">
           <video muted loop playsInline preload="none"
