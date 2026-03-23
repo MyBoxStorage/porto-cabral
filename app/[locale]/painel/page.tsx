@@ -226,8 +226,8 @@ function useContent<T>(key:string) {
     if(!data) return; setSaving(true)
     const r=await fetch(`/api/admin/content/${key}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({value:data})})
     setSaving(false)
-    r.ok?setToast({msg:'Conteúdo salvo com sucesso',type:'ok'}):setToast({msg:'Erro ao salvar',type:'err'})
-    if(r.ok) setDirty(false)
+    if(r.ok){ setToast({msg:'Conteúdo salvo com sucesso',type:'ok'}); setDirty(false) }
+    else setToast({msg:'Erro ao salvar',type:'err'})
   }
   return {data,update,save,saving,dirty,toast,clearToast:()=>setToast(null)}
 }
@@ -744,8 +744,8 @@ function EditVideos() {
       <LangTabs lang={lang} setLang={setLang}/>
       {/* eyebrow + título */}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1.5rem'}}>
-        <div><label style={labelSt}>Eyebrow ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as Record<string,string>)[`eyebrow_${lang}`]??''} onChange={e=>update(p=>({...p,[`eyebrow_${lang}`]:e.target.value}))}/></div>
-        <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as Record<string,string>)[`title_${lang}`]??''} onChange={e=>update(p=>({...p,[`title_${lang}`]:e.target.value}))}/></div>
+        <div><label style={labelSt}>Eyebrow ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as unknown as Record<string,string>)[`eyebrow_${lang}`]??''} onChange={e=>update(p=>({...p,[`eyebrow_${lang}`]:e.target.value}))}/></div>
+        <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as unknown as Record<string,string>)[`title_${lang}`]??''} onChange={e=>update(p=>({...p,[`title_${lang}`]:e.target.value}))}/></div>
       </div>
       {/* info */}
       <div style={{background:'rgba(212,168,67,0.06)',border:'1px solid rgba(212,168,67,0.15)',borderRadius:10,padding:'1rem',marginBottom:'1.5rem',display:'flex',gap:12,alignItems:'flex-start'}}>
