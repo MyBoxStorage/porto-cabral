@@ -16,15 +16,27 @@ export default function PainelLoginPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    const result = await signIn('credentials', { email, password, redirect: false })
-    if (result?.error) {
-      setError('Email ou senha invalidos.')
+    try {
+      const result = await signIn('credentials', { email, password, redirect: false })
+      console.log('[painel-login] result:', JSON.stringify(result))
+      if (!result) {
+        setError('Sem resposta do servidor. Tente novamente.')
+        setLoading(false)
+        return
+      }
+      if (result.error) {
+        setError(`Erro: ${result.error}`)
+        setLoading(false)
+        return
+      }
+      // Redireciona para o painel — o Server Component verifica se eh admin
+      router.push(`/${locale}/painel`)
+      router.refresh()
+    } catch (err) {
+      console.error('[painel-login] excecao:', err)
+      setError('Erro inesperado. Verifique o console.')
       setLoading(false)
-      return
     }
-    // Redireciona para o painel — o Server Component verifica se eh admin
-    router.push(`/${locale}/painel`)
-    router.refresh()
   }
 
   const inputStyle: React.CSSProperties = {
