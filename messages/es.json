@@ -67,6 +67,36 @@
     "error": "Error al enviar la reserva. Intente de nuevo.",
     "lgpd_required": "Acepte los términos LGPD para continuar."
   },
+  "nav": {
+    "home": "Inicio",
+    "cardapio": "Menú",
+    "sobre": "Nosotros",
+    "blog": "Blog",
+    "cliente": "Mi Cuenta"
+  },
+  "testimonials": {
+    "title": "Lo que dicen nuestros tripulantes",
+    "source": "Google Review"
+  },
+  "footer": {
+    "tagline": "La esencia de la sofisticación náutica en Balneário Camboriú. Un viaje sensorial donde el lujo se encuentra con las aguas.",
+    "nav_title": "Navegación",
+    "hours_title": "Horarios",
+    "location_title": "Ubicación",
+    "newsletter_title": "Newsletter",
+    "newsletter_desc": "Invitaciones a eventos exclusivos.",
+    "newsletter_placeholder": "tu@email.com",
+    "newsletter_success": "\u00a1Suscrito con éxito!",
+    "closed": "Cerrado",
+    "copyright": "Todos los derechos reservados",
+    "links": {
+      "home": "Inicio",
+      "cardapio": "Menú",
+      "sobre": "Nosotros",
+      "blog": "Blog",
+      "cliente": "Mi Cuenta"
+    }
+  },
   "auth": {
     "login": "Entrar",
     "signup": "Crear cuenta",

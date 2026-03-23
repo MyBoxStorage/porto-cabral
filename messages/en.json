@@ -67,6 +67,36 @@
     "error": "Error sending reservation. Please try again.",
     "lgpd_required": "Please accept the LGPD terms to continue."
   },
+  "nav": {
+    "home": "Home",
+    "cardapio": "Menu",
+    "sobre": "About",
+    "blog": "Blog",
+    "cliente": "My Account"
+  },
+  "testimonials": {
+    "title": "What our crew members say",
+    "source": "Google Review"
+  },
+  "footer": {
+    "tagline": "The essence of nautical sophistication in Balneário Camboriú. A sensory journey where luxury meets the waters.",
+    "nav_title": "Navigation",
+    "hours_title": "Hours",
+    "location_title": "Location",
+    "newsletter_title": "Newsletter",
+    "newsletter_desc": "Invitations to exclusive events.",
+    "newsletter_placeholder": "your@email.com",
+    "newsletter_success": "Successfully subscribed!",
+    "closed": "Closed",
+    "copyright": "All rights reserved",
+    "links": {
+      "home": "Home",
+      "cardapio": "Menu",
+      "sobre": "About",
+      "blog": "Blog",
+      "cliente": "My Account"
+    }
+  },
   "auth": {
     "login": "Sign In",
     "signup": "Create Account",

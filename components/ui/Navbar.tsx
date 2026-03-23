@@ -1,12 +1,13 @@
 'use client'
 import Link from 'next/link'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useState, useEffect } from 'react'
 import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import { Logo } from '@/components/brand/Logo'
 
 export function Navbar() {
   const locale = useLocale()
+  const t = useTranslations('nav')
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -17,12 +18,11 @@ export function Navbar() {
   }, [])
 
   const links = [
-    { href: `/${locale}`,          label: 'Home' },
-    { href: `/${locale}/cardapio`, label: 'Cardápio' },
-    { href: `/${locale}/sobre`,    label: 'Sobre' },
-    { href: `/${locale}/blog`,     label: 'Blog' },
-    { href: `/${locale}/cliente`,  label: 'Área do Cliente' },
-    { href: `/${locale}/admin`,    label: '⚙️ Admin' },
+    { href: `/${locale}`,          label: t('home') },
+    { href: `/${locale}/cardapio`, label: t('cardapio') },
+    { href: `/${locale}/sobre`,    label: t('sobre') },
+    { href: `/${locale}/blog`,     label: t('blog') },
+    { href: `/${locale}/cliente`,  label: t('cliente') },
   ]
 
   return (

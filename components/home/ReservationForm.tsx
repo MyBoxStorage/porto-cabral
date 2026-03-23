@@ -63,7 +63,7 @@ export function ReservationForm() {
     return (
       <div className="text-center py-12 px-6">
         <div className="text-6xl mb-6">⚓</div>
-        <h3 className="font-display text-3xl text-[#002451] mb-4">{t('success')}</h3>
+        <h3 className="font-display text-3xl text-pc-navy mb-4">{t('success')}</h3>
         <p className="text-slate-600 mb-2">{t('success_body')}</p>
         {reservationId && (
           <p className="text-xs text-slate-400 font-mono mt-2">ID: {reservationId}</p>
@@ -90,25 +90,25 @@ export function ReservationForm() {
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('name')} *</label>
         <input required value={form.name} onChange={e => set('name', e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-[#D4A843] rounded-lg px-4 py-3 outline-none"
+          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
           placeholder={namePlaceholder} />
       </div>
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('whatsapp')} *</label>
         <input required value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-[#D4A843] rounded-lg px-4 py-3 outline-none"
+          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
           placeholder="(00) 00000-0000" type="tel" />
       </div>
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('email')} *</label>
         <input required type="email" value={form.email} onChange={e => set('email', e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-[#D4A843] rounded-lg px-4 py-3 outline-none"
+          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
           placeholder="seu@email.com" />
       </div>
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('party_size')} *</label>
         <select value={form.party_size} onChange={e => set('party_size', Number(e.target.value))}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-[#D4A843] rounded-lg px-4 py-3 outline-none">
+          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none">
           {partyOptions.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
         </select>
       </div>
@@ -117,12 +117,12 @@ export function ReservationForm() {
         <input required type="date" value={form.reservation_date}
           onChange={e => set('reservation_date', e.target.value)}
           min={new Date().toISOString().split('T')[0]}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-[#D4A843] rounded-lg px-4 py-3 outline-none" />
+          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none" />
       </div>
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('time')} *</label>
         <select value={form.reservation_time} onChange={e => set('reservation_time', e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-[#D4A843] rounded-lg px-4 py-3 outline-none">
+          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none">
           {['12:00','13:00','14:00','18:00','19:00','20:00','21:00','22:00'].map(h => (
             <option key={h} value={h}>{h}</option>
           ))}
@@ -138,7 +138,7 @@ export function ReservationForm() {
       <div className="md:col-span-2 flex items-start gap-3 py-2">
         <input type="checkbox" id="lgpd" checked={form.optin_accepted}
           onChange={e => set('optin_accepted', e.target.checked)}
-          className="mt-1 rounded border-slate-300 text-[#D4A843] focus:ring-[#D4A843]" />
+          className="mt-1 rounded border-slate-300 text-pc-gold focus:ring-pc-gold" />
         <label htmlFor="lgpd" className="text-xs text-slate-500 leading-relaxed cursor-pointer">
           {t('lgpd')}
         </label>
@@ -150,7 +150,7 @@ export function ReservationForm() {
       )}
       <div className="md:col-span-2">
         <button type="submit" disabled={loading}
-          className="w-full bg-[#002451] text-white py-4 rounded-lg font-accent font-bold uppercase tracking-[0.2em] hover:bg-[#1a3a6b] transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
+          className="w-full shimmer text-pc-navy py-4 rounded-lg font-accent font-bold uppercase tracking-[0.2em] hover:scale-[1.01] active:scale-[0.98] transition-transform shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:animate-none">
           {loading ? (
             <span className="flex items-center justify-center gap-2">
               <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">

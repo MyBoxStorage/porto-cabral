@@ -43,3 +43,14 @@ yarn-error.log*
 # public uploads (Payload) — mantém .gitkeep
 /public/media/**
 !/public/media/.gitkeep
+
+# arquivos de mídia soltos na raiz (não pertencem ao repositório)
+/*.mp4
+/*.mov
+/*.avi
+/*.webm
+
+# documentos internos / prompts de desenvolvimento
+Comandos.docx
+prompt_*.md
+PROMPT_*.md

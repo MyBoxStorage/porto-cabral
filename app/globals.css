@@ -17,6 +17,7 @@
 :root {
   --pc-navy:       #1a5fa8;
   --pc-navy-deep:  #0e3d72;
+  --pc-navy-night: #001432;
   --pc-navy-mid:   #2a72c0;
   --pc-gold:       #D4A843;
   --pc-gold-light: #FECE65;
@@ -112,4 +113,15 @@ html { scroll-behavior: smooth; }
 .nav-scrolled {
   background: rgba(26,64,107,0.97) !important;
   box-shadow: 0 2px 24px rgba(0,0,0,0.35);
+}
+
+/* ── PRELOADER — bloqueia body antes da hidratação ──
+   A classe 'pc-loading' é injetada no <html> por um script inline
+   no <head>, antes do primeiro paint. Remove-se via JS após o preloader.
+   Usar classe no <html> (não style no <body>) evita hydration mismatch. ── */
+.pc-loading body {
+  visibility: hidden !important;
+}
+.pc-loading {
+  background: #001432 !important;
 }

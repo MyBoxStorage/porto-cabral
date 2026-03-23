@@ -67,6 +67,29 @@
     "error": "Erro ao enviar reserva. Tente novamente.",
     "lgpd_required": "Aceite os termos LGPD para continuar."
   },
+  "testimonials": {
+    "title": "O que dizem nossos tripulantes",
+    "source": "Google Review"
+  },
+  "footer": {
+    "tagline": "A ess\u00eancia da sofistica\u00e7\u00e3o n\u00e1utica em Balne\u00e1rio Cambori\u00fa. Uma jornada sensorial onde o luxo encontra as \u00e1guas.",
+    "nav_title": "Navega\u00e7\u00e3o",
+    "hours_title": "Hor\u00e1rios",
+    "location_title": "Localiza\u00e7\u00e3o",
+    "newsletter_title": "Newsletter",
+    "newsletter_desc": "Convites para eventos exclusivos.",
+    "newsletter_placeholder": "seu@email.com",
+    "newsletter_success": "Inscrito com sucesso!",
+    "closed": "Fechado",
+    "copyright": "Todos os direitos reservados",
+    "links": {
+      "home": "Home",
+      "cardapio": "Card\u00e1pio",
+      "sobre": "Sobre",
+      "blog": "Blog",
+      "cliente": "\u00c1rea do Cliente"
+    }
+  },
   "auth": {
     "login": "Entrar",
     "signup": "Criar conta",
