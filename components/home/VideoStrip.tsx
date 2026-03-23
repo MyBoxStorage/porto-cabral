@@ -20,7 +20,7 @@ const CARD_W  = 320
 const CARD_H  = 480
 const GAP     = 20
 const STEP    = CARD_W + GAP
-const SPEED   = (CARD_W + GAP) / (15 * 60) // 15 segundos por card a 60fps
+const SPEED   = 0.378 // ~15 segundos por card a 60fps (340px / 900frames)
 const DRAG_SENS = 1.2
 
 /* ── VideoCard ── */
@@ -222,7 +222,32 @@ export function VideoStrip({ locale = 'pt' }: Props) {
   const onPointerUp = () => setIsDragging(false)
   const nudge = (dir: 1 | -1) => { offsetRef.current += dir * STEP }
 
-  if (data.items.length === 0) return null
+  if (data.items.length === 0) return (
+    <section style={{
+      background:'linear-gradient(180deg,#002451 0%,#0d2040 60%,#071628 100%)',
+      padding:'5rem 0 6rem', position:'relative',
+    }}>
+      <div style={{ position:'absolute',inset:0,pointerEvents:'none',opacity:.03,
+        backgroundImage:'radial-gradient(rgba(212,168,67,1) 1px,transparent 1px)',
+        backgroundSize:'28px 28px' }}/>
+      <div style={{ position:'absolute',top:0,left:0,right:0,height:'1px',
+        background:'linear-gradient(90deg,transparent,rgba(212,168,67,0.35),transparent)' }}/>
+      <div style={{ textAlign:'center',padding:'0 1.5rem',position:'relative' }}>
+        <p style={{ fontFamily:"'Josefin Sans',sans-serif",fontSize:'0.6rem',fontWeight:700,
+          letterSpacing:'.45em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 .9rem' }}>
+          {(data as unknown as Record<string,string>)[`eyebrow_${L}`] ?? data.eyebrow_pt}
+        </p>
+        <h2 style={{ fontFamily:"'Playfair Display',serif",fontStyle:'italic',
+          fontSize:'clamp(2rem,5vw,3.2rem)',fontWeight:400,color:'#D4A843',margin:'0 0 1.2rem',lineHeight:1.1 }}>
+          {(data as unknown as Record<string,string>)[`title_${L}`] ?? data.title_pt}
+        </h2>
+        <p style={{ fontFamily:"'Josefin Sans',sans-serif",fontSize:'0.7rem',
+          color:'rgba(212,168,67,0.3)',letterSpacing:'.1em',marginTop:'2rem' }}>
+          Em breve
+        </p>
+      </div>
+    </section>
+  )
 
   return (
     <>
