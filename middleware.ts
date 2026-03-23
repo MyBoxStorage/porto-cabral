@@ -13,31 +13,21 @@ const intlMiddleware = createIntlMiddleware({
 export default auth((req) => {
   const { pathname } = req.nextUrl
 
-  // /admin → redireciona para /painel (evita conflito com Payload CMS)
+  // /admin e /[locale]/admin → redireciona para /painel sem locale
   if (pathname === '/admin' || /^\/(pt|en|es)\/admin(\/.*)?$/.test(pathname)) {
-    const localeMatch = pathname.match(/^\/(pt|en|es)/)
-    const locale = localeMatch?.[1] ?? 'pt'
     const rest = pathname.replace(/^\/(pt|en|es)?\/admin/, '') || ''
-    return NextResponse.redirect(new URL(`/${locale}/painel${rest}`, req.nextUrl.origin))
+    return NextResponse.redirect(new URL(`/painel${rest}`, req.nextUrl.origin))
   }
 
-  // Proteção de rotas /painel/* e /[locale]/painel/* (exceto login)
-  const isPainelRoute = /^(\/painel|\/(?:pt|en|es)\/painel)(\/.*)?$/.test(pathname)
-  const isPainelLogin = /^(\/painel\/login|\/(?:pt|en|es)\/painel\/login)$/.test(pathname)
+  // Proteção de /painel/* sem locale (exceto /painel/login)
+  const isPainelRoute = /^\/painel(\/.*)?$/.test(pathname)
+  const isPainelLogin = pathname === '/painel/login'
   if (isPainelRoute && !isPainelLogin) {
-    const localeMatch = pathname.match(/^\/(pt|en|es)/)
-    const locale = localeMatch?.[1] ?? 'pt'
-
-    // Sem sessão → login do painel (tela separada da area do cliente)
     if (!req.auth?.user?.email) {
-      return NextResponse.redirect(
-        new URL(`/${locale}/painel/login`, req.nextUrl.origin)
-      )
+      return NextResponse.redirect(new URL('/painel/login', req.nextUrl.origin))
     }
-
-    // Com sessão mas não é admin → home
     if (!isAdminEmail(req.auth.user.email)) {
-      return NextResponse.redirect(new URL(`/${locale}`, req.nextUrl.origin))
+      return NextResponse.redirect(new URL('/', req.nextUrl.origin))
     }
   }
 

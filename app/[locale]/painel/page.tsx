@@ -1,23 +1,7 @@
 import { redirect } from 'next/navigation'
-import { auth } from '@/auth'
-import { isAdminEmail } from '@/lib/admin'
-import { PainelClient } from './PainelClient'
 
-type Props = { params: Promise<{ locale: string }> }
-
-export default async function PainelPage({ params }: Props) {
-  const { locale } = await params
-  const session = await auth()
-
-  // Sem sessao -> login do painel (tela separada da area do cliente)
-  if (!session?.user?.email) {
-    redirect(`/${locale}/painel/login`)
-  }
-
-  // Logado mas nao eh admin -> home
-  if (!isAdminEmail(session.user.email)) {
-    redirect(`/${locale}`)
-  }
-
-  return <PainelClient />
+// O painel agora vive em /painel (sem locale)
+// Esta rota redireciona qualquer acesso com locale para a rota limpa
+export default function PainelLocaleRedirect() {
+  redirect('/painel')
 }
