@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { IconAncora, IconLeme, IconBussola, IconOnda, IconVela, IconSino } from '@/components/icons'
+import { IconAncora, IconLeme, IconBussola, IconOnda, IconSino } from '@/components/icons'
+import { Logo } from '@/components/brand/Logo'
 
 export function Footer() {
   return (
@@ -14,7 +15,8 @@ export function Footer() {
           {/* ── Brand ── */}
           <div className="md:col-span-1 space-y-5">
             <div className="flex items-center gap-3">
-              <span className="text-[#D4A843]"><IconVela size={26} strokeWidth={1.25} /></span>
+              {/* Logo símbolo 32px + nome */}
+              <Logo variant="symbol" size={32} color="#ffffff" />
               <span className="font-display italic text-xl text-white">
                 Porto Cabral <span className="text-[#D4A843]">BC</span>
               </span>

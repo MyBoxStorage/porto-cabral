@@ -7,6 +7,7 @@ import type { ReactNode } from 'react'
 import { routing } from '@/i18n/routing'
 import { Navbar } from '@/components/ui/Navbar'
 import { Footer } from '@/components/ui/Footer'
+import { PreloaderWrapper } from '@/components/brand/PreloaderWrapper'
 
 import '../globals.css'
 
@@ -48,6 +49,8 @@ export default async function LocaleLayout({ children, params }: Props) {
       </head>
       <body className="min-h-screen bg-[#fef9f1] text-[#1d1c17] antialiased">
         <NextIntlClientProvider messages={messages}>
+          {/* Preloader aparece só no primeiro acesso da sessão */}
+          <PreloaderWrapper />
           <Navbar />
           {children}
           <Footer />

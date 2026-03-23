@@ -1,0 +1,40 @@
+<svg viewBox="30 40 240 260" xmlns="http://www.w3.org/2000/svg" aria-label="Porto Cabral BC">
+  <rect x="30" y="40" width="240" height="260" rx="32" fill="#1a5fa8"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Mastro central -->
+    <line x1="150" y1="280" x2="150" y2="52" stroke-width="2"/>
+    <!-- Bandeirinha -->
+    <path d="M150 52 L162 60 L150 68" stroke-width="1.2"/>
+    <!-- Mastro dianteiro -->
+    <line x1="150" y1="200" x2="115" y2="80" stroke-width="1.6"/>
+    <!-- Mastro traseiro -->
+    <line x1="150" y1="210" x2="178" y2="95" stroke-width="1.5"/>
+    <!-- Verga horizontal -->
+    <line x1="128" y1="72" x2="172" y2="72" stroke-width="1.2"/>
+    <!-- Vela principal -->
+    <path d="M150 68 C152 100 158 140 162 180 C158 178 152 176 148 176 C144 176 138 178 134 180 C138 140 144 100 150 68Z" stroke-width="1.8"/>
+    <path d="M150 80 C153 105 156 135 158 162" stroke-width="0.9"/>
+    <path d="M150 80 C147 105 144 135 142 162" stroke-width="0.9"/>
+    <!-- Vela dianteira -->
+    <path d="M150 80 C140 100 128 130 115 165 C128 155 138 148 150 145Z" stroke-width="1.6"/>
+    <path d="M148 95 C140 118 130 145 120 168" stroke-width="0.85"/>
+    <!-- Vela traseira -->
+    <path d="M150 85 C158 105 168 128 178 155 C165 148 155 142 150 140Z" stroke-width="1.5"/>
+    <path d="M152 100 C160 120 168 142 175 158" stroke-width="0.8"/>
+    <!-- Jib -->
+    <path d="M115 82 C105 110 100 140 98 165 C108 150 114 130 118 110Z" stroke-width="1.2"/>
+    <!-- Gurupés -->
+    <line x1="150" y1="240" x2="90" y2="195" stroke-width="1.4"/>
+    <!-- Cabos -->
+    <path d="M150 68 C135 100 120 130 98 168" stroke-width="0.75"/>
+    <path d="M150 68 C162 95 170 130 178 158" stroke-width="0.75"/>
+    <!-- Casco -->
+    <path d="M90 248 C100 242 118 238 134 236 L134 280 C125 280 108 278 98 272 C92 268 88 258 90 248Z" stroke-width="2"/>
+    <path d="M210 248 C200 242 182 238 166 236 L166 280 C175 280 192 278 202 272 C208 268 212 258 210 248Z" stroke-width="2"/>
+    <path d="M98 272 C115 284 135 288 150 288 C165 288 185 284 202 272" stroke-width="2"/>
+    <path d="M134 236 C138 234 144 233 150 233 C156 233 162 234 166 236" stroke-width="1.8"/>
+    <!-- Linha d'água -->
+    <path d="M76 260 C90 255 108 252 124 252 C138 252 148 254 150 255 C152 254 162 252 176 252 C192 252 210 255 224 260" stroke-width="1.2"/>
+    <path d="M80 266 C96 262 114 260 130 260 C140 260 148 261 150 262 C152 261 160 260 170 260 C186 260 204 262 220 266" stroke-width="0.9"/>
+  </g>
+</svg>

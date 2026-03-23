@@ -9,14 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'pc-navy':     '#002451',
-        'pc-navy-mid': '#1a3a6b',
-        'pc-gold':     '#D4A843',
+        /* ─ Cor primária atualizada para azul royal da marca ─ */
+        'pc-navy':      '#1a5fa8',   // era #002451 — agora azul royal
+        'pc-navy-deep': '#0e3d72',   // versão mais escura (hero overlay, footer bg)
+        'pc-navy-mid':  '#2a72c0',   // versão mais clara (hover states)
+        'pc-gold':      '#D4A843',
         'pc-gold-light':'#FECE65',
-        'pc-surface':  '#fef9f1',
-        'pc-surface-2':'#f2ede5',
-        'pc-text':     '#1d1c17',
-        'pc-muted':    '#43474f',
+        'pc-surface':   '#fef9f1',
+        'pc-surface-2': '#f2ede5',
+        'pc-text':      '#1d1c17',
+        'pc-muted':     '#43474f',
       },
       fontFamily: {
         display: ['"Playfair Display"', 'Georgia', 'serif'],
