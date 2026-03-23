@@ -675,35 +675,36 @@ export default function CardapioPage() {
     }
 
     function onTouchMove(e: TouchEvent) {
-      if (startedInList) return   // dentro da lista: scroll livre, nunca vira
+      // Dentro da lista de itens ou já decidido como scroll → browser controla tudo
+      if (startedInList || scrollLocked) return
+
       const t = e.touches[0]
       const dx = t.clientX - startX
       const dy = t.clientY - startY
       const adx = Math.abs(dx)
       const ady = Math.abs(dy)
 
-      if (scrollLocked) return    // já decidiu que é scroll vertical
-
       if (!flipLocked) {
-        // Ainda na zona de ambiguidade — espera acumular pixels suficientes
+        // Zona de ambiguidade — aguarda acumular pixels suficientes para decidir
         if (adx < 8 && ady < 8) return
 
-        if (ady > adx) {
-          // Predominantemente vertical → scroll nativo
+        if (ady >= adx) {
+          // Predominantemente vertical → marca como scroll, sai sem bloquear nada
           scrollLocked = true
           return
         }
 
         if (adx >= 12) {
-          // Predominantemente horizontal → bloqueia scroll e prepara flip
+          // Predominantemente horizontal → confirma flip
           flipLocked = true
+        } else {
+          return // ainda não chegou no threshold horizontal
         }
       }
 
-      if (flipLocked) {
-        // Impede o browser de fazer scroll enquanto o usuário swipa para virar
-        e.preventDefault()
-      }
+      // Só chega aqui se flipLocked === true
+      // preventDefault() bloqueia o scroll da página apenas nesse caso
+      e.preventDefault()
     }
 
     function onTouchEnd(e: TouchEvent) {
