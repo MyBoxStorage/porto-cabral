@@ -8,15 +8,17 @@ import { IconAncora, IconVela } from '@/components/icons'
 export default function ClienteLoginPage() {
   const locale = useLocale()
   const router = useRouter()
-  const [tab, setTab] = useState<'login' | 'signup'>('login')
-  const [email, setEmail]       = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName]         = useState('')
-  const [whatsapp, setWhatsapp] = useState('')
-  const [optin, setOptin]       = useState(false)
-  const [loading, setLoading]   = useState(false)
-  const [gLoading, setGLoading] = useState(false)
-  const [error, setError]       = useState<string | null>(null)
+  const [tab, setTab]               = useState<'login' | 'signup'>('login')
+  const [email, setEmail]           = useState('')
+  const [password, setPassword]     = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [name, setName]             = useState('')
+  const [whatsapp, setWhatsapp]     = useState('')
+  const [optinTermos, setOptinTermos]       = useState(false)
+  const [optinParceiros, setOptinParceiros] = useState(false)
+  const [loading, setLoading]       = useState(false)
+  const [gLoading, setGLoading]     = useState(false)
+  const [error, setError]           = useState<string | null>(null)
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -33,13 +35,24 @@ export default function ClienteLoginPage() {
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault()
-    if (!optin) { setError('Aceite os termos LGPD para continuar.'); return }
+    if (!optinTermos) {
+      setError('Voce precisa aceitar os Termos de Uso e a Politica de Privacidade para continuar.')
+      return
+    }
+    if (password !== confirmPassword) {
+      setError('As senhas nao coincidem.')
+      return
+    }
     setLoading(true); setError(null)
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, whatsapp, optin_accepted: optin }),
+        body: JSON.stringify({
+          name, email, password, whatsapp,
+          optin_accepted: optinTermos,
+          optin_parceiros: optinParceiros,
+        }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error?.formErrors?.[0] ?? data.error ?? 'Erro.')
@@ -70,6 +83,7 @@ export default function ClienteLoginPage() {
           <p className="text-slate-400 text-sm">Area exclusiva para clientes Porto Cabral BC</p>
         </div>
 
+        {/* Tabs login / cadastro */}
         <div className="flex mb-6 bg-white/5 rounded-xl p-1">
           {(['login','signup'] as const).map(t => (
             <button key={t} onClick={() => { setTab(t); setError(null) }}
@@ -81,28 +95,88 @@ export default function ClienteLoginPage() {
         </div>
 
         <form onSubmit={tab === 'login' ? handleLogin : handleSignup} className="space-y-4">
+
+          {/* Campos exclusivos do cadastro */}
           {tab === 'signup' && (
             <>
-              <input required value={name} onChange={e => setName(e.target.value)} className={inp} placeholder="Nome completo" />
-              <input required value={whatsapp} onChange={e => setWhatsapp(e.target.value)} className={inp} placeholder="WhatsApp (00) 00000-0000" type="tel" />
+              <input required value={name} onChange={e => setName(e.target.value)}
+                className={inp} placeholder="Nome completo" />
+              <input required value={whatsapp} onChange={e => setWhatsapp(e.target.value)}
+                className={inp} placeholder="WhatsApp (00) 00000-0000" type="tel" />
             </>
           )}
-          <input required type="email" value={email} onChange={e => setEmail(e.target.value)} className={inp} placeholder="Email" />
-          <input required type="password" value={password} onChange={e => setPassword(e.target.value)} className={inp} placeholder="Senha (minimo 8 caracteres)" minLength={8} />
+
+          {/* Email e senha (comuns) */}
+          <input required type="email" value={email} onChange={e => setEmail(e.target.value)}
+            className={inp} placeholder="Email" />
+          <input required type="password" value={password} onChange={e => setPassword(e.target.value)}
+            className={inp} placeholder="Senha (minimo 8 caracteres)" minLength={8} />
+
+          {/* Confirmacao de senha — apenas no cadastro */}
           {tab === 'signup' && (
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" checked={optin} onChange={e => setOptin(e.target.checked)}
-                className="mt-1 rounded border-slate-500 text-[#D4A843] focus:ring-[#D4A843]" />
-              <span className="text-xs text-slate-400 leading-relaxed">
-                Concordo com o tratamento dos meus dados conforme a LGPD e desejo receber comunicacoes do Porto Cabral BC.
-              </span>
-            </label>
+            <input required type="password" value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              className={inp} placeholder="Repita a senha" minLength={8} />
           )}
+
+          {/* Opt-ins — apenas no cadastro */}
+          {tab === 'signup' && (
+            <div className="space-y-3 pt-1">
+
+              {/* Opt-in obrigatorio: Termos + Privacidade */}
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="mt-0.5 flex-shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={optinTermos}
+                    onChange={e => setOptinTermos(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-500 text-[#D4A843] focus:ring-[#D4A843] accent-[#D4A843]"
+                  />
+                </div>
+                <span className="text-xs text-slate-300 leading-relaxed">
+                  Li e aceito os{' '}
+                  <a href={`/${locale}/termos`} target="_blank" className="text-[#D4A843] underline underline-offset-2">
+                    Termos de Uso
+                  </a>{' '}
+                  e a{' '}
+                  <a href={`/${locale}/privacidade`} target="_blank" className="text-[#D4A843] underline underline-offset-2">
+                    Politica de Privacidade
+                  </a>
+                  . <span className="text-red-400">*</span>
+                  <span className="block text-slate-500 mt-0.5">Obrigatorio para criar a conta.</span>
+                </span>
+              </label>
+
+              {/* Opt-in opcional: sorteios e parceiros */}
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="mt-0.5 flex-shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={optinParceiros}
+                    onChange={e => setOptinParceiros(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-500 text-[#D4A843] focus:ring-[#D4A843] accent-[#D4A843]"
+                  />
+                </div>
+                <span className="text-xs text-slate-300 leading-relaxed">
+                  <span className="text-[#D4A843] font-semibold">🎁 Quero participar dos sorteios semanais</span>{' '}
+                  e receber ofertas exclusivas dos parceiros do Porto Cabral BC em Balneario Camboriu.
+                  <span className="block text-slate-500 mt-0.5">
+                    Opcional. Autorizo o compartilhamento do meu perfil com parceiros para promocoes personalizadas.
+                    Revogavel a qualquer momento. LGPD — Lei 13.709/2018.
+                  </span>
+                </span>
+              </label>
+
+            </div>
+          )}
+
           {error && <p className="text-red-400 text-sm bg-red-400/10 rounded-lg px-4 py-3">{error}</p>}
+
           <button type="submit" disabled={loading}
             className="w-full bg-[#D4A843] text-[#002451] font-bold font-accent uppercase tracking-widest py-3 rounded-lg hover:brightness-110 transition-all disabled:opacity-60">
             {loading ? 'Aguarde...' : tab === 'login' ? 'Entrar' : 'Criar conta'}
           </button>
+
         </form>
 
         <div className="my-6 flex items-center gap-4">

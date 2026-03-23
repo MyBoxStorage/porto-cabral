@@ -22,6 +22,8 @@ export const customers = pgTable('customers', {
   special_notes: text('special_notes'),
   optin_accepted: boolean('optin_accepted').default(false),
   optin_accepted_at: timestamp('optin_accepted_at', { withTimezone: true }),
+  optin_parceiros: boolean('optin_parceiros').default(false),
+  optin_parceiros_at: timestamp('optin_parceiros_at', { withTimezone: true }),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

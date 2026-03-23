@@ -17,6 +17,7 @@ const SignupSchema = z.object({
   password: z.string().min(8).max(72),
   whatsapp: z.string().min(10).max(20),
   optin_accepted: z.boolean(),
+  optin_parceiros: z.boolean().default(false),
 })
 
 export async function POST(req: Request) {
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { name, email, password, whatsapp, optin_accepted } = parsed.data
+  const { name, email, password, whatsapp, optin_accepted, optin_parceiros } = parsed.data
   const emailLower = email.toLowerCase()
 
   let authUserId: string
@@ -73,6 +74,8 @@ export async function POST(req: Request) {
       whatsapp,
       optin_accepted,
       optin_accepted_at: optin_accepted ? now : undefined,
+      optin_parceiros,
+      optin_parceiros_at: optin_parceiros ? now : undefined,
     })
   } catch (e) {
     console.error('[signup] db', e)
