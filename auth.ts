@@ -1,4 +1,3 @@
-import { SupabaseAdapter } from '@auth/supabase-adapter'
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
@@ -6,21 +5,11 @@ import { createClient } from '@supabase/supabase-js'
 
 import { sendBcEvent } from '@/lib/bcconnect'
 
-const supabaseUrl     = process.env.NEXT_PUBLIC_SUPABASE_URL_PC
-const supabaseServiceKey = process.env.PC_SUPABASE_SERVICE_ROLE_KEY
-const useSupabaseAdapter = Boolean(supabaseUrl && supabaseServiceKey)
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   secret: process.env.PC_NEXTAUTH_SECRET,
-  ...(useSupabaseAdapter
-    ? {
-        adapter: SupabaseAdapter({
-          url: supabaseUrl!,
-          secret: supabaseServiceKey!,
-        }),
-      }
-    : {}),
+  // Sem adapter — usa JWT session (cookie criptografado, sem tabelas no banco)
+  session: { strategy: 'jwt' },
   providers: [
     ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
       ? [
@@ -59,19 +48,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    // Persiste o id no token JWT (fluxo sem adapter / Credentials)
+    // Persiste id e email no token JWT
     async jwt({ token, user }) {
-      if (user?.id) {
-        token.id = user.id
-      }
+      if (user?.id)    token.id    = user.id
+      if (user?.email) token.email = user.email
       return token
     },
-    // Expoe o id na sessao — funciona tanto com adapter (user) quanto sem (token)
-    async session({ session, token, user }) {
-      const id = user?.id ?? (token?.id as string | undefined)
-      if (id) {
-        session.user.id = id
-      }
+    // Expoe id e email na sessao a partir do token
+    async session({ session, token }) {
+      if (token?.id)    session.user.id    = token.id as string
+      if (token?.email) session.user.email = token.email as string
       return session
     },
     async signIn({ user }) {
