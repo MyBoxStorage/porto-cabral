@@ -41,7 +41,7 @@ export function HistorySection() {
         {/* Imagem / placeholder */}
         <div className="w-full lg:w-2/5 flex-shrink-0 flex justify-center">
           <div className="relative rounded-2xl overflow-hidden w-full max-w-[280px] md:max-w-[380px]"
-            style={{ aspectRatio: '4/5', background: 'linear-gradient(135deg,#0a1e3d 0%,#1a3a6b 50%,#0d2545 100%)' }}>
+            style={{ aspectRatio: '4/5', background: 'linear-gradient(135deg,#005fa3 0%,#0074bf 50%,#0087d9 100%)' }}>
             {data.image_url ? (
               <Image src={data.image_url} alt="Nossa História" fill className="object-cover"
                 style={{ filter: 'brightness(0.85)' }} sizes="(max-width: 768px) 100vw, 380px" />

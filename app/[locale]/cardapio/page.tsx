@@ -216,81 +216,140 @@ const CSS = `
 
 /* ── HERO HEADER ── */
 .pf-hero{
-  background:linear-gradient(180deg,#060f1e 0%,#0a1a35 55%,#0d2040 100%);
-  padding:5rem 1.5rem 3rem;
+  background:linear-gradient(170deg,#030c1a 0%,#071628 45%,#0d2040 80%,#0a1830 100%);
+  padding:7rem 1.5rem 5rem;
   text-align:center;
   position:relative;
   overflow:hidden;
-  border-bottom:1px solid rgba(201,168,76,.12);
 }
+/* Pontos dourados de fundo */
 .pf-hero::before{
   content:'';position:absolute;inset:0;pointer-events:none;
   background-image:
-    radial-gradient(circle at 18% 50%,rgba(201,168,76,.05) 0%,transparent 45%),
-    radial-gradient(circle at 82% 50%,rgba(201,168,76,.05) 0%,transparent 45%),
-    radial-gradient(circle,rgba(201,168,76,.038) 1px,transparent 1px);
-  background-size:auto,auto,28px 28px;
+    radial-gradient(circle at 15% 50%,rgba(201,168,76,.06) 0%,transparent 50%),
+    radial-gradient(circle at 85% 50%,rgba(201,168,76,.06) 0%,transparent 50%),
+    radial-gradient(circle at 50% 0%,rgba(26,95,168,.35) 0%,transparent 60%),
+    radial-gradient(circle,rgba(201,168,76,.03) 1px,transparent 1px);
+  background-size:auto,auto,auto,28px 28px;
+}
+/* Linha dourada na base do hero fazendo transição com as tabs */
+.pf-hero::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent 0%,rgba(201,168,76,.5) 30%,rgba(201,168,76,.8) 50%,rgba(201,168,76,.5) 70%,transparent 100%);
 }
 .pf-hero-inner{position:relative;z-index:1}
 .pf-hero-eyebrow{
   font-family:'Josefin Sans',sans-serif;
-  font-size:.57rem;letter-spacing:.58em;text-transform:uppercase;
-  color:rgba(201,168,76,.52);
-  margin:0 0 1.2rem;
-  display:flex;align-items:center;justify-content:center;gap:.9rem;
+  font-size:.52rem;letter-spacing:.6em;text-transform:uppercase;
+  color:rgba(201,168,76,.6);
+  margin:0 0 1.8rem;
+  display:flex;align-items:center;justify-content:center;gap:1.2rem;
 }
 .pf-hero-eyebrow::before,.pf-hero-eyebrow::after{
-  content:'';display:block;height:1px;width:2.2rem;
-  background:linear-gradient(90deg,transparent,rgba(201,168,76,.38),transparent);
+  content:'';display:block;height:1px;width:3.5rem;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.5));
+}
+.pf-hero-eyebrow::after{
+  background:linear-gradient(90deg,rgba(201,168,76,.5),transparent);
 }
 .pf-hero-title{
   font-family:'Playfair Display',serif;
-  font-size:clamp(3.5rem,9vw,6.5rem);
+  font-size:clamp(4rem,10vw,7.5rem);
   font-style:italic;font-weight:400;
   color:#c9a84c;
-  line-height:1;letter-spacing:-.01em;
-  margin:0 0 1rem;
+  line-height:.95;letter-spacing:-.02em;
+  margin:0 0 1.6rem;
+  text-shadow:0 4px 40px rgba(201,168,76,.15);
 }
 .pf-hero-rule{
-  display:flex;align-items:center;justify-content:center;gap:.9rem;
-  max-width:260px;margin:0 auto .9rem;
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+  max-width:320px;margin:0 auto 1.4rem;
 }
 .pf-hero-rule-line{
   flex:1;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(201,168,76,.45),transparent);
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.5));
+}
+.pf-hero-rule-line:last-child{
+  background:linear-gradient(270deg,transparent,rgba(201,168,76,.5));
 }
 .pf-hero-rule-glyph{
   font-family:'Cormorant Garamond',serif;
-  color:rgba(201,168,76,.65);font-size:.95rem;letter-spacing:.1em;
+  color:rgba(201,168,76,.75);font-size:1rem;letter-spacing:.15em;
 }
 .pf-hero-sub{
   font-family:'Cormorant Garamond',serif;
-  font-size:1.05rem;font-style:italic;
-  color:rgba(255,255,255,.35);
+  font-size:1.15rem;font-style:italic;
+  color:rgba(255,255,255,.38);
+  letter-spacing:.03em;
+}
+/* Seta scroll-down */
+.pf-hero-scroll{
+  margin-top:2.5rem;
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+}
+.pf-hero-scroll-line{
+  width:1px;height:2.5rem;
+  background:linear-gradient(180deg,rgba(201,168,76,.5),transparent);
+}
+.pf-hero-scroll-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(201,168,76,.55);
 }
 
 /* ── TABS ── */
 .pf-tabs{
-  background:rgba(242,229,196,.98);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(160,110,30,.18);
+  background:linear-gradient(180deg,#071628 0%,#0a1f3a 100%);
+  border-bottom:1px solid rgba(201,168,76,.2);
   overflow-x:auto;
   position:sticky;top:0;z-index:40;
   scrollbar-width:none;
+  box-shadow:0 4px 24px rgba(0,0,0,.45);
+  /* necessario para o ::before com position:absolute funcionar */
+  position:sticky;
+}
+.pf-tabs::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent);
+  pointer-events:none;
 }
 .pf-tabs::-webkit-scrollbar{display:none}
-.pf-ti{display:flex;min-width:max-content;padding:0 1.2rem}
-.pf-tab{
-  padding:.7rem 1rem;border:none;background:transparent;
-  font-family:'Josefin Sans',sans-serif;
-  font-size:.58rem;letter-spacing:.13em;text-transform:uppercase;
-  color:#a07840;cursor:pointer;
-  border-bottom:2.5px solid transparent;
-  white-space:nowrap;transition:color .18s,border-color .18s;
-  min-height:44px;display:flex;align-items:center;
+.pf-ti{
+  display:flex;min-width:max-content;
+  padding:0 2rem;
+  gap:.25rem;
 }
-.pf-tab:hover{color:#5c3200}
-.pf-tab.on{color:#5c3200;font-weight:600;border-bottom-color:#c9a84c}
+.pf-tab{
+  padding:1.1rem 1.35rem;
+  border:none;background:transparent;
+  font-family:'Josefin Sans',sans-serif;
+  font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(201,168,76,.45);
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  white-space:nowrap;
+  transition:color .2s,border-color .2s,background .2s;
+  min-height:52px;display:flex;align-items:center;
+  position:relative;
+}
+.pf-tab:hover{
+  color:rgba(201,168,76,.8);
+  background:rgba(201,168,76,.05);
+}
+.pf-tab.on{
+  color:#c9a84c;
+  font-weight:600;
+  border-bottom-color:#c9a84c;
+  background:rgba(201,168,76,.07);
+}
+/* separador vertical entre tabs */
+.pf-tab+.pf-tab::before{
+  content:'';
+  position:absolute;left:0;top:30%;bottom:30%;
+  width:1px;
+  background:rgba(201,168,76,.1);
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DESKTOP — page-flip (sem alteração)
@@ -565,6 +624,20 @@ const CSS = `
   /* mostra carrossel, oculta page-flip */
   .pf-mobile-carousel { display: block; }
   .pf-deck { display: none !important; }
+
+  /* Hero mobile */
+  .pf-hero { padding: 5rem 1.2rem 3.5rem; }
+  .pf-hero-title { font-size: clamp(3.2rem,14vw,5rem); }
+  .pf-hero-scroll { margin-top: 1.8rem; }
+
+  /* Tabs mobile — menores mas ainda legíveis */
+  .pf-ti { padding: 0 1rem; gap: 0; }
+  .pf-tab {
+    padding: .9rem .85rem;
+    font-size: .5rem;
+    letter-spacing: .16em;
+    min-height: 46px;
+  }
 
   /* ── WRAPPER DO CARROSSEL ── */
   .mc-wrap {
@@ -1085,6 +1158,10 @@ export default function CardapioPage() {
             <span className="pf-hero-rule-line" />
           </div>
           <p className="pf-hero-sub">Relatos de Mar e Sal — Balneário Camboriú</p>
+          <div className="pf-hero-scroll">
+            <div className="pf-hero-scroll-line" />
+            <div className="pf-hero-scroll-dot" />
+          </div>
         </div>
       </header>
 

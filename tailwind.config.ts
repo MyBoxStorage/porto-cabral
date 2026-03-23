@@ -9,11 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* ─ Cor primária atualizada para azul royal da marca ─ */
-        'pc-navy':       '#1a5fa8',   // azul royal
-        'pc-navy-deep':  '#0e3d72',   // versão mais escura (hero overlay)
-        'pc-navy-night': '#001432',   // footer — azul noturno profundo
-        'pc-navy-mid':   '#2a72c0',   // versão mais clara (hover states)
+        /* ─ Cor primária: azul real da marca #0074bf ─ */
+        'pc-navy':       '#0074bf',   // azul real da marca
+        'pc-navy-deep':  '#005fa3',   // versão mais escura
+        'pc-navy-night': '#001432',   // footer — azul noturno profundo (mantido)
+        'pc-navy-mid':   '#0087d9',   // versão mais clara (hover states)
         'pc-gold':       '#D4A843',
         'pc-gold-light': '#FECE65',
         'pc-surface':    '#fef9f1',

@@ -12,13 +12,13 @@
 
 /* ═══════════════════════════════════════════════
    Porto Cabral BC — Design System
-   Cor primária: #1a5fa8 (azul royal da marca)
+   Cor primária: #0074bf (azul real da marca)
    ═══════════════════════════════════════════════ */
 :root {
-  --pc-navy:       #1a5fa8;
-  --pc-navy-deep:  #0e3d72;
+  --pc-navy:       #0074bf;
+  --pc-navy-deep:  #005fa3;
   --pc-navy-night: #001432;
-  --pc-navy-mid:   #2a72c0;
+  --pc-navy-mid:   #0087d9;
   --pc-gold:       #D4A843;
   --pc-gold-light: #FECE65;
   --pc-gold-dim:   rgba(212,168,67,0.18);
@@ -112,14 +112,14 @@ body { }
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar       { width: 5px; }
-::-webkit-scrollbar-track { background: #1a5fa8; }
+::-webkit-scrollbar-track { background: #0074bf; }
 ::-webkit-scrollbar-thumb { background: var(--pc-gold); border-radius: 3px; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ── NAVBAR SCROLLED STATE ── */
 .nav-scrolled {
-  background: rgba(26,64,107,0.97) !important;
+  background: rgba(0,95,163,0.97) !important;
   box-shadow: 0 2px 24px rgba(0,0,0,0.35);
 }
 

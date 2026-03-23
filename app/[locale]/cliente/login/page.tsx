@@ -73,7 +73,7 @@ export default function ClienteLoginPage() {
   const inp = "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#D4A843]"
 
   return (
-    <div className="min-h-screen bg-[#002451] flex items-center justify-center px-4 py-16">
+    <div className="min-h-screen bg-[#0074bf] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4 text-[#D4A843]">

@@ -7,7 +7,7 @@ export default function BlogPage() {
 
   return (
     <main className="min-h-screen bg-[#fef9f1] pt-[72px] overflow-x-hidden">
-      <section className="bg-[#002451] py-16 md:py-24 px-4 text-center">
+      <section className="bg-[#0074bf] py-16 md:py-24 px-4 text-center">
         <span className="font-accent text-[#D4A843] tracking-[0.3em] uppercase text-sm block mb-4">
           Histórias do Porto
         </span>
@@ -20,12 +20,12 @@ export default function BlogPage() {
           {posts.map((post) => (
             <article key={post.slug}
               className="bg-white rounded-xl overflow-hidden shadow-sm border border-[#f2ede5] hover:border-[#D4A843]/30 hover:shadow-md transition-all group">
-              <div className="bg-[#1a3a6b] h-48 flex items-center justify-center">
+              <div className="bg-[#005fa3] h-48 flex items-center justify-center">
                 <span className="text-[#D4A843] text-5xl">⚓</span>
               </div>
               <div className="p-6 space-y-3">
                 <span className="text-xs font-accent text-[#795900] uppercase tracking-widest">{post.category}</span>
-                <h2 className="font-display text-xl text-[#002451] group-hover:text-[#1a3a6b] transition-colors leading-snug">
+                <h2 className="font-display text-xl text-[#0074bf] group-hover:text-[#005fa3] transition-colors leading-snug">
                   {post.title}
                 </h2>
                 <p className="text-[#43474f] text-sm leading-relaxed line-clamp-3">{post.excerpt}</p>
