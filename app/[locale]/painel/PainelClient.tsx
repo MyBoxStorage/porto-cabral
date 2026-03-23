@@ -561,6 +561,23 @@ function EditHero() {
           <div><label style={labelSt}>Botão principal — Reserva</label><input className="pc-input" style={inp} value={data[`cta_reserva_${lang}`]??''} onChange={e=>update(p=>({...p,[`cta_reserva_${lang}`]:e.target.value}))}/></div>
           <div><label style={labelSt}>Botão secundário — Cardápio</label><input className="pc-input" style={inp} value={data[`cta_cardapio_${lang}`]??''} onChange={e=>update(p=>({...p,[`cta_cardapio_${lang}`]:e.target.value}))}/></div>
         </div>
+
+        {/* ── Vídeos do Hero ── */}
+        <div style={{borderTop:'1px solid rgba(212,168,67,0.12)',paddingTop:'1.25rem',marginTop:'.25rem'}}>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Vídeos do Hero</p>
+          <div style={{background:'rgba(212,168,67,0.05)',border:'1px solid rgba(212,168,67,0.12)',borderRadius:8,padding:'0.75rem 1rem',marginBottom:'1.25rem'}}>
+            <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.4)',letterSpacing:'.05em',margin:0,lineHeight:1.7}}>
+              🖥 <strong style={{color:GOLD}}>Desktop:</strong> 3 vídeos em formato portrait lado a lado · 📱 <strong style={{color:GOLD}}>Mobile:</strong> 1 vídeo otimizado
+            </p>
+          </div>
+          <div style={{display:'grid',gap:'1rem'}}>
+            <div><label style={labelSt}>🖥 Desktop — Vídeo 1 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_1??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_1:e.target.value}))}/></div>
+            <div><label style={labelSt}>🖥 Desktop — Vídeo 2 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_2??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_2:e.target.value}))}/></div>
+            <div><label style={labelSt}>🖥 Desktop — Vídeo 3 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_3??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_3:e.target.value}))}/></div>
+            <div><label style={labelSt}>📱 Mobile — Vídeo único (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_mobile??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_mobile:e.target.value}))}/></div>
+          </div>
+        </div>
+
       </div>
     </EdCard>
   )
