@@ -28,8 +28,8 @@ function HeroVideos() {
 
   return (
     <div className="absolute inset-0 z-0 flex">
-      {/* Painel 1 — carrega imediatamente */}
-      <div className="relative flex-1 overflow-hidden">
+      {/* Painel 1 — ocupa 100% no mobile, 1/3 no desktop */}
+      <div className="relative w-full md:flex-1 overflow-hidden">
         <video autoPlay muted loop playsInline preload="auto"
           className="absolute inset-0 w-full h-full" style={videoStyle}
           onCanPlayThrough={handlePrimaryReady}>
@@ -71,7 +71,7 @@ export function HeroSection() {
       }} />
 
       {/* Conteúdo */}
-      <div className="relative z-20 text-center px-6 max-w-3xl mx-auto">
+      <div className="relative z-20 text-center px-4 sm:px-6 max-w-3xl mx-auto w-full">
         <p className="font-accent text-[10px] tracking-[0.5em] uppercase mb-6"
           style={{ color: 'rgba(212,168,67,0.8)' }}>
           {t('hero_eyebrow')}
@@ -87,13 +87,13 @@ export function HeroSection() {
           <span className="font-display text-pc-gold" style={{ fontSize: '0.9rem', letterSpacing: '0.2em' }}>✦</span>
           <span className="flex-1 h-px" style={{ background: 'linear-gradient(90deg,rgba(212,168,67,0.55),transparent)' }} />
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full px-4 sm:px-0">
           <a href="#reserva"
-            className="shimmer px-10 py-4 font-accent font-semibold text-xs tracking-[0.22em] uppercase text-pc-navy rounded shadow-2xl hover:scale-105 active:scale-95 transition-transform duration-200">
+            className="shimmer w-full sm:w-auto px-8 md:px-10 py-4 font-accent font-semibold text-xs tracking-[0.22em] uppercase text-pc-navy rounded shadow-2xl hover:scale-105 active:scale-95 transition-transform duration-200 text-center min-h-[48px] flex items-center justify-center">
             {t('cta_reserva')}
           </a>
           <a href={`/${locale}/cardapio`}
-            className="px-10 py-4 font-accent font-semibold text-xs tracking-[0.22em] uppercase text-white rounded transition-all duration-200 hover:bg-white/15"
+            className="w-full sm:w-auto px-8 md:px-10 py-4 font-accent font-semibold text-xs tracking-[0.22em] uppercase text-white rounded transition-all duration-200 hover:bg-white/15 text-center min-h-[48px] flex items-center justify-center"
             style={{ border: '1px solid rgba(255,255,255,0.45)', backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.07)' }}>
             {t('cta_cardapio')}
           </a>

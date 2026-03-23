@@ -83,32 +83,32 @@ export function ReservationForm() {
 
   return (
     <form onSubmit={handleSubmit}
-      className={`grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 md:p-12 rounded-2xl shadow-xl transition-all
+      className={`grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 bg-white p-6 md:p-12 rounded-2xl shadow-xl transition-all
         ${shake ? 'animate-[shake_0.5s_ease-in-out]' : ''}`}>
       <style>{`@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}`}</style>
 
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('name')} *</label>
         <input required value={form.name} onChange={e => set('name', e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
+          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
           placeholder={namePlaceholder} />
       </div>
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('whatsapp')} *</label>
         <input required value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
+          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
           placeholder="(00) 00000-0000" type="tel" />
       </div>
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('email')} *</label>
         <input required type="email" value={form.email} onChange={e => set('email', e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
+          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
           placeholder="seu@email.com" />
       </div>
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('party_size')} *</label>
         <select value={form.party_size} onChange={e => set('party_size', Number(e.target.value))}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none">
+          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none">
           {partyOptions.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
         </select>
       </div>
@@ -117,12 +117,12 @@ export function ReservationForm() {
         <input required type="date" value={form.reservation_date}
           onChange={e => set('reservation_date', e.target.value)}
           min={new Date().toISOString().split('T')[0]}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none" />
+          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none" />
       </div>
       <div className="space-y-2">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('time')} *</label>
         <select value={form.reservation_time} onChange={e => set('reservation_time', e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none">
+          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none">
           {['12:00','13:00','14:00','18:00','19:00','20:00','21:00','22:00'].map(h => (
             <option key={h} value={h}>{h}</option>
           ))}

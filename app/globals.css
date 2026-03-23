@@ -28,7 +28,9 @@
   --pc-muted:      #43474f;
 }
 
-html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { overflow-x: hidden; }
 
 /* ── FONTS ── */
 .font-display { font-family: 'Playfair Display', Georgia, serif; }

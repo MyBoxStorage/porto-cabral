@@ -27,7 +27,7 @@ export async function Footer() {
     <footer className="w-full text-slate-400 bg-pc-navy-night">
       <div className="h-px w-full" style={{ background: 'linear-gradient(90deg,transparent,rgba(212,168,67,0.4),transparent)' }} />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-20 pb-10">
+      <div className="max-w-7xl mx-auto px-4 md:px-12 pt-14 md:pt-20 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
 
           {/* ── Brand ── */}
@@ -108,7 +108,7 @@ export async function Footer() {
         {/* ── Bottom bar ── */}
         <div className="mt-16 pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
           style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <p className="font-accent text-[10px] tracking-[0.2em] uppercase text-slate-600">
+          <p className="font-accent text-[11px] md:text-[10px] tracking-[0.2em] uppercase text-slate-600">
             © {new Date().getFullYear()} Porto Cabral BC · {t('copyright')}
           </p>
           <div className="flex items-center gap-4 text-pc-gold/25">

@@ -1,4 +1,3 @@
-'use client'
 import { HeroSection }     from '@/components/home/HeroSection'
 import { DishesSection }   from '@/components/home/DishesSection'
 import { HistorySection }  from '@/components/home/HistorySection'
@@ -6,13 +5,13 @@ import { VideoStrip }      from '@/components/home/VideoStrip'
 import { Testimonials }    from '@/components/home/Testimonials'
 import { LocationSection } from '@/components/home/LocationSection'
 import { ReservaSection }  from '@/components/home/ReservaSection'
-import { useLocale }       from 'next-intl'
+import { getLocale }       from 'next-intl/server'
 
-export default function HomePage() {
-  const locale = useLocale() as 'pt' | 'en' | 'es'
+export default async function HomePage() {
+  const locale = (await getLocale()) as 'pt' | 'en' | 'es'
 
   return (
-    <main>
+    <main className="overflow-x-hidden">
       <HeroSection />
       <DishesSection />
       <HistorySection />

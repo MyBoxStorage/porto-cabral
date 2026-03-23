@@ -34,12 +34,12 @@ export function LocationSection() {
   const d = (obj: Record<string, unknown>, base: string) => localeField(obj, base, locale)
 
   return (
-    <section className="py-28 px-6 md:px-12 bg-pc-surface">
-      <div ref={ref} className="fade-up max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-14">
+    <section className="py-16 md:py-28 px-4 md:px-12 bg-pc-surface overflow-x-hidden">
+      <div ref={ref} className="fade-up max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-10 md:gap-14">
 
         {/* Google Maps embed — Molhe da Barra Sul */}
         <div className="w-full lg:w-1/2 rounded-2xl overflow-hidden relative shadow-2xl"
-          style={{ aspectRatio: '16/9' }}>
+          style={{ aspectRatio: '16/9', minHeight: '220px' }}>
           <iframe
             title="Porto Cabral BC — Molhe da Barra Sul"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3543.6!2d-48.6368!3d-26.9982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d8e5b1b1b1b1b1%3A0x0!2sMolhe+da+Barra+Sul%2C+Balne%C3%A1rio+Cambori%C3%BA!5e0!3m2!1spt!2sbr!4v1700000000000!5m2!1spt!2sbr"

@@ -6,16 +6,16 @@ export default function BlogPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-[#fef9f1] pt-[72px]">
-      <section className="bg-[#002451] py-24 px-6 text-center">
+    <main className="min-h-screen bg-[#fef9f1] pt-[72px] overflow-x-hidden">
+      <section className="bg-[#002451] py-16 md:py-24 px-4 text-center">
         <span className="font-accent text-[#D4A843] tracking-[0.3em] uppercase text-sm block mb-4">
           Histórias do Porto
         </span>
-        <h1 className="font-display text-4xl md:text-6xl text-white mb-4">Blog</h1>
+        <h1 className="font-display text-3xl md:text-6xl text-white mb-4">Blog</h1>
         <div className="w-24 h-1 bg-[#D4A843] mx-auto" />
       </section>
 
-      <section className="py-16 px-6 max-w-5xl mx-auto">
+      <section className="py-12 md:py-16 px-4 md:px-6 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {posts.map((post) => (
             <article key={post.slug}

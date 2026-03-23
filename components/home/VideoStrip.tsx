@@ -16,11 +16,8 @@ const FALLBACK: VideosData = {
   items: [],
 }
 
-const CARD_W  = 320
-const CARD_H  = 480
-const GAP     = 20
-const STEP    = CARD_W + GAP
-const SPEED   = 0.09 // ~60 segundos por card a 60fps — bem lento e contemplativo
+const GAP       = 20
+const SPEED     = 0.09 // ~60 segundos por card a 60fps — bem lento e contemplativo
 const DRAG_SENS = 1.2
 
 /* ── VideoCard ── */
@@ -176,6 +173,21 @@ export function VideoStrip({ locale = 'pt' }: Props) {
   const [modalUrl, setModalUrl]     = useState<string | null>(null)
   const [paused, setPaused]         = useState(false)
   const [isDragging, setIsDragging] = useState(false)
+  const [cardW, setCardW]           = useState(320)
+  const [cardH, setCardH]           = useState(480)
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth
+      setCardW(w < 480 ? 240 : w < 768 ? 280 : 320)
+      setCardH(w < 480 ? 360 : w < 768 ? 420 : 480)
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+
+  const STEP = cardW + GAP
 
   const trackRef   = useRef<HTMLDivElement>(null)
   const offsetRef  = useRef(0)
@@ -200,7 +212,7 @@ export function VideoStrip({ locale = 'pt' }: Props) {
     }
     trackRef.current.style.transform = `translateX(${-offsetRef.current}px)`
     rafRef.current = requestAnimationFrame(animate)
-  }, [paused, isDragging, data.items.length])
+  }, [paused, isDragging, data.items.length, STEP])
 
   useEffect(() => {
     if (data.items.length === 0) return
@@ -293,9 +305,9 @@ export function VideoStrip({ locale = 'pt' }: Props) {
           onPointerUp={onPointerUp} onPointerLeave={onPointerUp}
           onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
           <div ref={trackRef} style={{ display:'flex',gap:GAP,width:totalW,willChange:'transform',
-            paddingLeft: 40, boxSizing:'content-box' }}>
+            paddingLeft: cardW < 280 ? 16 : 40, boxSizing:'content-box' }}>
             {items.map((item, idx) => (
-              <VideoCard key={idx} item={item} w={CARD_W} h={CARD_H} onOpen={() => setModalUrl(item.url)} />
+              <VideoCard key={idx} item={item} w={cardW} h={cardH} onOpen={() => setModalUrl(item.url)} />
             ))}
           </div>
         </div>

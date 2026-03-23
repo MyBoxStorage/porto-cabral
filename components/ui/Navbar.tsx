@@ -79,7 +79,7 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           <LanguageSelector />
           {/* Mobile hamburger */}
-          <button className="md:hidden text-white p-1" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+          <button className="md:hidden text-white min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                 d={menuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
@@ -94,7 +94,7 @@ export function Navbar() {
           style={{ background: 'rgba(26,64,107,0.97)', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
           {links.map((l) => (
             <Link key={l.href} href={l.href} onClick={() => setMenuOpen(false)}
-              className="font-accent text-xs tracking-[0.15em] uppercase text-white/70 hover:text-[#D4A843] transition-colors py-3 border-b border-white/5">
+              className="font-accent text-xs tracking-[0.15em] uppercase text-white/70 hover:text-[#D4A843] transition-colors min-h-[44px] flex items-center border-b border-white/5">
               {l.label}
             </Link>
           ))}

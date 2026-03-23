@@ -27,7 +27,7 @@ export function ReservaSection() {
   const ref = useFadeUp()
 
   return (
-    <section id="reserva" className="py-28 px-6 relative overflow-hidden bg-pc-surface-2">
+    <section id="reserva" className="py-16 md:py-28 px-4 md:px-6 relative overflow-hidden bg-pc-surface-2">
       <div className="absolute -left-12 bottom-0 pointer-events-none text-pc-navy/[0.04]">
         <IconAncora size={340} strokeWidth={0.4} />
       </div>

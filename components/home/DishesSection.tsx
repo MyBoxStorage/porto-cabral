@@ -49,11 +49,11 @@ export function DishesSection() {
   const d = (obj: Record<string, unknown>, base: string) => localeField(obj, base, locale)
 
   return (
-    <section className="pt-28 pb-16 px-6 md:px-12 bg-pc-surface">
+    <section className="pt-16 md:pt-28 pb-10 md:pb-16 px-4 md:px-12 bg-pc-surface overflow-x-hidden">
       <div ref={ref} className="fade-up max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <p className="eyebrow mb-3">{t('dishes_eyebrow')}</p>
-          <h2 className="font-display text-5xl md:text-6xl text-pc-navy mb-5">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-pc-navy mb-5">
             {d(data as Record<string, unknown>, 'section_title')}
           </h2>
           <div className="w-16 h-[2px] bg-pc-gold mx-auto" />
@@ -75,8 +75,8 @@ export function DishesSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-pc-navy-deep via-pc-navy-deep/30 to-transparent z-10" />
               <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-pc-gold/50 to-transparent z-20
                 scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-center" />
-              <div className="absolute inset-0 z-20 flex flex-col justify-end p-8">
-                <span className="font-accent text-pc-gold/30 text-5xl font-bold leading-none mb-3 select-none">
+              <div className="absolute inset-0 z-20 flex flex-col justify-end p-5 md:p-8">
+                <span className="font-accent text-pc-gold/30 text-4xl md:text-5xl font-bold leading-none mb-2 md:mb-3 select-none">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <h4 className="font-display italic text-2xl text-pc-gold mb-2 leading-tight">

@@ -257,7 +257,6 @@ const CSS = `
   color:rgba(255,255,255,.35);
 }
 
-/* ── STICKY TABS ── */
 .pf-tabs{
   background:rgba(242,229,196,.98);
   backdrop-filter:blur(12px);
@@ -275,6 +274,7 @@ const CSS = `
   color:#a07840;cursor:pointer;
   border-bottom:2.5px solid transparent;
   white-space:nowrap;transition:color .18s,border-color .18s;
+  min-height:44px;display:flex;align-items:center;
 }
 .pf-tab:hover{color:#5c3200}
 .pf-tab.on{color:#5c3200;font-weight:600;border-bottom-color:#c9a84c}
@@ -503,13 +503,18 @@ const CSS = `
 .pf-btn:hover:not(:disabled){background:rgba(201,168,76,.2);transform:scale(1.08)}
 .pf-btn:disabled{opacity:.18;cursor:default}
 .pf-nav-center{display:flex;flex-direction:column;align-items:center;gap:.55rem}
-.pf-dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center}
+.pf-dots{display:flex;gap:2px;align-items:center;flex-wrap:wrap;justify-content:center}
 .pf-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:rgba(201,168,76,.28);border:none;cursor:pointer;
-  transition:all .24s;padding:0;
+  width:44px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;background:transparent;padding:0;
 }
-.pf-dot.on{width:20px;border-radius:3px;background:#c9a84c}
+.pf-dot-inner{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(201,168,76,.28);
+  transition:all .24s;
+}
+.pf-dot.on .pf-dot-inner{width:20px;border-radius:3px;background:#c9a84c}
 .pf-folio{
   font-family:'Cormorant Garamond',serif;
   font-style:italic;font-size:.86rem;
@@ -534,11 +539,12 @@ export default function CardapioPage() {
       try {
         const { PageFlip } = await import('page-flip')
         const el = bookRef.current
+        const isMobile = window.innerWidth < 768
         pf = new PageFlip(el, {
-          width: 430, height: 610,
+          width: isMobile ? 320 : 430, height: isMobile ? 520 : 610,
           size: 'stretch',
-          minWidth: 300, maxWidth: 480,
-          minHeight: 440, maxHeight: 720,
+          minWidth: 280, maxWidth: 480,
+          minHeight: 400, maxHeight: 720,
           maxShadowOpacity: 0.6,
           showCover: false,
           mobileScrollSupport: false,
@@ -649,7 +655,9 @@ export default function CardapioPage() {
                   className={`pf-dot${i === cur ? ' on' : ''}`}
                   onClick={() => goTo(i)}
                   aria-label={`Ir para ${SECTIONS[i].title}`}
-                />
+                >
+                  <span className="pf-dot-inner" />
+                </button>
               ))}
             </div>
           </div>

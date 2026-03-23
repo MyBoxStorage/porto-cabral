@@ -64,7 +64,7 @@ export function Testimonials() {
         {/* Card do depoimento */}
         <div className="relative min-h-[220px] flex items-center">
           <div
-            className="w-full bg-white/[0.06] backdrop-blur-md p-10 rounded-2xl border border-white/10 shadow-2xl transition-opacity duration-300"
+            className="w-full bg-white/[0.06] backdrop-blur-md p-6 md:p-10 rounded-2xl border border-white/10 shadow-2xl transition-opacity duration-300"
             style={{ opacity: animating ? 0 : 1 }}
           >
             <p className="text-xl md:text-2xl text-slate-200 font-light leading-relaxed mb-8 italic">
@@ -86,20 +86,22 @@ export function Testimonials() {
           </div>
         </div>
 
-        {/* Indicadores de navegação */}
-        <div className="flex justify-center gap-3 mt-8">
+        {/* Indicadores de navegação — área de toque 44×44px (WCAG 2.5.5) */}
+        <div className="flex justify-center gap-1 mt-8">
           {reviews.map((_, i) => (
             <button
               key={i}
               onClick={() => goTo(i)}
               aria-label={`Depoimento ${i + 1}`}
-              className="transition-all duration-300 rounded-full"
-              style={{
+              className="flex items-center justify-center transition-all duration-300"
+              style={{ width: 44, height: 44 }}
+            >
+              <span className="block rounded-full transition-all duration-300" style={{
                 width: i === active ? '28px' : '8px',
                 height: '8px',
                 background: i === active ? 'var(--pc-gold)' : 'rgba(255,255,255,0.25)',
-              }}
-            />
+              }} />
+            </button>
           ))}
         </div>
       </div>
