@@ -21,9 +21,9 @@ export default auth((req) => {
     return NextResponse.redirect(new URL(`/${locale}/painel${rest}`, req.nextUrl.origin))
   }
 
-  // Proteção de rotas /[locale]/painel/* (exceto /painel/login)
-  const isPainelRoute = /^\/(pt|en|es)\/painel(\/.*)?$/.test(pathname)
-  const isPainelLogin = /^\/(pt|en|es)\/painel\/login$/.test(pathname)
+  // Proteção de rotas /painel/* e /[locale]/painel/* (exceto login)
+  const isPainelRoute = /^(\/painel|\/(?:pt|en|es)\/painel)(\/.*)?$/.test(pathname)
+  const isPainelLogin = /^(\/painel\/login|\/(?:pt|en|es)\/painel\/login)$/.test(pathname)
   if (isPainelRoute && !isPainelLogin) {
     const localeMatch = pathname.match(/^\/(pt|en|es)/)
     const locale = localeMatch?.[1] ?? 'pt'
