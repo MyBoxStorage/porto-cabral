@@ -58,7 +58,7 @@ export function Navbar() {
             </span>
             <span
               className="font-accent uppercase text-[#D4A843]/70"
-              style={{ fontSize: '0.42rem', letterSpacing: '0.22em' }}
+              style={{ fontSize: '0.42rem', letterSpacing: '0.22em', marginTop: '4px' }}
             >
               GASTRONOMIA FLUTUANTE
             </span>
