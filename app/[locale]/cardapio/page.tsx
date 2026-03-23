@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { getMenuSectionIcon } from '@/components/icons/menu-icons'
+import { useSiteContent } from '@/lib/useSiteContent'
 
 type Item = { name: string; price: string; desc?: string; tag?: 'vegano' | 'sem-lactose' | 'destaque' }
 type Section = { id: string; title: string; subtitle: string; items: Item[] }
@@ -835,10 +836,9 @@ type PF = {
 /* ─────────────────────────────────────────────────────────────────────────────
    COMPONENTE MOBILE — card de seção
 ───────────────────────────────────────────────────────────────────────────── */
-function MobileCard({ section, index, isActive }: { section: Section; index: number; isActive: boolean }) {
+function MobileCard({ section, index, isActive, total }: { section: Section; index: number; isActive: boolean; total: number }) {
   const iconSvg = getMenuSectionIcon(index, '#c9a84c', 36)
   const hasNote = section.subtitle.includes('acompanham')
-  const total = SECTIONS.length
 
   return (
     <div className={`mc-card${isActive ? ' mc-active' : ''}`}>
@@ -895,9 +895,9 @@ function MobileCard({ section, index, isActive }: { section: Section; index: num
 /* ─────────────────────────────────────────────────────────────────────────────
    COMPONENTE MOBILE — carrossel completo
 ───────────────────────────────────────────────────────────────────────────── */
-function MobileCarousel({ cur, onChangeCur }: { cur: number; onChangeCur: (i: number) => void }) {
+function MobileCarousel({ cur, onChangeCur, sections }: { cur: number; onChangeCur: (i: number) => void; sections: Section[] }) {
   const trackRef = useRef<HTMLDivElement>(null)
-  const total = SECTIONS.length
+  const total = sections.length
 
   const scrollTo = useCallback((index: number) => {
     const track = trackRef.current
@@ -941,17 +941,17 @@ function MobileCarousel({ cur, onChangeCur }: { cur: number; onChangeCur: (i: nu
   return (
     <div className="mc-wrap">
       <div className="mc-track" ref={trackRef}>
-        {SECTIONS.map((s, i) => (
-          <MobileCard key={s.id} section={s} index={i} isActive={i === cur} />
+        {sections.map((s, i) => (
+          <MobileCard key={s.id} section={s} index={i} isActive={i === cur} total={total} />
         ))}
       </div>
       <div className="mc-progress">
-        {SECTIONS.map((_, i) => (
+        {sections.map((_, i) => (
           <button
             key={i}
             className="mc-pip-btn"
             onClick={() => { onChangeCur(i); scrollTo(i) }}
-            aria-label={`Ir para ${SECTIONS[i].title}`}
+            aria-label={`Ir para ${sections[i].title}`}
           >
             <span
               className={`mc-pip${i === cur ? ' mc-pip-active' : ''}`}
@@ -961,7 +961,7 @@ function MobileCarousel({ cur, onChangeCur }: { cur: number; onChangeCur: (i: nu
         ))}
       </div>
       <p className="mc-section-label">
-        {SECTIONS[cur]?.title} · {cur + 1}/{total}
+        {sections[cur]?.title} · {cur + 1}/{total}
       </p>
     </div>
   )
@@ -978,7 +978,10 @@ export default function CardapioPage() {
   const [ready, setReady] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const total = SECTIONS.length
+  // Carrega do banco com fallback para o hardcoded (garante que nunca fica vazio)
+  const menuData = useSiteContent<{ sections: Section[] }>('menu_full', { sections: SECTIONS })
+  const sections: Section[] = menuData?.sections?.length ? menuData.sections : SECTIONS
+  const total = sections.length
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -1014,7 +1017,7 @@ export default function CardapioPage() {
         }) as unknown as PF
 
         const pages: HTMLDivElement[] = []
-        SECTIONS.forEach((s, i) => {
+        sections.forEach((s, i) => {
           const cover = document.createElement('div')
           cover.className = 'page page-cover'
           cover.innerHTML = coverHTML(s, i, total)
@@ -1061,7 +1064,7 @@ export default function CardapioPage() {
 
       <nav className="pf-tabs" aria-label="Seções do cardápio">
         <div className="pf-ti">
-          {SECTIONS.map((s, i) => (
+          {sections.map((s, i) => (
             <button key={s.id} className={`pf-tab${i === cur ? ' on' : ''}`} onClick={() => goTo(i)}>
               {s.title}
             </button>
@@ -1071,7 +1074,7 @@ export default function CardapioPage() {
 
       {/* MOBILE: carrossel nativo */}
       <div className="pf-mobile-carousel">
-        <MobileCarousel cur={cur} onChangeCur={setCur} />
+        <MobileCarousel cur={cur} onChangeCur={setCur} sections={sections} />
       </div>
 
       {/* DESKTOP: page-flip */}
@@ -1093,10 +1096,10 @@ export default function CardapioPage() {
         <div className="pf-nav">
           <button className="pf-btn" onClick={prev} disabled={cur === 0} aria-label="Anterior">‹</button>
           <div className="pf-nav-center">
-            <p className="pf-folio">{SECTIONS[cur]?.title} · Folio {cur + 1} de {total}</p>
+            <p className="pf-folio">{sections[cur]?.title} · Folio {cur + 1} de {total}</p>
             <div className="pf-dots">
-              {SECTIONS.map((_, i) => (
-                <button key={i} className={`pf-dot${i === cur ? ' on' : ''}`} onClick={() => goTo(i)} aria-label={`Ir para ${SECTIONS[i].title}`}>
+              {sections.map((_, i) => (
+                <button key={i} className={`pf-dot${i === cur ? ' on' : ''}`} onClick={() => goTo(i)} aria-label={`Ir para ${sections[i].title}`}>
                   <span className="pf-dot-inner" />
                 </button>
               ))}

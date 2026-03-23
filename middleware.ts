@@ -3,6 +3,7 @@ import createIntlMiddleware from 'next-intl/middleware'
 
 import { auth } from './auth'
 import { routing } from './i18n/routing'
+import { isAdminEmail } from './lib/admin'
 
 const intlMiddleware = createIntlMiddleware({
   ...routing,
@@ -18,6 +19,25 @@ export default auth((req) => {
     const locale = localeMatch?.[1] ?? 'pt'
     const rest = pathname.replace(/^\/(pt|en|es)?\/admin/, '') || ''
     return NextResponse.redirect(new URL(`/${locale}/painel${rest}`, req.nextUrl.origin))
+  }
+
+  // Proteção de rotas /[locale]/painel/*
+  const isPainelRoute = /^\/(pt|en|es)\/painel(\/.*)?$/.test(pathname)
+  if (isPainelRoute) {
+    const localeMatch = pathname.match(/^\/(pt|en|es)/)
+    const locale = localeMatch?.[1] ?? 'pt'
+
+    // Sem sessão → login
+    if (!req.auth?.user?.email) {
+      return NextResponse.redirect(
+        new URL(`/${locale}/cliente/login`, req.nextUrl.origin)
+      )
+    }
+
+    // Com sessão mas não é admin → home
+    if (!isAdminEmail(req.auth.user.email)) {
+      return NextResponse.redirect(new URL(`/${locale}`, req.nextUrl.origin))
+    }
   }
 
   // Proteção de rotas /[locale]/cliente/* (exceto login)
@@ -37,7 +57,5 @@ export default auth((req) => {
 })
 
 export const config = {
-  // Remove 'admin' da exclusão — o Payload tem seu próprio grupo de rotas (payload)
-  // Exclui apenas api, _next e arquivos estáticos
   matcher: ['/((?!api|_next|.*\\..*).*)'],
 }

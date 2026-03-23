@@ -6,8 +6,8 @@ import { createClient } from '@supabase/supabase-js'
 
 import { sendBcEvent } from '@/lib/bcconnect'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const supabaseUrl     = process.env.NEXT_PUBLIC_SUPABASE_URL_PC
+const supabaseServiceKey = process.env.PC_SUPABASE_SERVICE_ROLE_KEY
 const useSupabaseAdapter = Boolean(supabaseUrl && supabaseServiceKey)
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -37,8 +37,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        const url  = process.env.NEXT_PUBLIC_SUPABASE_URL_PC
+        const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_PC
         if (!url || !anon) return null
         const supabase = createClient(url, anon)
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -59,9 +59,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
+    // Persiste o id no token JWT (fluxo sem adapter / Credentials)
+    async jwt({ token, user }) {
       if (user?.id) {
-        session.user.id = user.id
+        token.id = user.id
+      }
+      return token
+    },
+    // Expoe o id na sessao — funciona tanto com adapter (user) quanto sem (token)
+    async session({ session, token, user }) {
+      const id = user?.id ?? (token?.id as string | undefined)
+      if (id) {
+        session.user.id = id
       }
       return session
     },

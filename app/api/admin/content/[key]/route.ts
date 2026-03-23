@@ -1,10 +1,13 @@
-import { getDb } from '@/lib/db'
+﻿import { getDb } from '@/lib/db'
 import { siteContent } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/adminAuth'
 export const dynamic = 'force-dynamic'
 
 export async function GET(_req: Request, { params }: { params: Promise<{ key: string }> }) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   const { key } = await params
   try {
     const db = getDb()
@@ -20,9 +23,11 @@ export async function GET(_req: Request, { params }: { params: Promise<{ key: st
 }
 
 export async function PUT(req: Request, { params }: { params: Promise<{ key: string }> }) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   const { key } = await params
   const body = await req.json().catch(() => null)
-  if (!body?.value) return NextResponse.json({ error: 'value obrigatório' }, { status: 400 })
+  if (!body?.value) return NextResponse.json({ error: 'value obrigatorio' }, { status: 400 })
   try {
     const db = getDb()
     await db

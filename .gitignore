@@ -54,3 +54,7 @@ yarn-error.log*
 Comandos.docx
 prompt_*.md
 PROMPT_*.md
+
+# scripts de seed (contêm credenciais)
+scripts/seed-menu.mjs
+scripts/fix-tabs.py

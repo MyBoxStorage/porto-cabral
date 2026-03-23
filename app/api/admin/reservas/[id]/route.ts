@@ -1,14 +1,17 @@
-import { getDb } from '@/lib/db'
+﻿import { getDb } from '@/lib/db'
 import { reservations } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/adminAuth'
 export const dynamic = 'force-dynamic'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   const { id } = await params
   const body = await req.json().catch(() => ({}))
   const allowed = ['pending', 'confirmed', 'cancelled', 'no_show', 'completed']
-  if (!allowed.includes(body.status)) return NextResponse.json({ error: 'Status inválido' }, { status: 400 })
+  if (!allowed.includes(body.status)) return NextResponse.json({ error: 'Status invalido' }, { status: 400 })
   try {
     const db = getDb()
     await db.update(reservations).set({ status: body.status }).where(eq(reservations.id, id))
@@ -17,6 +20,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   const { id } = await params
   try {
     const db = getDb()

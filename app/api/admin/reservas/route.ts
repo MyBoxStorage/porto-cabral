@@ -1,10 +1,13 @@
-import { getDb } from '@/lib/db'
+﻿import { getDb } from '@/lib/db'
 import { reservations } from '@/lib/db/schema'
 import { eq, desc, like, and, gte, lte } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/adminAuth'
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
+  const authError = await requireAdmin()
+  if (authError) return authError
   const { searchParams } = new URL(req.url)
   const status = searchParams.get('status')
   const search = searchParams.get('search')

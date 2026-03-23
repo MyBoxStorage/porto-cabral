@@ -1,3 +1,4 @@
+﻿import { requireAdmin } from '@/lib/adminAuth'
 import { getDb } from '@/lib/db'
 import { reservations, customers } from '@/lib/db/schema'
 import { eq, count, sql } from 'drizzle-orm'
@@ -5,6 +6,8 @@ import { NextResponse } from 'next/server'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
+  const authError = await requireAdmin()
+  if (authError) return authError
   try {
     const db = getDb()
     const today = new Date().toISOString().split('T')[0]
