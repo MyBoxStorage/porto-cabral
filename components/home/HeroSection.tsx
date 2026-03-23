@@ -1,79 +1,18 @@
 'use client'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 
-const VIDEOS_DESKTOP = [
-  'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4',
-  'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204724/BANNER_LENTO_2_uzz8l5.mp4',
-  'https://res.cloudinary.com/djhevgyvi/video/upload/v1774203528/video_banner_rapido_2_vio4zz.mp4',
-]
-
-// Cloudinary gera JPEG do frame 2s do vídeo automaticamente via URL transform:
-//   so_2      → frame no segundo 2
-//   w_900     → largura 900px (suficiente para mobile retina)
-//   q_auto    → qualidade adaptativa (~60–80KB)
-//   f_jpg     → formato JPEG
-const HERO_MOBILE_IMG =
-  'https://res.cloudinary.com/djhevgyvi/video/upload/so_2,w_900,q_auto,f_jpg/v1774204726/BANNER_LENTO_1_idcad3.jpg'
-
-const videoStyle: React.CSSProperties = {
-  objectFit: 'cover',
-  objectPosition: 'center',
-  filter: 'brightness(0.5)',
-}
+const VIDEO_HERO = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4'
 
 function HeroVideos() {
-  const [isMobile, setIsMobile] = useState<boolean | null>(null)
-  const [secondaryReady, setSecondaryReady] = useState(false)
-
-  useEffect(() => {
-    setIsMobile(window.matchMedia('(max-width: 767px)').matches)
-  }, [])
-
-  const handlePrimaryReady = () => {
-    if (!isMobile) requestAnimationFrame(() => setSecondaryReady(true))
-  }
-
-  // Mobile: imagem estática extraída do vídeo pelo Cloudinary — zero CPU de decodificação
-  if (isMobile === true) {
-    return (
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={HERO_MOBILE_IMG}
-          alt="Porto Cabral BC — Gastronomia Flutuante"
-          fill
-          priority
-          sizes="100vw"
-          style={{ objectFit: 'cover', objectPosition: 'center', filter: 'brightness(0.5)' }}
-        />
-      </div>
-    )
-  }
-
-  // Desktop: 3 vídeos side-by-side com lazy load nos secundários
   return (
-    <div className="absolute inset-0 z-0 flex">
-      <div className="relative w-full md:flex-1 overflow-hidden">
-        <video autoPlay muted loop playsInline preload="auto"
-          className="absolute inset-0 w-full h-full" style={videoStyle}
-          onCanPlayThrough={handlePrimaryReady}>
-          <source src={VIDEOS_DESKTOP[0]} type="video/mp4" />
-        </video>
-      </div>
-      {isMobile === false && VIDEOS_DESKTOP.slice(1).map((src, idx) => (
-        <div key={idx + 1} className="relative flex-1 overflow-hidden">
-          <video muted loop playsInline preload="none"
-            className="absolute inset-0 w-full h-full" style={videoStyle}
-            ref={(el) => {
-              if (!el || !secondaryReady) return
-              el.load()
-              el.play().catch(() => {})
-            }}>
-            <source src={src} type="video/mp4" />
-          </video>
-        </div>
-      ))}
+    <div className="absolute inset-0 z-0">
+      <video
+        autoPlay muted loop playsInline preload="auto"
+        className="absolute inset-0 w-full h-full"
+        style={{ objectFit: 'cover', objectPosition: 'center', filter: 'brightness(0.5)' }}
+      >
+        <source src={VIDEO_HERO} type="video/mp4" />
+      </video>
     </div>
   )
 }
