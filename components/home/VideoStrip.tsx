@@ -20,7 +20,7 @@ const CARD_W  = 320
 const CARD_H  = 480
 const GAP     = 20
 const STEP    = CARD_W + GAP
-const SPEED   = 0.18
+const SPEED   = (CARD_W + GAP) / (15 * 60) // 15 segundos por card a 60fps
 const DRAG_SENS = 1.2
 
 /* ── VideoCard ── */
