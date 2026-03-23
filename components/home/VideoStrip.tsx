@@ -175,12 +175,15 @@ export function VideoStrip({ locale = 'pt' }: Props) {
   const [isDragging, setIsDragging] = useState(false)
   const [cardW, setCardW]           = useState(320)
   const [cardH, setCardH]           = useState(480)
+  const [speed, setSpeed]           = useState(SPEED)
 
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth
       setCardW(w < 480 ? 240 : w < 768 ? 280 : 320)
       setCardH(w < 480 ? 360 : w < 768 ? 420 : 480)
+      // Mobile mais lento: ~0.04 em telas < 480px, ~0.06 em tablet, 0.09 no desktop
+      setSpeed(w < 480 ? 0.04 : w < 768 ? 0.06 : SPEED)
     }
     update()
     window.addEventListener('resize', update)
@@ -204,7 +207,7 @@ export function VideoStrip({ locale = 'pt' }: Props) {
     if (!paused && !isDragging) {
       const delta = ts - lastTS.current
       lastTS.current = ts
-      offsetRef.current += SPEED * Math.min(delta, 32)
+      offsetRef.current += speed * Math.min(delta, 32)
       const loopAt = data.items.length * STEP
       if (loopAt > 0 && offsetRef.current >= loopAt * 2) offsetRef.current -= loopAt
     } else {
@@ -212,7 +215,7 @@ export function VideoStrip({ locale = 'pt' }: Props) {
     }
     trackRef.current.style.transform = `translateX(${-offsetRef.current}px)`
     rafRef.current = requestAnimationFrame(animate)
-  }, [paused, isDragging, data.items.length, STEP])
+  }, [paused, isDragging, data.items.length, STEP, speed])
 
   useEffect(() => {
     if (data.items.length === 0) return
