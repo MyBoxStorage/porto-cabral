@@ -29,8 +29,14 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; overflow-x: hidden; }
-body { overflow-x: hidden; }
+html { scroll-behavior: smooth; }
+/* overflow-x: hidden no html/body quebra o scroll nativo no iOS Safari —
+   o clip horizontal é feito por overflow-x:clip nos wrappers internos que precisam */
+body { }
+/* Garante que o scroll vertical nunca seja bloqueado no nível raiz */
+@media (max-width: 767px) {
+  html, body { overflow-y: auto !important; touch-action: pan-y; }
+}
 
 /* ── FONTS ── */
 .font-display { font-family: 'Playfair Display', Georgia, serif; }

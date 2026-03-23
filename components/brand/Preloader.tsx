@@ -23,11 +23,9 @@ const GLINTS = [
 
 // URLs para pré-carregar durante o preloader
 const PRELOAD_IMAGES: string[] = []
-const PRELOAD_VIDEOS = [
-  'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4',
-  'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204724/BANNER_LENTO_2_uzz8l5.mp4',
-  'https://res.cloudinary.com/djhevgyvi/video/upload/v1774203528/video_banner_rapido_2_vio4zz.mp4',
-]
+// Vídeos removidos do preload — são pesados demais para mobile
+// e o browser mobile trava tentando baixar os 3 ao mesmo tempo
+const PRELOAD_VIDEOS: string[] = []
 
 export function Preloader() {
   const [ready, setReady] = useState(false)
