@@ -222,11 +222,11 @@ export function VideoStrip({ locale = 'pt' }: Props) {
         <div style={{ textAlign:'center',padding:'0 1.5rem',marginBottom:'3.5rem',position:'relative' }}>
           <p style={{ fontFamily:"'Josefin Sans',sans-serif",fontSize:'0.6rem',fontWeight:700,
             letterSpacing:'.45em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 .9rem' }}>
-            {(data as Record<string,string>)[`eyebrow_${L}`] ?? data.eyebrow_pt}
+            {(data as unknown as Record<string,string>)[`eyebrow_${L}`] ?? data.eyebrow_pt}
           </p>
           <h2 style={{ fontFamily:"'Playfair Display',serif",fontStyle:'italic',
             fontSize:'clamp(2rem,5vw,3.2rem)',fontWeight:400,color:'#D4A843',margin:'0 0 1.2rem',lineHeight:1.1 }}>
-            {(data as Record<string,string>)[`title_${L}`] ?? data.title_pt}
+            {(data as unknown as Record<string,string>)[`title_${L}`] ?? data.title_pt}
           </h2>
           <div style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:12,maxWidth:260,margin:'0 auto' }}>
             <div style={{ flex:1,height:1,background:'linear-gradient(90deg,transparent,rgba(212,168,67,0.45))' }}/>
