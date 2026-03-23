@@ -686,19 +686,21 @@ export default function CardapioPage() {
 
       if (!flipLocked) {
         // Zona de ambiguidade — aguarda acumular pixels suficientes para decidir
-        if (adx < 8 && ady < 8) return
+        if (adx < 6 && ady < 6) return
 
-        if (ady >= adx) {
-          // Predominantemente vertical → marca como scroll, sai sem bloquear nada
+        // Para virar página: horizontal precisa ser pelo menos 2x o vertical
+        // Para fazer scroll: vertical maior que horizontal já basta
+        if (ady > adx * 0.5) {
+          // Tem componente vertical relevante → scroll nativo
           scrollLocked = true
           return
         }
 
-        if (adx >= 12) {
-          // Predominantemente horizontal → confirma flip
+        if (adx >= 8 && adx > ady * 2) {
+          // Claramente horizontal (2x mais horizontal que vertical) → flip
           flipLocked = true
         } else {
-          return // ainda não chegou no threshold horizontal
+          return
         }
       }
 
