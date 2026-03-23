@@ -2,8 +2,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 
-const VIDEOS = [
-  'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4',
+// Vídeo original (desktop — qualidade máxima)
+const VIDEO_DESKTOP = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4'
+
+// Vídeo mobile — mesma fonte, transformado pelo Cloudinary na URL:
+//   w_480        → reduz resolução para 480px de largura
+//   q_auto:low   → qualidade adaptativa baixa (~300–500kbps vs ~4–8Mbps original)
+//   br_400k      → bitrate máximo de 400kbps
+//   f_mp4        → força mp4 com codec h264 compatível
+//   vc_h264      → codec explícito para máxima compatibilidade iOS/Android
+const VIDEO_MOBILE = 'https://res.cloudinary.com/djhevgyvi/video/upload/w_480,q_auto:low,br_400k,f_mp4,vc_h264/v1774204726/BANNER_LENTO_1_idcad3.mp4'
+
+const VIDEOS_DESKTOP = [
+  VIDEO_DESKTOP,
   'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204724/BANNER_LENTO_2_uzz8l5.mp4',
   'https://res.cloudinary.com/djhevgyvi/video/upload/v1774203528/video_banner_rapido_2_vio4zz.mp4',
 ]
@@ -22,41 +33,33 @@ function HeroVideos() {
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 767px)').matches
     setIsMobile(mobile)
-
-    // No mobile: forçar preload=none no vídeo primário para reduzir consumo de memória.
-    // autoPlay continua funcionando — o browser carrega apenas o suficiente para iniciar.
-    if (mobile && primaryRef.current) {
-      primaryRef.current.preload = 'none'
-    }
   }, [])
 
   const handlePrimaryReady = () => {
-    // Só carrega os vídeos secundários no desktop
     if (!isMobile) requestAnimationFrame(() => setSecondaryReady(true))
   }
 
-  // Enquanto isMobile não foi determinado (SSR), renderizar apenas o painel primário
-  // para evitar hydration mismatch e não montar os vídeos desnecessariamente
+  // Fonte correta por device
+  const primarySrc = isMobile === true ? VIDEO_MOBILE : VIDEO_DESKTOP
+
   return (
     <div className="absolute inset-0 z-0 flex">
-      {/* Painel 1 — único vídeo no mobile, 1/3 no desktop */}
+      {/* Painel 1 — único no mobile (versão leve), 1/3 no desktop */}
       <div className="relative w-full md:flex-1 overflow-hidden">
         <video
           ref={primaryRef}
-          autoPlay muted loop playsInline
-          // desktop: preload=auto para carregar logo; mobile: será sobrescrito para 'none' no useEffect
-          preload="auto"
+          key={primarySrc}
+          autoPlay muted loop playsInline preload="auto"
           className="absolute inset-0 w-full h-full"
           style={videoStyle}
           onCanPlayThrough={handlePrimaryReady}
         >
-          <source src={VIDEOS[0]} type="video/mp4" />
+          <source src={primarySrc} type="video/mp4" />
         </video>
       </div>
 
-      {/* Painéis 2 e 3 — NÃO montados no mobile (isMobile===true).
-          No desktop (isMobile===false) são lazy: só carregam após o vídeo primário. */}
-      {isMobile === false && VIDEOS.slice(1).map((src, idx) => (
+      {/* Painéis 2 e 3 — apenas desktop, lazy */}
+      {isMobile === false && VIDEOS_DESKTOP.slice(1).map((src, idx) => (
         <div key={idx + 1} className="relative flex-1 overflow-hidden">
           <video muted loop playsInline preload="none"
             className="absolute inset-0 w-full h-full" style={videoStyle}
