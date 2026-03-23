@@ -1,5 +1,6 @@
 'use client'
 import { signIn } from 'next-auth/react'
+import Link from 'next/link'
 import { useState } from 'react'
 
 export default function PainelLoginPage() {
@@ -108,13 +109,13 @@ export default function PainelLoginPage() {
         </form>
 
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <a href="/" style={{
+          <Link href="/" style={{
             fontFamily: "'Josefin Sans',sans-serif",
             fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase',
             color: 'rgba(212,168,67,0.35)', textDecoration: 'none',
           }}>
             ← Voltar ao site
-          </a>
+          </Link>
         </div>
 
       </div>

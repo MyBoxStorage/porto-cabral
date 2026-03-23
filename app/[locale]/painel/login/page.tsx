@@ -1,12 +1,11 @@
 'use client'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { useState } from 'react'
 
 export default function PainelLoginPage() {
   const locale = useLocale()
-  const router = useRouter()
+  void locale // mantido para compatibilidade com link 'Voltar ao site'
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading]   = useState(false)
