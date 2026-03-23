@@ -9,9 +9,9 @@ export default async function PainelPage({ params }: Props) {
   const { locale } = await params
   const session = await auth()
 
-  // Sem sessao -> redireciona para login
+  // Sem sessao -> login do painel (tela separada da area do cliente)
   if (!session?.user?.email) {
-    redirect(`/${locale}/cliente/login`)
+    redirect(`/${locale}/painel/login`)
   }
 
   // Logado mas nao eh admin -> home

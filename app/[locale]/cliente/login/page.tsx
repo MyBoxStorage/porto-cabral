@@ -23,7 +23,7 @@ export default function ClienteLoginPage() {
     setLoading(true); setError(null)
     const result = await signIn('credentials', { email, password, redirect: false })
     if (result?.error) {
-      setError('Email ou senha inválidos.')
+      setError('Email ou senha invalidos.')
       setLoading(false)
     } else {
       await fetch('/api/cliente/login-event', { method: 'POST' }).catch(() => {})
@@ -44,7 +44,7 @@ export default function ClienteLoginPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error?.formErrors?.[0] ?? data.error ?? 'Erro.')
       const result = await signIn('credentials', { email, password, redirect: false })
-      if (result?.error) throw new Error('Conta criada! Faça login.')
+      if (result?.error) throw new Error('Conta criada! Faca login.')
       router.push(`/${locale}/cliente`)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erro inesperado.')
@@ -67,7 +67,7 @@ export default function ClienteLoginPage() {
             <IconAncora size={52} strokeWidth={1.25} />
           </div>
           <h1 className="font-display text-3xl text-white mb-2">Cabine do Comandante</h1>
-          <p className="text-slate-400 text-sm">Área exclusiva para clientes Porto Cabral BC</p>
+          <p className="text-slate-400 text-sm">Area exclusiva para clientes Porto Cabral BC</p>
         </div>
 
         <div className="flex mb-6 bg-white/5 rounded-xl p-1">
@@ -88,13 +88,13 @@ export default function ClienteLoginPage() {
             </>
           )}
           <input required type="email" value={email} onChange={e => setEmail(e.target.value)} className={inp} placeholder="Email" />
-          <input required type="password" value={password} onChange={e => setPassword(e.target.value)} className={inp} placeholder="Senha (mínimo 8 caracteres)" minLength={8} />
+          <input required type="password" value={password} onChange={e => setPassword(e.target.value)} className={inp} placeholder="Senha (minimo 8 caracteres)" minLength={8} />
           {tab === 'signup' && (
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" checked={optin} onChange={e => setOptin(e.target.checked)}
                 className="mt-1 rounded border-slate-500 text-[#D4A843] focus:ring-[#D4A843]" />
               <span className="text-xs text-slate-400 leading-relaxed">
-                Concordo com o tratamento dos meus dados conforme a LGPD e desejo receber comunicações do Porto Cabral BC.
+                Concordo com o tratamento dos meus dados conforme a LGPD e desejo receber comunicacoes do Porto Cabral BC.
               </span>
             </label>
           )}
@@ -122,7 +122,6 @@ export default function ClienteLoginPage() {
           {gLoading ? 'Redirecionando...' : 'Continuar com Google'}
         </button>
 
-        {/* Decoração náutica */}
         <div className="flex justify-center mt-10 text-[#D4A843]/20">
           <IconVela size={40} strokeWidth={1} />
         </div>

@@ -21,16 +21,17 @@ export default auth((req) => {
     return NextResponse.redirect(new URL(`/${locale}/painel${rest}`, req.nextUrl.origin))
   }
 
-  // Proteção de rotas /[locale]/painel/*
+  // Proteção de rotas /[locale]/painel/* (exceto /painel/login)
   const isPainelRoute = /^\/(pt|en|es)\/painel(\/.*)?$/.test(pathname)
-  if (isPainelRoute) {
+  const isPainelLogin = /^\/(pt|en|es)\/painel\/login$/.test(pathname)
+  if (isPainelRoute && !isPainelLogin) {
     const localeMatch = pathname.match(/^\/(pt|en|es)/)
     const locale = localeMatch?.[1] ?? 'pt'
 
-    // Sem sessão → login
+    // Sem sessão → login do painel (tela separada da area do cliente)
     if (!req.auth?.user?.email) {
       return NextResponse.redirect(
-        new URL(`/${locale}/cliente/login`, req.nextUrl.origin)
+        new URL(`/${locale}/painel/login`, req.nextUrl.origin)
       )
     }
 
