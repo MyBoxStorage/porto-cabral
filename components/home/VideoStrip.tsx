@@ -20,19 +20,39 @@ const CARD_W  = 320
 const CARD_H  = 480
 const GAP     = 20
 const STEP    = CARD_W + GAP
-const SPEED   = 0.45
+const SPEED   = 0.18
 const DRAG_SENS = 1.2
 
 /* ── VideoCard ── */
 function VideoCard({ item, w, h, onOpen }: { item: VideoItem; w: number; h: number; onOpen: () => void }) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [ready, setReady] = useState(false)
+  const videoRef  = useRef<HTMLVideoElement>(null)
+  const wrapRef   = useRef<HTMLDivElement>(null)
+  const [ready, setReady]     = useState(false)
   const [hovered, setHovered] = useState(false)
 
-  useEffect(() => { videoRef.current?.play().catch(() => {}) }, [])
+  // Play apenas quando o card está visível na tela
+  useEffect(() => {
+    const video = videoRef.current
+    const wrap  = wrapRef.current
+    if (!video || !wrap) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {})
+        } else {
+          video.pause()
+        }
+      },
+      { threshold: 0.3 } // pelo menos 30% visível para tocar
+    )
+    observer.observe(wrap)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div
+      ref={wrapRef}
       style={{
         width: w, height: h, flexShrink: 0,
         borderRadius: 16, overflow: 'hidden', position: 'relative', cursor: 'pointer',
