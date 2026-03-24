@@ -68,7 +68,7 @@ export default function SobrePage() {
     <main className="min-h-screen bg-[#fef9f1] overflow-x-hidden">
 
       {/* ── Hero ── */}
-      <section className="bg-[#0074bf] pt-[calc(72px+4rem)] pb-16 md:pt-[calc(72px+6rem)] md:pb-24 px-4 text-center relative overflow-hidden">
+      <section className="bg-[#0074bf] pt-[calc(72px+4rem)] pb-16 md:pt-[calc(72px+5rem)] md:pb-24 px-4 text-center relative overflow-hidden">
         {/* pontilhado sutil */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
           style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,1) 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
