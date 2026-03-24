@@ -18,7 +18,7 @@ function useFadeUp() {
     if (!el) return
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); obs.disconnect() } },
-      { threshold: 0.12 }
+      { threshold: 0.08 }
     )
     obs.observe(el)
     return () => obs.disconnect()
@@ -34,27 +34,42 @@ export function LocationSection() {
   const d = (obj: Record<string, unknown>, base: string) => localeField(obj, base, locale)
 
   return (
-    <section className="py-16 md:py-28 px-4 md:px-12 bg-pc-surface overflow-x-hidden">
-      <div ref={ref} className="fade-up max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-10 md:gap-14">
+    <section className="py-14 md:py-28 px-4 md:px-12 bg-pc-surface overflow-x-hidden">
+      <div ref={ref} className="fade-up max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-8 md:gap-14">
 
-        {/* Google Maps embed — Molhe da Barra Sul */}
-        <div className="w-full lg:w-1/2 rounded-2xl overflow-hidden relative shadow-2xl"
-          style={{ aspectRatio: '16/9', minHeight: '220px' }}>
-          <iframe
-            title="Porto Cabral BC — Molhe da Barra Sul"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3543.6!2d-48.6368!3d-26.9982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d8e5b1b1b1b1b1%3A0x0!2sMolhe+da+Barra+Sul%2C+Balne%C3%A1rio+Cambori%C3%BA!5e0!3m2!1spt!2sbr!4v1700000000000!5m2!1spt!2sbr"
-            width="100%"
-            height="100%"
-            style={{ border: 0, display: 'block' }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="absolute inset-0 w-full h-full"
-          />
-          {/* Badge de identidade sobre o mapa */}
+        {/* Google Maps embed
+            Mobile: 16/9 com altura mínima maior para ter presença real
+            Desktop: metade da largura
+        */}
+        <div
+          className="w-full lg:w-1/2 rounded-2xl overflow-hidden relative shadow-2xl"
+          style={{ minHeight: '260px' }}
+        >
+          {/* Wrapper com aspect-ratio responsivo */}
+          <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+            <iframe
+              title="Porto Cabral BC — Molhe da Barra Sul"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3543.6!2d-48.6368!3d-26.9982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d8e5b1b1b1b1b1%3A0x0!2sMolhe+da+Barra+Sul%2C+Balne%C3%A1rio+Cambori%C3%BA!5e0!3m2!1spt!2sbr!4v1700000000000!5m2!1spt!2sbr"
+              width="100%"
+              height="100%"
+              style={{ border: 0, display: 'block' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="absolute inset-0 w-full h-full"
+            />
+          </div>
+
+          {/* Badge sobre o mapa */}
           <div className="absolute bottom-4 left-4 z-10 pointer-events-none">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg"
-              style={{ background: 'rgba(0,10,30,0.82)', border: '1px solid rgba(212,168,67,0.3)', backdropFilter: 'blur(10px)' }}>
+            <div
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg"
+              style={{
+                background: 'rgba(0,10,30,0.82)',
+                border: '1px solid rgba(212,168,67,0.3)',
+                backdropFilter: 'blur(10px)',
+              }}
+            >
               <span className="text-pc-gold text-xs">⚓</span>
               <div>
                 <p className="font-display italic text-white text-xs leading-tight">Porto Cabral BC</p>
@@ -65,26 +80,39 @@ export function LocationSection() {
         </div>
 
         {/* Texto */}
-        <div className="w-full lg:w-1/2 space-y-6">
+        <div className="w-full lg:w-1/2 space-y-5 md:space-y-6">
           <p className="eyebrow">{d(data as Record<string, unknown>, 'eyebrow')}</p>
+
           <div className="flex items-start gap-3">
-            <span className="text-pc-gold mt-1 flex-shrink-0"><IconCarta size={24} strokeWidth={1.4} /></span>
-            <h3 className="font-display text-4xl text-pc-navy leading-tight">
+            <span className="text-pc-gold mt-1 flex-shrink-0"><IconCarta size={22} strokeWidth={1.4} /></span>
+            <h3 className="font-display text-3xl sm:text-4xl text-pc-navy leading-tight">
               {d(data as Record<string, unknown>, 'title').split('\n').map((line, i) => (
                 <span key={i}>{line}{i === 0 && <br />}</span>
               ))}
             </h3>
           </div>
+
           <div className="w-10 h-[2px] bg-pc-gold" />
-          <p className="text-pc-muted leading-relaxed">{d(data as Record<string, unknown>, 'desc')}</p>
+
+          <p className="text-pc-muted leading-relaxed text-sm md:text-base">
+            {d(data as Record<string, unknown>, 'desc')}
+          </p>
+
+          {/* Botões — empilhados no mobile, lado a lado no sm+ */}
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <a href={data.maps_url} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-accent text-xs tracking-[0.18em] uppercase text-white px-7 py-3 rounded transition-all duration-200 hover:bg-pc-navy-deep bg-pc-navy">
+            <a
+              href={data.maps_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 font-accent text-xs tracking-[0.18em] uppercase text-white px-6 py-3.5 rounded transition-all duration-200 hover:bg-pc-navy-deep bg-pc-navy active:scale-95 text-center"
+            >
               {t('location_maps')}
               <span>→</span>
             </a>
-            <a href="#reserva"
-              className="inline-flex items-center gap-2 font-accent text-xs tracking-[0.18em] uppercase text-pc-navy px-7 py-3 rounded transition-all duration-200 border border-pc-navy">
+            <a
+              href="#reserva"
+              className="inline-flex items-center justify-center gap-2 font-accent text-xs tracking-[0.18em] uppercase text-pc-navy px-6 py-3.5 rounded transition-all duration-200 border border-pc-navy hover:bg-pc-navy hover:text-white active:scale-95 text-center"
+            >
               {t('cta_reserva')}
             </a>
           </div>

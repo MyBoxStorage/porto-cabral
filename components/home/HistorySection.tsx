@@ -19,7 +19,7 @@ function useFadeUp() {
     if (!el) return
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); obs.disconnect() } },
-      { threshold: 0.12 }
+      { threshold: 0.08 }
     )
     obs.observe(el)
     return () => obs.disconnect()
@@ -35,29 +35,64 @@ export function HistorySection() {
   const d = (obj: Record<string, unknown>, base: string) => localeField(obj, base, locale)
 
   return (
-    <section className="pt-16 md:pt-20 pb-20 md:pb-32 px-4 md:px-12 overflow-hidden bg-pc-surface-2">
-      <div ref={ref} className="fade-up max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+    <section className="pt-14 md:pt-20 pb-16 md:pb-32 px-4 md:px-12 overflow-hidden bg-pc-surface-2">
+      <div ref={ref} className="fade-up max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-24">
 
-        {/* Imagem / placeholder */}
+        {/* Imagem
+            Mobile: largura total, ratio 4/3 (mais paisagem — menos espaço vertical)
+            Desktop: 2/5 da largura, ratio 4/5 (mais retrato)
+        */}
         <div className="w-full lg:w-2/5 flex-shrink-0 flex justify-center">
-          <div className="relative rounded-2xl overflow-hidden w-full max-w-[280px] md:max-w-[380px]"
-            style={{ aspectRatio: '4/5', background: 'linear-gradient(135deg,#005fa3 0%,#0074bf 50%,#0087d9 100%)' }}>
+          <div
+            className="relative rounded-2xl overflow-hidden w-full lg:max-w-[380px]"
+            style={{
+              aspectRatio: 'var(--hist-ratio, 4/3)',
+              background: 'linear-gradient(135deg,#005fa3 0%,#0074bf 50%,#0087d9 100%)',
+            }}
+          >
+            <style>{`
+              @media (min-width: 1024px) {
+                [style*="--hist-ratio"] { --hist-ratio: 4/5; }
+              }
+            `}</style>
+
             {data.image_url ? (
-              <Image src={data.image_url} alt="Nossa História" fill className="object-cover"
-                style={{ filter: 'brightness(0.85)' }} sizes="(max-width: 768px) 100vw, 380px" />
+              <Image
+                src={data.image_url}
+                alt="Nossa História"
+                fill
+                className="object-cover"
+                style={{ filter: 'brightness(0.85)' }}
+                sizes="(max-width: 1024px) 100vw, 380px"
+              />
             ) : (
               <>
-                <div className="absolute inset-0 opacity-[0.07]"
-                  style={{ backgroundImage: 'radial-gradient(rgba(212,168,67,1) 1.5px,transparent 1.5px)', backgroundSize: '28px 28px' }} />
+                <div
+                  className="absolute inset-0 opacity-[0.07]"
+                  style={{
+                    backgroundImage: 'radial-gradient(rgba(212,168,67,1) 1.5px,transparent 1.5px)',
+                    backgroundSize: '28px 28px',
+                  }}
+                />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-pc-gold/25"><IconAncora size={220} strokeWidth={0.6} /></span>
+                  <span className="text-pc-gold/25">
+                    <IconAncora size={160} strokeWidth={0.6} />
+                  </span>
                 </div>
               </>
             )}
-            <div className="absolute bottom-6 left-6 right-6">
-              <div className="inline-flex items-center gap-3 px-5 py-3 rounded-lg"
-                style={{ background: 'rgba(0,10,30,0.7)', border: '1px solid rgba(212,168,67,0.25)', backdropFilter: 'blur(12px)' }}>
-                <span className="text-pc-gold"><IconBussola size={18} strokeWidth={1.5} /></span>
+
+            {/* Badge */}
+            <div className="absolute bottom-4 left-4 right-4">
+              <div
+                className="inline-flex items-center gap-3 px-4 py-2.5 rounded-lg"
+                style={{
+                  background: 'rgba(0,10,30,0.7)',
+                  border: '1px solid rgba(212,168,67,0.25)',
+                  backdropFilter: 'blur(12px)',
+                }}
+              >
+                <span className="text-pc-gold"><IconBussola size={16} strokeWidth={1.5} /></span>
                 <div>
                   <p className="font-display italic text-white text-sm leading-tight">Molhe da Barra Sul</p>
                   <p className="font-accent text-[10px] tracking-[0.2em] uppercase text-pc-gold/70">Since 1998</p>
@@ -68,20 +103,24 @@ export function HistorySection() {
         </div>
 
         {/* Texto */}
-        <div className="w-full lg:w-1/2 space-y-7">
+        <div className="w-full lg:w-1/2 space-y-5 md:space-y-7">
           <p className="eyebrow">{t('history_eyebrow')}</p>
-          <h2 className="font-display text-4xl md:text-5xl text-pc-navy leading-tight">
+
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-pc-navy leading-tight">
             {d(data as Record<string, unknown>, 'title').split('\n').map((line, i) => (
               <span key={i}>{line}{i === 0 && <br />}</span>
             ))}
           </h2>
+
           <div className="w-10 h-[2px] bg-pc-gold" />
-          <div className="space-y-5 text-pc-muted leading-relaxed">
+
+          <div className="space-y-4 text-pc-muted leading-relaxed text-sm md:text-base">
             <p>{d(data as Record<string, unknown>, 'p1')}</p>
             <p>{d(data as Record<string, unknown>, 'p2')}</p>
           </div>
-          <blockquote className="border-l-[3px] border-pc-gold pl-6 py-1">
-            <p className="font-display italic text-xl text-pc-navy leading-snug mb-3">
+
+          <blockquote className="border-l-[3px] border-pc-gold pl-5 md:pl-6 py-1">
+            <p className="font-display italic text-lg md:text-xl text-pc-navy leading-snug mb-2 md:mb-3">
               &ldquo;{d(data as Record<string, unknown>, 'quote')}&rdquo;
             </p>
             <footer className="font-accent text-[10px] tracking-[0.25em] uppercase text-amber-800">

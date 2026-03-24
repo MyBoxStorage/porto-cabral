@@ -39,7 +39,6 @@ export function Testimonials() {
     }, 300)
   }, [active])
 
-  // Auto-avanço a cada INTERVAL_MS
   useEffect(() => {
     const timer = setInterval(() => {
       goTo((active + 1) % reviews.length)
@@ -50,44 +49,49 @@ export function Testimonials() {
   const review = reviews[active]
 
   return (
-    <section className="py-24 bg-pc-navy-deep relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-pc-navy-deep relative overflow-hidden">
       {/* Pontilhado decorativo */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(#ffffff 1px,transparent 1px)', backgroundSize: '20px 20px' }} />
+      <div
+        className="absolute inset-0 opacity-10 pointer-events-none"
+        style={{ backgroundImage: 'radial-gradient(#ffffff 1px,transparent 1px)', backgroundSize: '20px 20px' }}
+      />
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+      <div className="max-w-3xl mx-auto px-5 sm:px-6 relative z-10 text-center">
         {/* Estrelas + rating */}
-        <div className="flex justify-center gap-1 mb-3 text-pc-gold text-xl">{'★★★★★'}</div>
-        <p className="text-pc-gold font-accent text-sm uppercase tracking-widest mb-2">{rating} / 5</p>
-        <h2 className="text-white font-display text-3xl mb-10">{t('title')}</h2>
+        <div className="flex justify-center gap-1 mb-3 text-pc-gold text-lg md:text-xl">{'★★★★★'}</div>
+        <p className="text-pc-gold font-accent text-xs uppercase tracking-widest mb-2">{rating} / 5</p>
+        <h2 className="text-white font-display text-2xl md:text-3xl mb-8 md:mb-10">{t('title')}</h2>
 
-        {/* Card do depoimento */}
-        <div className="relative min-h-[220px] flex items-center">
+        {/* Card do depoimento
+            min-h maior no mobile para acomodar textos longos sem pular de tamanho */}
+        <div className="relative min-h-[260px] sm:min-h-[220px] flex items-center">
           <div
-            className="w-full bg-white/[0.06] backdrop-blur-md p-6 md:p-10 rounded-2xl border border-white/10 shadow-2xl transition-opacity duration-300"
+            className="w-full bg-white/[0.06] backdrop-blur-md px-5 py-7 sm:p-6 md:p-10 rounded-2xl border border-white/10 shadow-2xl transition-opacity duration-300"
             style={{ opacity: animating ? 0 : 1 }}
           >
-            <p className="text-xl md:text-2xl text-slate-200 font-light leading-relaxed mb-8 italic">
+            {/* Texto do depoimento — tamanho controlado no mobile */}
+            <p className="text-base sm:text-xl md:text-2xl text-slate-200 font-light leading-relaxed mb-6 md:mb-8 italic">
               &ldquo;{review.text}&rdquo;
             </p>
-            <div className="flex items-center justify-center gap-4">
-              {/* Avatar estilizado com gradiente brand */}
+
+            <div className="flex items-center justify-center gap-3 md:gap-4">
+              {/* Avatar */}
               <div
-                className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-bold text-base md:text-lg flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, var(--pc-navy) 0%, var(--pc-gold) 100%)' }}
               >
                 {review.author_name[0]}
               </div>
               <div className="text-left">
-                <span className="block text-white font-bold">{review.author_name}</span>
-                <span className="text-pc-gold text-sm font-accent uppercase tracking-tighter">{t('source')}</span>
+                <span className="block text-white font-bold text-sm md:text-base">{review.author_name}</span>
+                <span className="text-pc-gold text-xs font-accent uppercase tracking-tighter">{t('source')}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Indicadores de navegação — área de toque 44×44px (WCAG 2.5.5) */}
-        <div className="flex justify-center gap-1 mt-8">
+        {/* Indicadores de navegação — área de toque 44×44px */}
+        <div className="flex justify-center gap-1 mt-6 md:mt-8">
           {reviews.map((_, i) => (
             <button
               key={i}
@@ -96,11 +100,14 @@ export function Testimonials() {
               className="flex items-center justify-center transition-all duration-300"
               style={{ width: 44, height: 44 }}
             >
-              <span className="block rounded-full transition-all duration-300" style={{
-                width: i === active ? '28px' : '8px',
-                height: '8px',
-                background: i === active ? 'var(--pc-gold)' : 'rgba(255,255,255,0.25)',
-              }} />
+              <span
+                className="block rounded-full transition-all duration-300"
+                style={{
+                  width: i === active ? '28px' : '8px',
+                  height: '8px',
+                  background: i === active ? 'var(--pc-gold)' : 'rgba(255,255,255,0.25)',
+                }}
+              />
             </button>
           ))}
         </div>

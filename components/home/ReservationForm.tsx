@@ -61,10 +61,10 @@ export function ReservationForm() {
 
   if (success) {
     return (
-      <div className="text-center py-12 px-6">
-        <div className="text-6xl mb-6">⚓</div>
-        <h3 className="font-display text-3xl text-pc-navy mb-4">{t('success')}</h3>
-        <p className="text-slate-600 mb-2">{t('success_body')}</p>
+      <div className="text-center py-10 px-6">
+        <div className="text-5xl md:text-6xl mb-5 md:mb-6">⚓</div>
+        <h3 className="font-display text-2xl md:text-3xl text-pc-navy mb-3 md:mb-4">{t('success')}</h3>
+        <p className="text-slate-600 mb-2 text-sm md:text-base">{t('success_body')}</p>
         {reservationId && (
           <p className="text-xs text-slate-400 font-mono mt-2">ID: {reservationId}</p>
         )}
@@ -82,75 +82,134 @@ export function ReservationForm() {
   const obsPlaceholder  = locale === 'pt' ? 'Alergias, ocasião especial, preferências de mesa...' : locale === 'es' ? 'Alergias, ocasión especial, preferencias de mesa...' : 'Allergies, special occasion, table preferences...'
 
   return (
-    <form onSubmit={handleSubmit}
-      className={`grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 bg-white p-6 md:p-12 rounded-2xl shadow-xl transition-all
-        ${shake ? 'animate-[shake_0.5s_ease-in-out]' : ''}`}>
+    <form
+      onSubmit={handleSubmit}
+      className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6 bg-white p-5 sm:p-8 md:p-12 rounded-2xl shadow-xl transition-all
+        ${shake ? 'animate-[shake_0.5s_ease-in-out]' : ''}`}
+    >
       <style>{`@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}`}</style>
 
-      <div className="space-y-2">
+      {/* Nome */}
+      <div className="space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('name')} *</label>
-        <input required value={form.name} onChange={e => set('name', e.target.value)}
-          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
-          placeholder={namePlaceholder} />
+        <input
+          required
+          value={form.name}
+          onChange={e => set('name', e.target.value)}
+          className="w-full min-h-[48px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none text-sm"
+          placeholder={namePlaceholder}
+        />
       </div>
-      <div className="space-y-2">
+
+      {/* WhatsApp */}
+      <div className="space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('whatsapp')} *</label>
-        <input required value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)}
-          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
-          placeholder="(00) 00000-0000" type="tel" />
+        <input
+          required
+          value={form.whatsapp}
+          onChange={e => set('whatsapp', e.target.value)}
+          className="w-full min-h-[48px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none text-sm"
+          placeholder="(00) 00000-0000"
+          type="tel"
+          inputMode="tel"
+        />
       </div>
-      <div className="space-y-2">
+
+      {/* Email — largura total no mobile para facilitar digitação */}
+      <div className="sm:col-span-2 space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('email')} *</label>
-        <input required type="email" value={form.email} onChange={e => set('email', e.target.value)}
-          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none"
-          placeholder="seu@email.com" />
+        <input
+          required
+          type="email"
+          inputMode="email"
+          value={form.email}
+          onChange={e => set('email', e.target.value)}
+          className="w-full min-h-[48px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none text-sm"
+          placeholder="seu@email.com"
+        />
       </div>
-      <div className="space-y-2">
+
+      {/* Nº de pessoas */}
+      <div className="space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('party_size')} *</label>
-        <select value={form.party_size} onChange={e => set('party_size', Number(e.target.value))}
-          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none">
+        <select
+          value={form.party_size}
+          onChange={e => set('party_size', Number(e.target.value))}
+          className="w-full min-h-[48px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none text-sm"
+        >
           {partyOptions.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
         </select>
       </div>
-      <div className="space-y-2">
+
+      {/* Data */}
+      <div className="space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('date')} *</label>
-        <input required type="date" value={form.reservation_date}
+        <input
+          required
+          type="date"
+          value={form.reservation_date}
           onChange={e => set('reservation_date', e.target.value)}
           min={new Date().toISOString().split('T')[0]}
-          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none" />
+          className="w-full min-h-[48px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none text-sm"
+        />
       </div>
-      <div className="space-y-2">
+
+      {/* Horário */}
+      <div className="space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('time')} *</label>
-        <select value={form.reservation_time} onChange={e => set('reservation_time', e.target.value)}
-          className="w-full min-h-[44px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none">
+        <select
+          value={form.reservation_time}
+          onChange={e => set('reservation_time', e.target.value)}
+          className="w-full min-h-[48px] bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-pc-gold rounded-lg px-4 py-3 outline-none text-sm"
+        >
           {['12:00','13:00','14:00','18:00','19:00','20:00','21:00','22:00'].map(h => (
             <option key={h} value={h}>{h}</option>
           ))}
         </select>
       </div>
-      <div className="md:col-span-2 space-y-2">
+
+      {/* Observações — largura total sempre */}
+      <div className="sm:col-span-2 space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('observations')}</label>
-        <textarea value={form.observations} onChange={e => set('observations', e.target.value)}
-          rows={3} maxLength={500}
-          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-[#D4A843] rounded-lg px-4 py-3 outline-none resize-none"
-          placeholder={obsPlaceholder} />
+        <textarea
+          value={form.observations}
+          onChange={e => set('observations', e.target.value)}
+          rows={3}
+          maxLength={500}
+          className="w-full bg-slate-50 border border-slate-200 focus:ring-1 focus:ring-[#D4A843] rounded-lg px-4 py-3 outline-none resize-none text-sm"
+          placeholder={obsPlaceholder}
+        />
       </div>
-      <div className="md:col-span-2 flex items-start gap-3 py-2">
-        <input type="checkbox" id="lgpd" checked={form.optin_accepted}
+
+      {/* LGPD */}
+      <div className="sm:col-span-2 flex items-start gap-3 py-1">
+        <input
+          type="checkbox"
+          id="lgpd"
+          checked={form.optin_accepted}
           onChange={e => set('optin_accepted', e.target.checked)}
-          className="mt-1 rounded border-slate-300 text-pc-gold focus:ring-pc-gold" />
+          className="mt-0.5 rounded border-slate-300 text-pc-gold focus:ring-pc-gold flex-shrink-0"
+          style={{ width: 18, height: 18 }}
+        />
         <label htmlFor="lgpd" className="text-xs text-slate-500 leading-relaxed cursor-pointer">
           {t('lgpd')}
         </label>
       </div>
+
+      {/* Erro */}
       {error && (
-        <div className="md:col-span-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
+        <div className="sm:col-span-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
           {error}
         </div>
       )}
-      <div className="md:col-span-2">
-        <button type="submit" disabled={loading}
-          className="w-full shimmer text-pc-navy py-4 rounded-lg font-accent font-bold uppercase tracking-[0.2em] hover:scale-[1.01] active:scale-[0.98] transition-transform shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:animate-none">
+
+      {/* Botão submit */}
+      <div className="sm:col-span-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full shimmer text-pc-navy py-4 rounded-lg font-accent font-bold uppercase tracking-[0.2em] hover:scale-[1.01] active:scale-[0.98] transition-transform shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:animate-none min-h-[52px]"
+        >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
               <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
