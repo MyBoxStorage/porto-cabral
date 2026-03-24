@@ -22,13 +22,92 @@ const HERO_FB: HeroData = {
   video_mobile_2: '',
 }
 
-/*
-  VideoItem
-  - eager=true  → autoPlay + preload="auto" imediato (sem esperar nada)
-  - eager=false → controlado por unlocked + hero props (desktop)
-  - hero=false + unlocked via observer → desktop vídeos 2 e 3
-*/
-function VideoItem({
+/* ─────────────────────────────────────────────────────────────
+   Detecção de mobile SÍNCRONA — roda antes do primeiro render,
+   sem useState, eliminando o flash "desktop → mobile".
+   Fallback para false em SSR (sem window).
+───────────────────────────────────────────────────────────── */
+function getIsMobile(): boolean {
+  if (typeof window === 'undefined') return false
+  // Usa tanto largura quanto userAgent para cobrir tablets em modo landscape
+  return window.innerWidth < 768 ||
+    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent)
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MobileVideo — componente dedicado para mobile.
+   Estratégia:
+   1. Atributos nativos: autoPlay muted loop playsInline
+   2. play() via ref no mount + tentativas repetidas (browsers
+      mobile bloqueiam o autoplay e silenciosamente ignoram)
+   3. IntersectionObserver para re-disparar quando volta para
+      viewport (ex: usuário troca de aba e volta)
+───────────────────────────────────────────────────────────── */
+function MobileVideo({
+  src,
+  onFirstPlay,
+}: {
+  src: string
+  onFirstPlay?: () => void
+}) {
+  const ref = useRef<HTMLVideoElement>(null)
+  const firedRef = useRef(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    // Tenta play agressivamente logo no mount
+    const tryPlay = () => {
+      el.play().then(() => {
+        if (!firedRef.current) {
+          firedRef.current = true
+          onFirstPlay?.()
+        }
+      }).catch(() => {
+        // Browser bloqueou — tenta novamente em 300ms
+        setTimeout(tryPlay, 300)
+      })
+    }
+    tryPlay()
+
+    // Re-dispara play ao voltar para viewport
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) el.play().catch(() => {})
+        else el.pause()
+      },
+      { threshold: 0.05 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [onFirstPlay])
+
+  return (
+    <video
+      ref={ref}
+      src={src}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      x-webkit-airplay="deny"
+      style={{
+        width: '100%', height: '100%',
+        objectFit: 'cover', objectPosition: 'center',
+        filter: 'brightness(0.55)', display: 'block',
+        // Evita controles nativos iOS que aparecem antes do play
+        WebkitMediaControlsPanel: 'none',
+      } as React.CSSProperties}
+    />
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DesktopVideoItem — comportamento sequencial original (sem mudança)
+───────────────────────────────────────────────────────────── */
+function DesktopVideoItem({
   src,
   eager = false,
   unlocked = true,
@@ -44,7 +123,6 @@ function VideoItem({
   const ref = useRef<HTMLVideoElement>(null)
   const [preload, setPreload] = useState<string>(eager ? 'auto' : 'none')
 
-  // Desktop: ao desbloquear, hero inicia imediatamente
   useEffect(() => {
     if (!unlocked || eager) return
     const el = ref.current
@@ -57,7 +135,6 @@ function VideoItem({
     }
   }, [unlocked, eager, hero])
 
-  // Observer: pausa quando sai da viewport (economiza CPU/banda)
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -93,26 +170,46 @@ function VideoItem({
   )
 }
 
+/* ─────────────────────────────────────────────────────────────
+   HeroSection
+───────────────────────────────────────────────────────────── */
 export function HeroSection() {
   const t = useTranslations('home')
   const locale = useLocale()
-  const [isMobile, setIsMobile] = useState(false)
+
+  // ── Detecção de mobile SÍNCRONA no primeiro render (cliente)
+  // useState com initializer function — roda uma vez, sem efeito colateral
+  const [isMobile] = useState<boolean>(getIsMobile)
+
+  // ── Visibilidade da camada de vídeo
+  // Mobile: revela em 400ms fixos (não depende de onCanPlay)
+  // Desktop: revela quando o primeiro vídeo dispara onCanPlay
   const [videoReady, setVideoReady] = useState(false)
-  // Desktop: controle de unlock sequencial para vídeos 2 e 3
+
   const [v2Unlocked, setV2Unlocked] = useState(false)
   const [v3Unlocked, setV3Unlocked] = useState(false)
 
-  // Desktop: desbloqueia vídeos 2 e 3 sequencialmente como fallback de tempo
   useEffect(() => {
-    const t2 = setTimeout(() => setV2Unlocked(true), 3000)
-    const t3 = setTimeout(() => setV3Unlocked(true), 5000)
-    const tR = setTimeout(() => setVideoReady(true), 4000)
-    return () => { clearTimeout(t2); clearTimeout(t3); clearTimeout(tR) }
-  }, [])
+    if (isMobile) {
+      // Mobile: revela o vídeo em 400ms — ele já está tocando,
+      // só esperamos o fade-in ser visualmente suave
+      const t = setTimeout(() => setVideoReady(true), 400)
+      return () => clearTimeout(t)
+    } else {
+      // Desktop: fallback de tempo caso onCanPlay demore
+      const t2 = setTimeout(() => setV2Unlocked(true), 3000)
+      const t3 = setTimeout(() => setV3Unlocked(true), 5000)
+      const tR = setTimeout(() => setVideoReady(true), 2000)
+      return () => { clearTimeout(t2); clearTimeout(t3); clearTimeout(tR) }
+    }
+  }, [isMobile])
 
+  // Atualiza isMobile em resize (sem re-render: só para o listener)
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768)
-    check()
+    const check = () => {
+      // Não podemos mudar isMobile (é readonly após mount)
+      // mas precisamos do listener para evitar memory leak
+    }
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
@@ -129,7 +226,6 @@ export function HeroSection() {
   const desktopVideos = [d1, d2, d3].filter(Boolean)
   const mobileVideos  = [mob, mob2].filter(Boolean)
 
-  // Chamado quando o 1º vídeo está pronto para tocar
   const handleV1Ready = useCallback(() => {
     setVideoReady(true)
     setV2Unlocked(true)
@@ -140,13 +236,14 @@ export function HeroSection() {
       className="relative w-full overflow-hidden flex items-center justify-center"
       style={{ height: '100dvh' }}
     >
-      {/* Capa de loading — some quando video esta pronto */}
+      {/* Capa de loading */}
       <div
         className="absolute inset-0 z-[5]"
         style={{
           background: 'linear-gradient(135deg,#001432 0%,#002451 50%,#0a1a35 100%)',
           opacity: videoReady ? 0 : 1,
-          transition: 'opacity 0.8s ease',
+          // Mobile: transição mais curta para não segurar o vídeo
+          transition: isMobile ? 'opacity 0.4s ease' : 'opacity 0.8s ease',
           pointerEvents: 'none',
         }}
       >
@@ -163,41 +260,34 @@ export function HeroSection() {
         }} />
       </div>
 
-      {/* Camada de video */}
+      {/* Camada de vídeo */}
       <div
         className="absolute inset-0 z-0"
-        style={{ opacity: videoReady ? 1 : 0, transition: 'opacity 0.8s ease' }}
+        style={{
+          opacity: videoReady ? 1 : 0,
+          transition: isMobile ? 'opacity 0.4s ease' : 'opacity 0.8s ease',
+        }}
       >
         {isMobile ? (
           mobileVideos.length >= 2 ? (
-            // Mobile com 2 vídeos: ambos eager — autoplay imediato em paralelo
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <VideoItem
-                  src={mobileVideos[0]}
-                  eager
-                  onReady={handleV1Ready}
-                />
+                <MobileVideo src={mobileVideos[0]} onFirstPlay={handleV1Ready} />
               </div>
               <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <VideoItem
-                  src={mobileVideos[1]}
-                  eager
-                />
+                <MobileVideo src={mobileVideos[1]} />
               </div>
             </div>
           ) : (
-            // Mobile com 1 vídeo
-            <VideoItem src={mob} eager onReady={handleV1Ready} />
+            <MobileVideo src={mob} onFirstPlay={handleV1Ready} />
           )
         ) : (
-          // Desktop: unlock sequencial para economizar banda
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {desktopVideos.map((src, i) => (
               <div key={i} style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                {i === 0 && <VideoItem src={src} eager unlocked onReady={handleV1Ready} />}
-                {i === 1 && <VideoItem src={src} hero unlocked={v2Unlocked} onReady={() => setV3Unlocked(true)} />}
-                {i === 2 && <VideoItem src={src} hero unlocked={v3Unlocked} />}
+                {i === 0 && <DesktopVideoItem src={src} eager unlocked onReady={handleV1Ready} />}
+                {i === 1 && <DesktopVideoItem src={src} hero unlocked={v2Unlocked} onReady={() => setV3Unlocked(true)} />}
+                {i === 2 && <DesktopVideoItem src={src} hero unlocked={v3Unlocked} />}
               </div>
             ))}
           </div>
@@ -212,7 +302,7 @@ export function HeroSection() {
         }}
       />
 
-      {/* Conteudo */}
+      {/* Conteúdo */}
       <div className="relative z-20 text-center px-4 sm:px-6 max-w-3xl mx-auto w-full">
         <p className="font-accent text-[10px] tracking-[0.5em] uppercase mb-6"
           style={{ color: 'rgba(212,168,67,0.8)' }}>
