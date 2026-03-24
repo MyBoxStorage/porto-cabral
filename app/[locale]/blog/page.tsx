@@ -29,8 +29,9 @@ const posts = [
 
 export default function BlogPage() {
   return (
-    <main className="min-h-screen bg-[#fef9f1] pt-[72px] overflow-x-hidden">
-      <section className="bg-[#0074bf] py-16 md:py-24 px-4 text-center">
+    <main className="min-h-screen bg-[#fef9f1] overflow-x-hidden">
+      {/* Hero — começa no topo absoluto (por baixo da navbar transparente) */}
+      <section className="bg-[#0074bf] pt-[calc(72px+4rem)] pb-16 md:pt-[calc(72px+5rem)] md:pb-24 px-4 text-center">
         <span className="font-accent text-[#D4A843] tracking-[0.3em] uppercase text-sm block mb-4">
           Histórias do Porto
         </span>

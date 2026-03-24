@@ -217,7 +217,7 @@ const CSS = `
 /* ── HERO HEADER ── */
 .pf-hero{
   background:linear-gradient(170deg,#005fa3 0%,#0074bf 45%,#0087d9 80%,#006ab3 100%);
-  padding:7rem 1.5rem 5rem;
+  padding:calc(72px + 5rem) 1.5rem 5rem;
   text-align:center;
   position:relative;
   overflow:hidden;
@@ -642,7 +642,7 @@ const CSS = `
   .pf-deck { display: none !important; }
 
   /* Hero mobile */
-  .pf-hero { padding: 5rem 1.2rem 3.5rem; }
+  .pf-hero { padding: calc(72px + 3rem) 1.2rem 3.5rem; }
   .pf-hero-title { font-size: clamp(3.2rem,14vw,5rem); }
   .pf-hero-scroll { margin-top: 1.8rem; }
 
@@ -1166,7 +1166,7 @@ export default function CardapioPage() {
   function next() { if (!isMobile) flipRef.current?.flipNext() }
 
   return (
-    <div className="pf-wrap pt-[72px]">
+    <div className="pf-wrap">
       <style>{CSS}</style>
 
       <header className="pf-hero">

@@ -13,26 +13,17 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
-  const isHome    = pathname === `/${locale}` || pathname === '/'
-  const isCliente = pathname.includes('/cliente') && !pathname.includes('/login')
-
-  // Páginas onde o navbar começa invisível no topo e surge com o scroll
-  const isTransparentPage = isHome || isCliente
-
   const checkScroll = useCallback(() => {
     setScrolled(window.scrollY > 60)
   }, [])
 
   useEffect(() => {
-    // Verifica imediatamente ao montar (cobre reload com scroll já feito)
     checkScroll()
-
-    // Listener passivo — máxima performance
     window.addEventListener('scroll', checkScroll, { passive: true })
     return () => window.removeEventListener('scroll', checkScroll)
   }, [checkScroll])
 
-  // Fecha menu ao trocar de rota
+  // Fecha o menu mobile ao navegar
   useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
@@ -45,39 +36,28 @@ export function Navbar() {
     { href: `/${locale}/cliente`,  label: t('cliente') },
   ]
 
-  // isTransparent: só nas páginas elegíveis E antes do primeiro scroll
-  const isTransparent = isTransparentPage && !scrolled
-
-  // Na área do cliente o navbar fica completamente invisível no topo
-  // (o header próprio da área do cliente ocupa esse espaço)
-  const isHidden = isCliente && !scrolled
-
   return (
     <nav
       className="fixed top-0 w-full z-50"
       style={{
-        background: isTransparent ? 'transparent' : 'rgba(0,95,163,0.97)',
-        backdropFilter: isTransparent ? 'none' : 'blur(16px)',
-        WebkitBackdropFilter: isTransparent ? 'none' : 'blur(16px)',
-        borderBottom: isTransparent ? '1px solid transparent' : '1px solid rgba(255,255,255,0.08)',
-        boxShadow: isTransparent ? 'none' : '0 2px 24px rgba(0,0,0,0.35)',
-        // Transição suave para todas as propriedades visuais
-        transition: 'background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease, opacity 0.4s ease',
-        // Área do cliente: invisível + não interativo no topo
-        opacity: isHidden ? 0 : 1,
-        pointerEvents: isHidden ? 'none' : 'auto',
+        background: scrolled ? 'rgba(0,95,163,0.97)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.08)' : '1px solid transparent',
+        boxShadow: scrolled ? '0 2px 24px rgba(0,0,0,0.35)' : 'none',
+        transition: 'background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease',
       }}
     >
       <div className="flex justify-between items-center px-6 md:px-12 py-3 max-w-7xl mx-auto">
 
-        {/* ── Brand: logo + wordmark — some quando transparente na home ── */}
+        {/* Brand — some quando não scrollou */}
         <Link
           href={`/${locale}`}
           className="flex items-center gap-3 group"
           aria-label="Porto Cabral BC — Home"
           style={{
-            opacity: isTransparent ? 0 : 1,
-            pointerEvents: isTransparent ? 'none' : 'auto',
+            opacity: scrolled ? 1 : 0,
+            pointerEvents: scrolled ? 'auto' : 'none',
             transition: 'opacity 0.4s ease',
           }}
         >
@@ -86,28 +66,19 @@ export function Navbar() {
           </span>
           <span className="hidden md:block h-8 w-px" style={{ background: 'rgba(255,255,255,0.18)' }} />
           <span className="hidden md:flex flex-col gap-0 leading-none">
-            <span
-              className="font-accent uppercase text-white/60"
-              style={{ fontSize: '0.55rem', letterSpacing: '0.38em' }}
-            >
+            <span className="font-accent uppercase text-white/60" style={{ fontSize: '0.55rem', letterSpacing: '0.38em' }}>
               ·PORTO·
             </span>
-            <span
-              className="font-display italic text-white tracking-wide"
-              style={{ fontSize: '1.15rem', lineHeight: 1.1 }}
-            >
+            <span className="font-display italic text-white tracking-wide" style={{ fontSize: '1.15rem', lineHeight: 1.1 }}>
               Cabral
             </span>
-            <span
-              className="font-accent uppercase text-[#D4A843]/70"
-              style={{ fontSize: '0.42rem', letterSpacing: '0.22em', marginTop: '4px' }}
-            >
+            <span className="font-accent uppercase text-[#D4A843]/70" style={{ fontSize: '0.42rem', letterSpacing: '0.22em', marginTop: '4px' }}>
               GASTRONOMIA FLUTUANTE
             </span>
           </span>
         </Link>
 
-        {/* ── Desktop links ── */}
+        {/* Desktop links */}
         <div className="hidden md:flex gap-8 items-center">
           {links.map((l) => (
             <Link
@@ -115,8 +86,8 @@ export function Navbar() {
               href={l.href}
               className="font-accent text-xs tracking-[0.15em] uppercase hover:text-[#D4A843] transition-colors duration-200 relative group"
               style={{
-                color: 'rgba(255,255,255,0.85)',
-                textShadow: isTransparent ? '0 1px 8px rgba(0,0,0,0.6)' : 'none',
+                color: 'rgba(255,255,255,0.9)',
+                textShadow: !scrolled ? '0 1px 8px rgba(0,0,0,0.6)' : 'none',
               }}
             >
               {l.label}
@@ -127,16 +98,12 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           <LanguageSelector />
-
-          {/* Mobile hamburger */}
           <button
             className="md:hidden text-white min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={menuOpen}
-            style={{
-              filter: isTransparent ? 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' : 'none',
-            }}
+            style={{ filter: !scrolled ? 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' : 'none' }}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -150,7 +117,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* ── Mobile menu — desliza de cima para baixo ── */}
+      {/* Mobile menu */}
       <div
         className="md:hidden overflow-hidden"
         style={{
