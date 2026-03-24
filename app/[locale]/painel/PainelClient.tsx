@@ -70,11 +70,7 @@ const G = `
   .pc-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
 `
 
-/* ══ SORTABLE LIST ══════════════════════════════════════════════════
-   Componente reutilizavel de reordenacao drag-and-drop sem dependencias.
-   Uso: <SortableList items={arr} onReorder={newArr => update(...)} renderItem={(item,i,handle) => ...} />
-   O 'handle' e um <div> que deve ser colocado como alca de arrastar.
-══════════════════════════════════════════════════════════════════ */
+/* ══ SORTABLE LIST ══════════════════════════════════════════════════ */
 function SortableList<T>({ items, onReorder, renderItem }: {
   items: T[]
   onReorder: (newItems: T[]) => void
@@ -196,7 +192,6 @@ function StatCard({label,value,sub,color}:{label:string;value:number|string;sub?
       borderRadius:16,padding:'1.5rem',position:'relative',overflow:'hidden',
       border:`1px solid rgba(212,168,67,0.15)`,
     }}>
-      {/* dot pattern */}
       <div style={{position:'absolute',inset:0,opacity:.04,
         backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none'}}/>
       <div style={{position:'absolute',top:0,left:0,width:3,bottom:0,background:`linear-gradient(180deg,transparent,${color??GOLD},transparent)`,borderRadius:'16px 0 0 16px'}}/>
@@ -319,7 +314,6 @@ function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
         <StatCard label="Opt-in LGPD"     value={stats.optin_customers}       color="#ec4899" sub="marketing aceito"/>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
-        {/* por status */}
         <div style={{background:`linear-gradient(135deg,${NAVY} 0%,${NAVY2} 100%)`,borderRadius:16,padding:'1.5rem',
           border:'1px solid rgba(212,168,67,0.15)',position:'relative',overflow:'hidden'}}>
           <div style={{position:'absolute',inset:0,opacity:.03,backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none'}}/>
@@ -332,7 +326,6 @@ function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
             </div>
           ))}
         </div>
-        {/* recentes */}
         <div style={{background:`linear-gradient(135deg,${NAVY} 0%,${NAVY2} 100%)`,borderRadius:16,padding:'1.5rem',
           border:'1px solid rgba(212,168,67,0.15)',position:'relative',overflow:'hidden'}}>
           <div style={{position:'absolute',inset:0,opacity:.03,backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none'}}/>
@@ -390,7 +383,6 @@ function TabReservas() {
   return (
     <div>
       <SectionTitle>Gestão de Reservas</SectionTitle>
-      {/* filtros */}
       <div style={{display:'flex',gap:10,marginBottom:'1.5rem',flexWrap:'wrap',alignItems:'center'}}>
         <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Buscar por nome…"
           className="pc-input" style={{...inp,maxWidth:220}}/>
@@ -442,7 +434,6 @@ function TabReservas() {
         </div>
       )}
 
-      {/* Modal */}
       {selected&&(
         <div style={{position:'fixed',inset:0,background:'rgba(0,10,30,0.85)',zIndex:999,display:'flex',alignItems:'center',justifyContent:'center',padding:16,backdropFilter:'blur(4px)'}} onClick={()=>setSelected(null)}>
           <div style={{background:`linear-gradient(160deg,${NAVY} 0%,${NAVY2} 100%)`,borderRadius:20,padding:'2rem',
@@ -553,14 +544,15 @@ function TabClientes() {
 
 /* ══ TAB: CONTEÚDO ══════════════════════════════════════════════ */
 function TabConteudo() {
-  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'|'sobre'|'banners'>('hero')
+  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'|'reserva'|'sobre'|'banners'>('hero')
   const sections: {id:typeof section;label:string;icon:string}[] = [
-    {id:'hero',    label:'Hero Banner',       icon:'▶'},
-    {id:'dishes',  label:'Pratos Destaque',   icon:'◆'},
-    {id:'history', label:'Nossa História',    icon:'◎'},
-    {id:'videos',  label:'Film Strip',        icon:'🎬'},
-    {id:'location',label:'Localização',       icon:'◉'},
-    {id:'sobre',   label:'Página Sobre',      icon:'⚓'},
+    {id:'hero',    label:'Hero Banner',      icon:'▶'},
+    {id:'dishes',  label:'Pratos Destaque',  icon:'◆'},
+    {id:'history', label:'Nossa História',   icon:'◎'},
+    {id:'videos',  label:'Film Strip',       icon:'🎬'},
+    {id:'location',label:'Localização',      icon:'◉'},
+    {id:'reserva', label:'Fundo Reserva',    icon:'📷'},
+    {id:'sobre',   label:'Página Sobre',     icon:'⚓'},
     {id:'banners', label:'Banners Páginas',  icon:'🖼️'},
   ]
   return (
@@ -588,8 +580,9 @@ function TabConteudo() {
           {section==='history'  && <EditHistory/>}
           {section==='videos'   && <EditVideos/>}
           {section==='location' && <EditLocation/>}
-        {section==='sobre'    && <EditSobre/>}
-        {section==='banners'  && <EditPageBanners/>}
+          {section==='reserva'  && <EditReserva/>}
+          {section==='sobre'    && <EditSobre/>}
+          {section==='banners'  && <EditPageBanners/>}
         </div>
       </div>
     </div>
@@ -632,8 +625,6 @@ function EditHero() {
           <div><label style={labelSt}>Botão principal — Reserva</label><input className="pc-input" style={inp} value={data[`cta_reserva_${lang}`]??''} onChange={e=>update(p=>({...p,[`cta_reserva_${lang}`]:e.target.value}))}/></div>
           <div><label style={labelSt}>Botão secundário — Cardápio</label><input className="pc-input" style={inp} value={data[`cta_cardapio_${lang}`]??''} onChange={e=>update(p=>({...p,[`cta_cardapio_${lang}`]:e.target.value}))}/></div>
         </div>
-
-        {/* ── Vídeos do Hero ── */}
         <div style={{borderTop:'1px solid rgba(212,168,67,0.12)',paddingTop:'1.25rem',marginTop:'.25rem'}}>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Vídeos do Hero</p>
           <div style={{background:'rgba(212,168,67,0.05)',border:'1px solid rgba(212,168,67,0.12)',borderRadius:8,padding:'0.75rem 1rem',marginBottom:'1.25rem'}}>
@@ -655,7 +646,6 @@ function EditHero() {
             </div>
           </div>
         </div>
-
       </div>
     </EdCard>
   )
@@ -670,13 +660,12 @@ function ImageUploader({value,onChange,label}:{value:string;onChange:(url:string
   async function handleFile(e:React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if(!file) return
-    // Valida tamanho (máx 2MB)
     if(file.size > 2*1024*1024) { setErr('Imagem muito grande. Máx 2MB.'); return }
     setUploading(true); setErr('')
     const reader = new FileReader()
     reader.onload = async () => {
       const dataUri = reader.result as string
-      setPreview(dataUri) // preview imediato
+      setPreview(dataUri)
       try {
         const res = await fetch('/api/admin/upload',{
           method:'POST',
@@ -685,10 +674,10 @@ function ImageUploader({value,onChange,label}:{value:string;onChange:(url:string
         })
         const json = await res.json()
         if(!res.ok) throw new Error(json.error ?? 'Erro no upload')
-        onChange(json.url) // /api/img/<key>
+        onChange(json.url)
       } catch(ex:unknown) {
         setErr(ex instanceof Error ? ex.message : 'Erro no upload')
-        setPreview(value) // volta preview anterior
+        setPreview(value)
       } finally { setUploading(false) }
     }
     reader.readAsDataURL(file)
@@ -700,7 +689,6 @@ function ImageUploader({value,onChange,label}:{value:string;onChange:(url:string
     <div>
       <label style={labelSt}>{label}</label>
       <div style={{display:'flex',gap:12,alignItems:'flex-start',flexWrap:'wrap'}}>
-        {/* Preview */}
         <div style={{width:90,height:90,borderRadius:10,overflow:'hidden',flexShrink:0,
           border:`2px ${displayUrl?'solid rgba(212,168,67,0.4)':'dashed rgba(212,168,67,0.2)'}`,
           background:'rgba(0,0,0,0.2)',display:'flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
@@ -719,7 +707,6 @@ function ImageUploader({value,onChange,label}:{value:string;onChange:(url:string
             <span style={{color:'rgba(212,168,67,0.25)',fontSize:28,lineHeight:1}}>+</span>
           )}
         </div>
-        {/* Botão upload */}
         <div style={{flex:1,minWidth:160,display:'flex',flexDirection:'column',gap:6,justifyContent:'center'}}>
           <label style={{
             display:'flex',alignItems:'center',justifyContent:'center',gap:8,
@@ -842,29 +829,24 @@ function EditVideos() {
     <EdCard toast={toast} onClearToast={clearToast}>
       <SectionHeader title="Film Strip — Vídeos" onSave={save} saving={saving} dirty={dirty}/>
       <LangTabs lang={lang} setLang={setLang}/>
-      {/* eyebrow + título */}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1.5rem'}}>
         <div><label style={labelSt}>Eyebrow ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as unknown as Record<string,string>)[`eyebrow_${lang}`]??''} onChange={e=>update(p=>({...p,[`eyebrow_${lang}`]:e.target.value}))}/></div>
         <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as unknown as Record<string,string>)[`title_${lang}`]??''} onChange={e=>update(p=>({...p,[`title_${lang}`]:e.target.value}))}/></div>
       </div>
-      {/* info */}
       <div style={{background:'rgba(212,168,67,0.06)',border:'1px solid rgba(212,168,67,0.15)',borderRadius:10,padding:'1rem',marginBottom:'1.5rem',display:'flex',gap:12,alignItems:'flex-start'}}>
         <span style={{fontSize:18,flexShrink:0}}>🎬</span>
         <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,0.5)',letterSpacing:'.05em',lineHeight:1.7,margin:0}}>
-          Cole o link direto do vídeo no Cloudinary (ex: <strong style={{color:GOLD}}>https://res.cloudinary.com/.../video.mp4</strong>). Cada vídeo adicionado aparece automaticamente no carrossel da home. Ordem de exibição = ordem da lista abaixo.
+          Cole o link direto do vídeo no Cloudinary (ex: <strong style={{color:GOLD}}>https://res.cloudinary.com/.../video.mp4</strong>). Cada vídeo adicionado aparece automaticamente no carrossel da home.
         </p>
       </div>
-      {/* lista de vídeos */}
       <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:'1rem'}}>
         {items.map((item,i)=>(
           <div key={i} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(212,168,67,0.1)',borderRadius:10,padding:'1rem'}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'.75rem'}}>
               <span style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:13,color:GOLD}}>Vídeo {i+1}</span>
               <div style={{display:'flex',gap:8,alignItems:'center'}}>
-                {/* mover p/ cima */}
                 {i>0&&<button onClick={()=>{const a=[...items];[a[i-1],a[i]]=[a[i],a[i-1]];update(p=>({...p,items:a}))}}
                   style={{padding:'3px 8px',borderRadius:5,border:'1px solid rgba(212,168,67,0.2)',background:'transparent',color:GOLD,fontSize:11,cursor:'pointer'}}>↑</button>}
-                {/* mover p/ baixo */}
                 {i<items.length-1&&<button onClick={()=>{const a=[...items];[a[i],a[i+1]]=[a[i+1],a[i]];update(p=>({...p,items:a}))}}
                   style={{padding:'3px 8px',borderRadius:5,border:'1px solid rgba(212,168,67,0.2)',background:'transparent',color:GOLD,fontSize:11,cursor:'pointer'}}>↓</button>}
                 <button onClick={()=>update(p=>({...p,items:p.items.filter((_,j)=>j!==i)}))}
@@ -884,20 +866,16 @@ function EditVideos() {
                   onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,label_pt:e.target.value}:it)}))}/>
               </div>
             </div>
-            {/* preview thumbnail */}
             {item.url&&(
               <div style={{marginTop:'.75rem',display:'flex',alignItems:'center',gap:10}}>
                 <video src={item.url} muted playsInline preload="metadata"
                   style={{width:72,height:72,objectFit:'cover',borderRadius:8,border:'1px solid rgba(212,168,67,0.2)',flexShrink:0}}/>
-                <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(212,168,67,0.45)',letterSpacing:'.06em',margin:0,wordBreak:'break-all'}}>
-                  ✔ URL configurada
-                </p>
+                <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(212,168,67,0.45)',letterSpacing:'.06em',margin:0,wordBreak:'break-all'}}>✔ URL configurada</p>
               </div>
             )}
           </div>
         ))}
       </div>
-      {/* adicionar novo */}
       <button onClick={()=>update(p=>({...p,items:[...(p.items??[]),{url:'',label_pt:''}]}))}
         style={{...ghostBtn,width:'100%',justifyContent:'center',color:GOLD,borderColor:'rgba(212,168,67,0.25)',fontSize:11}}>
         + Adicionar Vídeo
@@ -925,6 +903,50 @@ function EditLocation() {
           {data.maps_url&&<a href={data.maps_url} target="_blank" rel="noopener" style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:GOLD,letterSpacing:'.08em',marginTop:6,display:'inline-block'}}>✦ Testar link →</a>}
         </div>
       </div>
+    </EdCard>
+  )
+}
+
+/* ─── Fundo Seção Reserva ────────────── */
+function EditReserva() {
+  const {data,update,save,saving,dirty,toast,clearToast} = useContent<Record<string,string>>('reserva')
+  if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
+  return (
+    <EdCard toast={toast} onClearToast={clearToast}>
+      <SectionHeader title="Fundo — Seção Reserva" onSave={save} saving={saving} dirty={dirty}/>
+      {/* Descrição */}
+      <div style={{background:'rgba(212,168,67,0.05)',border:'1px solid rgba(212,168,67,0.12)',borderRadius:10,padding:'1rem',marginBottom:'1.5rem',display:'flex',gap:12,alignItems:'flex-start'}}>
+        <span style={{fontSize:20,flexShrink:0}}>📷</span>
+        <div>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,0.6)',letterSpacing:'.05em',lineHeight:1.7,margin:'0 0 4px'}}>
+            Esta foto cobre <strong style={{color:GOLD}}>toda a seção "Garanta seu Lugar"</strong> da home page como background.
+          </p>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'.04em',lineHeight:1.6,margin:0}}>
+            Recomendado: foto em formato portrait (vertical) · Alta resolução · JPG ou WEBP · Máx 2MB
+          </p>
+        </div>
+      </div>
+      {/* Preview grande da foto atual */}
+      {data.bg_image_url && (
+        <div style={{marginBottom:'1.5rem',borderRadius:12,overflow:'hidden',position:'relative',height:200}}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={data.bg_image_url} alt="Fundo reserva" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center'}}/>
+          <div style={{position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 60%,rgba(0,0,0,0.6) 100%)'}}/>
+          <div style={{position:'absolute',bottom:12,left:12,right:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.7)',letterSpacing:'.08em',margin:0}}>✔ Foto configurada — aparece na seção Reservas da home</p>
+            <button onClick={()=>update(p=>({...p,bg_image_url:''}))}
+              style={{background:'rgba(0,0,0,0.7)',border:'1px solid rgba(255,255,255,0.2)',color:'#fff',borderRadius:6,padding:'5px 12px',cursor:'pointer',fontSize:10,fontFamily:"'Josefin Sans',sans-serif",whiteSpace:'nowrap'}}>
+              ✕ Remover
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Uploader */}
+      <ImageUploader
+        label="Foto de fundo da Seção Reserva (portrait recomendado)"
+        value={data.bg_image_url??''}
+        onChange={url=>update(p=>({...p,bg_image_url:url}))}
+      />
     </EdCard>
   )
 }
@@ -963,7 +985,6 @@ function EditSobre() {
         {F('p3','Parágrafo 3',3)}
         {F('quote','Citação do Fundador',3)}
         {F('quote_author','Autor da Citação (ex: — Edson Cabral, Fundador)')}
-        {/* Upload da foto principal */}
         <ImageUploader
           label="Foto Principal da Página Sobre"
           value={data.image_url??''}
@@ -999,7 +1020,6 @@ function EditPageBanners() {
         </p>
       </div>
       <div style={{display:'grid',gap:'2rem'}}>
-        {/* Video da Area do Cliente */}
         <div>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 .5rem'}}>🎬 Área do Cliente — Vídeo de Fundo</p>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'.04em',margin:'0 0 1rem',lineHeight:1.6}}>
@@ -1023,7 +1043,6 @@ function EditPageBanners() {
             </div>
           )}
         </div>
-        {/* Cardápio */}
         <div>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Página Cardápio</p>
           {data.cardapio&&(
@@ -1036,7 +1055,6 @@ function EditPageBanners() {
           )}
           <ImageUploader label="Foto de fundo do banner Cardápio" value={data.cardapio??''} onChange={url=>update(p=>({...p,cardapio:url}))}/>
         </div>
-        {/* Sobre */}
         <div style={{borderTop:'1px solid rgba(212,168,67,0.1)',paddingTop:'1.5rem'}}>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Página Sobre</p>
           {data.sobre&&(
@@ -1049,7 +1067,6 @@ function EditPageBanners() {
           )}
           <ImageUploader label="Foto de fundo do banner Sobre" value={data.sobre??''} onChange={url=>update(p=>({...p,sobre:url}))}/>
         </div>
-        {/* Blog */}
         <div style={{borderTop:'1px solid rgba(212,168,67,0.1)',paddingTop:'1.5rem'}}>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Página Blog</p>
           {data.blog&&(
@@ -1068,7 +1085,6 @@ function EditPageBanners() {
 }
 
 /* ══ TAB: CARDÁPIO ══════════════════════════════════════════════ */
-/* tipos do cardápio completo */
 type MenuItem = {name:string;price:string;desc?:string;tag?:string}
 type MenuSection = {id:string;title:string;subtitle:string;items:MenuItem[]}
 type MenuData = {sections: MenuSection[]}
@@ -1091,7 +1107,6 @@ function TabCardapio() {
       <SectionTitle>Cardápio — Logbook do Capitão</SectionTitle>
       {toast&&<Toast msg={toast.msg} type={toast.type} onClose={clearToast}/>}
 
-      {/* barra de ações */}
       <div style={{display:'flex',justifyContent:'flex-end',marginBottom:'1.5rem'}}>
         <button onClick={save} disabled={saving||!dirty} className={dirty&&!saving?'pc-shimmer':''}
           style={{...goldBtn,opacity:(saving||!dirty)?0.4:1,
@@ -1101,7 +1116,6 @@ function TabCardapio() {
         </button>
       </div>
 
-      {/* seções */}
       <SortableList
         items={sec}
         onReorder={newSecs=>update(p=>({...p,sections:newSecs}))}
@@ -1109,7 +1123,6 @@ function TabCardapio() {
           <div style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,
             borderRadius:14,border:`1px solid ${openSection===section.id?'rgba(212,168,67,0.35)':'rgba(212,168,67,0.1)'}`,
             overflow:'hidden',transition:'border .2s'}}>
-            {/* header da seção */}
             <div style={{display:'flex',alignItems:'center'}}>
               <div style={{paddingLeft:'0.75rem'}}>{secHandle}</div>
               <button onClick={()=>setOpenSection(openSection===section.id?null:section.id)}
@@ -1129,10 +1142,8 @@ function TabCardapio() {
               </button>
             </div>
 
-            {/* conteúdo expandido */}
             {openSection===section.id&&(
               <div style={{padding:'0 1.25rem 1.25rem',borderTop:'1px solid rgba(212,168,67,0.08)'}}>
-                {/* metadados da seção */}
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',margin:'1rem 0 1.25rem'}}>
                   <div>
                     <label style={labelSt}>Título da Seção</label>
@@ -1146,7 +1157,6 @@ function TabCardapio() {
                   </div>
                 </div>
 
-                {/* itens */}
                 <p style={{...labelSt,marginBottom:'0.75rem'}}>Itens do Cardápio</p>
                 <SortableList
                   items={section.items??[]}
@@ -1252,7 +1262,6 @@ export function PainelClient() {
     <div style={{minHeight:'100vh',background:CREAM,fontFamily:"'Inter',sans-serif"}}>
       <style>{G}</style>
 
-      {/* ── TOPBAR ───────────────────────────────────────────── */}
       <header style={{
         background:`linear-gradient(90deg,${NAVY} 0%,${NAVY2} 100%)`,
         borderBottom:'1px solid rgba(212,168,67,0.15)',
@@ -1260,7 +1269,6 @@ export function PainelClient() {
         display:'flex',alignItems:'center',justifyContent:'space-between',
         boxShadow:'0 4px 24px rgba(0,10,30,0.4)',
       }}>
-        {/* logo */}
         <div style={{display:'flex',alignItems:'center',gap:14}}>
           <div style={{width:38,height:38,borderRadius:10,background:'rgba(212,168,67,0.12)',border:'1px solid rgba(212,168,67,0.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>⚓</div>
           <div>
@@ -1268,7 +1276,6 @@ export function PainelClient() {
             <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:8,letterSpacing:'.25em',textTransform:'uppercase',color:'rgba(212,168,67,0.45)',margin:0}}>Painel Administrativo</p>
           </div>
         </div>
-        {/* badges */}
         <div style={{display:'flex',gap:20,alignItems:'center'}}>
           {stats&&(
             <>
@@ -1290,14 +1297,12 @@ export function PainelClient() {
       </header>
 
       <div style={{display:'flex',minHeight:'calc(100vh - 64px)'}}>
-        {/* ── SIDEBAR ──────────────────────────────────────── */}
         <aside style={{
           width:220,background:`linear-gradient(180deg,${NAVY} 0%,${NAVY2} 100%)`,
           borderRight:'1px solid rgba(212,168,67,0.1)',
           padding:'1.5rem 0',flexShrink:0,
           position:'sticky',top:64,height:'calc(100vh - 64px)',overflowY:'auto',
         }}>
-          {/* decoração topo */}
           <div style={{padding:'0 1.25rem 1.25rem',borderBottom:'1px solid rgba(212,168,67,0.08)',marginBottom:'0.75rem'}}>
             <div style={{height:1,background:`linear-gradient(90deg,transparent,${GOLD},transparent)`,marginBottom:'1rem'}}/>
             <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:8,fontWeight:700,letterSpacing:'.22em',textTransform:'uppercase',color:'rgba(212,168,67,0.35)',textAlign:'center'}}>Navegação</p>
@@ -1319,7 +1324,6 @@ export function PainelClient() {
               </button>
             ))}
           </nav>
-          {/* links rápidos */}
           <div style={{padding:'1.5rem 1.25rem 1rem',borderTop:'1px solid rgba(212,168,67,0.08)',marginTop:'1rem',display:'flex',flexDirection:'column',gap:8}}>
             <a href="/pt/payload/admin" target="_blank" style={{
               ...goldBtn,justifyContent:'center',fontSize:10,padding:'9px 14px',textDecoration:'none',
@@ -1331,7 +1335,6 @@ export function PainelClient() {
           </div>
         </aside>
 
-        {/* ── MAIN ─────────────────────────────────────────── */}
         <main style={{flex:1,padding:'2.5rem',overflowX:'auto',minWidth:0,background:CREAM}}>
           {tab==='dashboard' && <TabDashboard stats={stats} loading={statsLoading}/>}
           {tab==='reservas'  && <TabReservas/>}
