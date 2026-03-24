@@ -632,19 +632,17 @@ function EditHero() {
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Vídeos do Hero</p>
           <div style={{background:'rgba(212,168,67,0.05)',border:'1px solid rgba(212,168,67,0.12)',borderRadius:8,padding:'0.75rem 1rem',marginBottom:'1.25rem'}}>
             <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.4)',letterSpacing:'.05em',margin:0,lineHeight:1.7}}>
-              🖥 <strong style={{color:GOLD}}>Desktop:</strong> 3 vídeos em formato portrait lado a lado · 📱 <strong style={{color:GOLD}}>Mobile:</strong> 1 vídeo otimizado
+              🖥 <strong style={{color:GOLD}}>Desktop:</strong> 2 vídeos lado a lado · 📱 <strong style={{color:GOLD}}>Mobile:</strong> 2 vídeos lado a lado
             </p>
           </div>
           <div style={{display:'grid',gap:'1rem'}}>
-            <div><label style={labelSt}>🖥 Desktop — Vídeo 1 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_1??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_1:e.target.value}))}/></div>
-            <div><label style={labelSt}>🖥 Desktop — Vídeo 2 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_2??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_2:e.target.value}))}/></div>
-            <div><label style={labelSt}>🖥 Desktop — Vídeo 3 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_3??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_3:e.target.value}))}/></div>
-            <div><label style={labelSt}>📱 Mobile — Vídeo 1 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_mobile??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_mobile:e.target.value}))}/></div>
+            <div><label style={labelSt}>🖥 Vídeo 1 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_1??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_1:e.target.value}))}/></div>
+            <div><label style={labelSt}>🖥 Vídeo 2 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_2??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_2:e.target.value}))}/></div>
             <div>
-              <label style={labelSt}>📱 Mobile — Vídeo 2 (opcional — ativa split screen)</label>
-              <input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_mobile_2??''} placeholder="Deixe vazio para tela cheia · Preencha para split screen" onChange={e=>update(p=>({...p,video_mobile_2:e.target.value}))}/>
+              <label style={labelSt}>🖥 Vídeo 2 — lado direito (URL Cloudinary .mp4)</label>
+              <input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_mobile_2??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_mobile_2:e.target.value}))}/>
               <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.3)',letterSpacing:'.04em',marginTop:6,lineHeight:1.5}}>
-                {data.video_mobile_2 ? '✔ Split screen ativo — 2 vídeos lado a lado no mobile' : 'Vazio = 1 vídeo em tela cheia no mobile'}
+                Usado como vídeo do lado direito tanto no desktop quanto no mobile
               </p>
             </div>
           </div>
