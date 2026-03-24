@@ -3,7 +3,8 @@ import { getDb } from '@/lib/db'
 import { siteContent } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-static'
+export const revalidate = 86400 // 24h
 
 export async function GET(_req: Request, { params }: { params: Promise<{ key: string }> }) {
   const { key } = await params
