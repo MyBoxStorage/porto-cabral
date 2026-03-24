@@ -3,7 +3,16 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useSiteContent } from '@/lib/useSiteContent'
 
-const VIDEO_FALLBACK = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4'
+/* ─────────────────────────────────────────────────────────────
+   Detecção de mobile SÍNCRONA — antes do primeiro render
+───────────────────────────────────────────────────────────── */
+function getIsMobile(): boolean {
+  if (typeof window === 'undefined') return false
+  return (
+    window.innerWidth < 768 ||
+    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent)
+  )
+}
 
 type HeroData = {
   video_desktop_1?: string
@@ -14,36 +23,12 @@ type HeroData = {
   [key: string]: string | undefined
 }
 
-const HERO_FB: HeroData = {
-  video_desktop_1: VIDEO_FALLBACK,
-  video_desktop_2: '',
-  video_desktop_3: '',
-  video_mobile: VIDEO_FALLBACK,
-  video_mobile_2: '',
-}
-
 /* ─────────────────────────────────────────────────────────────
-   Detecção de mobile SÍNCRONA — roda antes do primeiro render,
-   sem useState, eliminando o flash "desktop → mobile".
-   Fallback para false em SSR (sem window).
+   VideoSlot — renderiza UM vídeo e nunca troca sua src.
+   A src é travada no primeiro valor não-vazio recebido.
+   Isso evita o re-render que reinicia o carregamento.
 ───────────────────────────────────────────────────────────── */
-function getIsMobile(): boolean {
-  if (typeof window === 'undefined') return false
-  // Usa tanto largura quanto userAgent para cobrir tablets em modo landscape
-  return window.innerWidth < 768 ||
-    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent)
-}
-
-/* ─────────────────────────────────────────────────────────────
-   MobileVideo — componente dedicado para mobile.
-   Estratégia:
-   1. Atributos nativos: autoPlay muted loop playsInline
-   2. play() via ref no mount + tentativas repetidas (browsers
-      mobile bloqueiam o autoplay e silenciosamente ignoram)
-   3. IntersectionObserver para re-disparar quando volta para
-      viewport (ex: usuário troca de aba e volta)
-───────────────────────────────────────────────────────────── */
-function MobileVideo({
+function VideoSlot({
   src,
   onFirstPlay,
 }: {
@@ -52,26 +37,28 @@ function MobileVideo({
 }) {
   const ref = useRef<HTMLVideoElement>(null)
   const firedRef = useRef(false)
+  // Trava a src no primeiro valor não-vazio — nunca muda depois
+  const lockedSrc = useRef<string>('')
+  if (src && !lockedSrc.current) {
+    lockedSrc.current = src
+  }
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
 
-    // Tenta play agressivamente logo no mount
     const tryPlay = () => {
-      el.play().then(() => {
-        if (!firedRef.current) {
-          firedRef.current = true
-          onFirstPlay?.()
-        }
-      }).catch(() => {
-        // Browser bloqueou — tenta novamente em 300ms
-        setTimeout(tryPlay, 300)
-      })
+      el.play()
+        .then(() => {
+          if (!firedRef.current) {
+            firedRef.current = true
+            onFirstPlay?.()
+          }
+        })
+        .catch(() => setTimeout(tryPlay, 300))
     }
     tryPlay()
 
-    // Re-dispara play ao voltar para viewport
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) el.play().catch(() => {})
@@ -81,90 +68,28 @@ function MobileVideo({
     )
     obs.observe(el)
     return () => obs.disconnect()
-  }, [onFirstPlay])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // intencionalmente sem deps — monta uma vez
+
+  // Só renderiza quando tiver src travada
+  if (!lockedSrc.current) return null
 
   return (
     <video
       ref={ref}
-      src={src}
+      src={lockedSrc.current}
       autoPlay
       muted
       loop
       playsInline
       preload="auto"
-      x-webkit-airplay="deny"
       style={{
-        width: '100%', height: '100%',
-        objectFit: 'cover', objectPosition: 'center',
-        filter: 'brightness(0.55)', display: 'block',
-        // Evita controles nativos iOS que aparecem antes do play
-        WebkitMediaControlsPanel: 'none',
-      } as React.CSSProperties}
-    />
-  )
-}
-
-/* ─────────────────────────────────────────────────────────────
-   DesktopVideoItem — comportamento sequencial original (sem mudança)
-───────────────────────────────────────────────────────────── */
-function DesktopVideoItem({
-  src,
-  eager = false,
-  unlocked = true,
-  hero = false,
-  onReady,
-}: {
-  src: string
-  eager?: boolean
-  unlocked?: boolean
-  hero?: boolean
-  onReady?: () => void
-}) {
-  const ref = useRef<HTMLVideoElement>(null)
-  const [preload, setPreload] = useState<string>(eager ? 'auto' : 'none')
-
-  useEffect(() => {
-    if (!unlocked || eager) return
-    const el = ref.current
-    if (!el) return
-    if (hero) {
-      setPreload('auto')
-      el.play().catch(() => {})
-    } else {
-      setPreload('metadata')
-    }
-  }, [unlocked, eager, hero])
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) el.play().catch(() => {})
-        else el.pause()
-      },
-      { threshold: 0.05 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-
-  const handleCanPlay = useCallback(() => { onReady?.() }, [onReady])
-
-  return (
-    <video
-      ref={ref}
-      src={src}
-      muted
-      loop
-      playsInline
-      autoPlay={eager}
-      preload={preload}
-      onCanPlay={handleCanPlay}
-      style={{
-        width: '100%', height: '100%',
-        objectFit: 'cover', objectPosition: 'center',
-        filter: 'brightness(0.55)', display: 'block',
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        objectPosition: 'center',
+        filter: 'brightness(0.55)',
+        display: 'block',
       }}
     />
   )
@@ -176,59 +101,33 @@ function DesktopVideoItem({
 export function HeroSection() {
   const t = useTranslations('home')
   const locale = useLocale()
-
-  // ── Detecção de mobile SÍNCRONA no primeiro render (cliente)
-  // useState com initializer function — roda uma vez, sem efeito colateral
   const [isMobile] = useState<boolean>(getIsMobile)
-
-  // ── Visibilidade da camada de vídeo
-  // Mobile: revela em 400ms fixos (não depende de onCanPlay)
-  // Desktop: revela quando o primeiro vídeo dispara onCanPlay
   const [videoReady, setVideoReady] = useState(false)
 
-  const [v2Unlocked, setV2Unlocked] = useState(false)
-  const [v3Unlocked, setV3Unlocked] = useState(false)
-
+  // Revela os vídeos após 400ms no mobile, 600ms no desktop
+  // independente de qualquer evento — os vídeos já estão tocando
   useEffect(() => {
-    if (isMobile) {
-      // Mobile: revela o vídeo em 400ms — ele já está tocando,
-      // só esperamos o fade-in ser visualmente suave
-      const t = setTimeout(() => setVideoReady(true), 400)
-      return () => clearTimeout(t)
-    } else {
-      // Desktop: fallback de tempo caso onCanPlay demore
-      const t2 = setTimeout(() => setV2Unlocked(true), 3000)
-      const t3 = setTimeout(() => setV3Unlocked(true), 5000)
-      const tR = setTimeout(() => setVideoReady(true), 2000)
-      return () => { clearTimeout(t2); clearTimeout(t3); clearTimeout(tR) }
-    }
+    const delay = isMobile ? 400 : 600
+    const timer = setTimeout(() => setVideoReady(true), delay)
+    return () => clearTimeout(timer)
   }, [isMobile])
 
-  // Atualiza isMobile em resize (sem re-render: só para o listener)
-  useEffect(() => {
-    const check = () => {
-      // Não podemos mudar isMobile (é readonly após mount)
-      // mas precisamos do listener para evitar memory leak
-    }
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
+  const raw = useSiteContent<HeroData>('hero', {})
+  const data = raw ?? {}
 
-  const raw = useSiteContent<HeroData>('hero', HERO_FB)
-  const data: HeroData = { ...HERO_FB, ...raw }
+  // URLs finais — sem fallback para URL diferente
+  // Se não tem URL configurada, o slot não renderiza nada
+  const d1   = data.video_desktop_1 ?? ''
+  const d2   = data.video_desktop_2 ?? ''
+  const d3   = data.video_desktop_3 ?? ''
+  const mob  = data.video_mobile    ?? ''
+  const mob2 = data.video_mobile_2  ?? ''
 
-  const d1   = data.video_desktop_1 || VIDEO_FALLBACK
-  const d2   = data.video_desktop_2 || ''
-  const d3   = data.video_desktop_3 || ''
-  const mob  = data.video_mobile    || VIDEO_FALLBACK
-  const mob2 = data.video_mobile_2  || ''
+  const desktopSrcs = [d1, d2, d3]
+  const mobileSrcs  = [mob, mob2]
 
-  const desktopVideos = [d1, d2, d3].filter(Boolean)
-  const mobileVideos  = [mob, mob2].filter(Boolean)
-
-  const handleV1Ready = useCallback(() => {
+  const handleFirstPlay = useCallback(() => {
     setVideoReady(true)
-    setV2Unlocked(true)
   }, [])
 
   return (
@@ -236,28 +135,30 @@ export function HeroSection() {
       className="relative w-full overflow-hidden flex items-center justify-center"
       style={{ height: '100dvh' }}
     >
-      {/* Capa de loading */}
+      {/* Capa de loading — some quando videoReady */}
       <div
-        className="absolute inset-0 z-[5]"
+        className="absolute inset-0 z-[5] pointer-events-none"
         style={{
           background: 'linear-gradient(135deg,#001432 0%,#002451 50%,#0a1a35 100%)',
           opacity: videoReady ? 0 : 1,
-          // Mobile: transição mais curta para não segurar o vídeo
-          transition: isMobile ? 'opacity 0.4s ease' : 'opacity 0.8s ease',
-          pointerEvents: 'none',
+          transition: 'opacity 0.6s ease',
         }}
       >
-        <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          backgroundImage: 'radial-gradient(rgba(212,168,67,0.06) 1px,transparent 1px)',
-          backgroundSize: '28px 28px',
-        }} />
-        <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          backgroundImage:
-            'radial-gradient(ellipse at 20% 50%,rgba(0,116,191,0.25) 0%,transparent 55%),' +
-            'radial-gradient(ellipse at 80% 50%,rgba(0,116,191,0.25) 0%,transparent 55%)',
-        }} />
+        <div
+          style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'radial-gradient(rgba(212,168,67,0.06) 1px,transparent 1px)',
+            backgroundSize: '28px 28px',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute', inset: 0,
+            backgroundImage:
+              'radial-gradient(ellipse at 20% 50%,rgba(0,116,191,0.25) 0%,transparent 55%),' +
+              'radial-gradient(ellipse at 80% 50%,rgba(0,116,191,0.25) 0%,transparent 55%)',
+          }}
+        />
       </div>
 
       {/* Camada de vídeo */}
@@ -265,29 +166,29 @@ export function HeroSection() {
         className="absolute inset-0 z-0"
         style={{
           opacity: videoReady ? 1 : 0,
-          transition: isMobile ? 'opacity 0.4s ease' : 'opacity 0.8s ease',
+          transition: 'opacity 0.6s ease',
         }}
       >
         {isMobile ? (
-          mobileVideos.length >= 2 ? (
+          /* ── MOBILE ── */
+          mobileSrcs.filter(Boolean).length >= 2 ? (
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <MobileVideo src={mobileVideos[0]} onFirstPlay={handleV1Ready} />
+                <VideoSlot src={mobileSrcs[0]} onFirstPlay={handleFirstPlay} />
               </div>
               <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <MobileVideo src={mobileVideos[1]} />
+                <VideoSlot src={mobileSrcs[1]} />
               </div>
             </div>
           ) : (
-            <MobileVideo src={mob} onFirstPlay={handleV1Ready} />
+            <VideoSlot src={mob} onFirstPlay={handleFirstPlay} />
           )
         ) : (
+          /* ── DESKTOP ── */
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            {desktopVideos.map((src, i) => (
+            {desktopSrcs.map((src, i) => (
               <div key={i} style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                {i === 0 && <DesktopVideoItem src={src} eager unlocked onReady={handleV1Ready} />}
-                {i === 1 && <DesktopVideoItem src={src} hero unlocked={v2Unlocked} onReady={() => setV3Unlocked(true)} />}
-                {i === 2 && <DesktopVideoItem src={src} hero unlocked={v3Unlocked} />}
+                <VideoSlot src={src} onFirstPlay={i === 0 ? handleFirstPlay : undefined} />
               </div>
             ))}
           </div>
@@ -296,37 +197,49 @@ export function HeroSection() {
 
       {/* Overlay gradiente */}
       <div
-        className="absolute inset-0 z-10"
+        className="absolute inset-0 z-10 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg,rgba(0,20,50,0.5) 0%,rgba(26,95,168,0.06) 38%,rgba(26,95,168,0.06) 62%,rgba(0,20,50,0.65) 100%)',
+          background:
+            'linear-gradient(180deg,rgba(0,20,50,0.5) 0%,rgba(26,95,168,0.06) 38%,rgba(26,95,168,0.06) 62%,rgba(0,20,50,0.65) 100%)',
         }}
       />
 
       {/* Conteúdo */}
       <div className="relative z-20 text-center px-4 sm:px-6 max-w-3xl mx-auto w-full">
-        <p className="font-accent text-[10px] tracking-[0.5em] uppercase mb-6"
-          style={{ color: 'rgba(212,168,67,0.8)' }}>
+        <p
+          className="font-accent text-[10px] tracking-[0.5em] uppercase mb-6"
+          style={{ color: 'rgba(212,168,67,0.8)' }}
+        >
           {t('hero_eyebrow')}
         </p>
-        <h1 className="font-display italic text-white leading-[1.05] mb-7"
-          style={{ fontSize: 'clamp(2.8rem,7vw,5.5rem)', textShadow: '0 4px 32px rgba(0,0,0,0.6)' }}>
+        <h1
+          className="font-display italic text-white leading-[1.05] mb-7"
+          style={{ fontSize: 'clamp(2.8rem,7vw,5.5rem)', textShadow: '0 4px 32px rgba(0,0,0,0.6)' }}
+        >
           {t('hero_tagline').split('\n').map((line, i) => (
             <span key={i}>{line}{i === 0 && <br />}</span>
           ))}
         </h1>
-        <div className="flex items-center justify-center gap-3 mb-8 mx-auto" style={{ maxWidth: 220 }}>
+        <div
+          className="flex items-center justify-center gap-3 mb-8 mx-auto"
+          style={{ maxWidth: 220 }}
+        >
           <span className="flex-1 h-px" style={{ background: 'linear-gradient(90deg,transparent,rgba(212,168,67,0.55))' }} />
           <span className="font-display text-pc-gold" style={{ fontSize: '0.9rem', letterSpacing: '0.2em' }}>✦</span>
           <span className="flex-1 h-px" style={{ background: 'linear-gradient(90deg,rgba(212,168,67,0.55),transparent)' }} />
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full px-4 sm:px-0">
-          <a href="#reserva"
-            className="shimmer w-full sm:w-auto px-8 md:px-10 py-4 font-accent font-semibold text-xs tracking-[0.22em] uppercase text-pc-navy rounded shadow-2xl hover:scale-105 active:scale-95 transition-transform duration-200 text-center min-h-[48px] flex items-center justify-center">
+          <a
+            href="#reserva"
+            className="shimmer w-full sm:w-auto px-8 md:px-10 py-4 font-accent font-semibold text-xs tracking-[0.22em] uppercase text-pc-navy rounded shadow-2xl hover:scale-105 active:scale-95 transition-transform duration-200 text-center min-h-[48px] flex items-center justify-center"
+          >
             {t('cta_reserva')}
           </a>
-          <a href={`/${locale}/cardapio`}
+          <a
+            href={`/${locale}/cardapio`}
             className="w-full sm:w-auto px-8 md:px-10 py-4 font-accent font-semibold text-xs tracking-[0.22em] uppercase text-white rounded transition-all duration-200 hover:bg-white/15 text-center min-h-[48px] flex items-center justify-center"
-            style={{ border: '1px solid rgba(255,255,255,0.45)', backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.07)' }}>
+            style={{ border: '1px solid rgba(255,255,255,0.45)', backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.07)' }}
+          >
             {t('cta_cardapio')}
           </a>
         </div>
