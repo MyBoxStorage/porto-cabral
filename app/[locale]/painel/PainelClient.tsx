@@ -553,13 +553,14 @@ function TabClientes() {
 
 /* ══ TAB: CONTEÚDO ══════════════════════════════════════════════ */
 function TabConteudo() {
-  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'>('hero')
+  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'|'sobre'>('hero')
   const sections: {id:typeof section;label:string;icon:string}[] = [
     {id:'hero',    label:'Hero Banner',       icon:'▶'},
     {id:'dishes',  label:'Pratos Destaque',   icon:'◆'},
     {id:'history', label:'Nossa História',    icon:'◎'},
     {id:'videos',  label:'Film Strip',        icon:'🎬'},
     {id:'location',label:'Localização',       icon:'◉'},
+    {id:'sobre',   label:'Página Sobre',      icon:'⚓'},
   ]
   return (
     <div>
@@ -586,6 +587,7 @@ function TabConteudo() {
           {section==='history'  && <EditHistory/>}
           {section==='videos'   && <EditVideos/>}
           {section==='location' && <EditLocation/>}
+        {section==='sobre'    && <EditSobre/>}
         </div>
       </div>
     </div>
