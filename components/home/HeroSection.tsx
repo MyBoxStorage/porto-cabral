@@ -140,9 +140,9 @@ export function HeroSection() {
       style={{ height: '100dvh' }}
     >
       {/* ── CAPA: fundo azul escuro mostrado enquanto o video nao esta pronto ── */}
-      {/* Faz fade out quando videoReady = true */}
+      {/* z-[5] — fica acima do video (z-0) mas abaixo do overlay (z-10) e conteudo (z-20) */}
       <div
-        className="absolute inset-0 z-[1]"
+        className="absolute inset-0 z-[5]"
         style={{
           background: 'linear-gradient(135deg,#001432 0%,#002451 50%,#0a1a35 100%)',
           opacity: videoReady ? 0 : 1,
