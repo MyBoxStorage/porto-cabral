@@ -70,7 +70,7 @@ export default function ClienteLoginPage() {
     await signIn('google', { callbackUrl: `/${locale}/cliente` })
   }
 
-  const inp = "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#D4A843]"
+  const inp = "w-full bg-[#005fa3] border border-white/25 rounded-lg px-4 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-[#D4A843]"
 
   return (
     <div className="min-h-screen bg-[#0074bf] flex items-center justify-center px-4 py-16">
@@ -80,7 +80,7 @@ export default function ClienteLoginPage() {
             <IconAncora size={52} strokeWidth={1.25} />
           </div>
           <h1 className="font-display text-3xl text-white mb-2">Cabine do Comandante</h1>
-          <p className="text-slate-400 text-sm">Area exclusiva para clientes Porto Cabral BC</p>
+          <p className="text-white/70 text-sm">Area exclusiva para clientes Porto Cabral BC</p>
         </div>
 
         {/* Tabs login / cadastro */}
@@ -88,7 +88,7 @@ export default function ClienteLoginPage() {
           {(['login','signup'] as const).map(t => (
             <button key={t} onClick={() => { setTab(t); setError(null) }}
               className={`flex-1 py-2 rounded-lg text-sm font-accent uppercase tracking-wide transition-all ${
-                tab === t ? 'bg-[#D4A843] text-[#002451] font-bold' : 'text-slate-400 hover:text-white'}`}>
+                tab === t ? 'bg-[#D4A843] text-[#002451] font-bold' : 'text-white/60 hover:text-white'}`}>
               {t === 'login' ? 'Entrar' : 'Criar conta'}
             </button>
           ))}
@@ -133,7 +133,7 @@ export default function ClienteLoginPage() {
                     className="w-4 h-4 rounded border-slate-500 text-[#D4A843] focus:ring-[#D4A843] accent-[#D4A843]"
                   />
                 </div>
-                <span className="text-xs text-slate-300 leading-relaxed">
+                <span className="text-xs text-white/80 leading-relaxed">
                   Li e aceito os{' '}
                   <a href={`/${locale}/termos`} target="_blank" className="text-[#D4A843] underline underline-offset-2">
                     Termos de Uso
@@ -143,7 +143,7 @@ export default function ClienteLoginPage() {
                     Politica de Privacidade
                   </a>
                   . <span className="text-red-400">*</span>
-                  <span className="block text-slate-500 mt-0.5">Obrigatorio para criar a conta.</span>
+                  <span className="block text-white/50 mt-0.5">Obrigatorio para criar a conta.</span>
                 </span>
               </label>
 
@@ -157,10 +157,10 @@ export default function ClienteLoginPage() {
                     className="w-4 h-4 rounded border-slate-500 text-[#D4A843] focus:ring-[#D4A843] accent-[#D4A843]"
                   />
                 </div>
-                <span className="text-xs text-slate-300 leading-relaxed">
+                <span className="text-xs text-white/80 leading-relaxed">
                   <span className="text-[#D4A843] font-semibold">🎁 Quero participar dos sorteios semanais</span>{' '}
                   e receber ofertas exclusivas dos parceiros do Porto Cabral BC em Balneario Camboriu.
-                  <span className="block text-slate-500 mt-0.5">
+                  <span className="block text-white/50 mt-0.5">
                     Opcional. Autorizo o compartilhamento do meu perfil com parceiros para promocoes personalizadas.
                     Revogavel a qualquer momento. LGPD — Lei 13.709/2018.
                   </span>
@@ -180,9 +180,9 @@ export default function ClienteLoginPage() {
         </form>
 
         <div className="my-6 flex items-center gap-4">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-slate-500 text-xs uppercase tracking-widest">ou</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-white/20" />
+          <span className="text-white/50 text-xs uppercase tracking-widest">ou</span>
+          <div className="flex-1 h-px bg-white/20" />
         </div>
 
         <button onClick={handleGoogle} disabled={gLoading}

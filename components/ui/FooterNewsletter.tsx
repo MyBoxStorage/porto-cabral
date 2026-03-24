@@ -26,7 +26,7 @@ export function FooterNewsletter({ title, desc, placeholder, successMsg }: Props
   return (
     <div className="pt-2">
       <h4 className="font-accent text-[10px] tracking-[0.3em] uppercase text-white mb-2">{title}</h4>
-      <p className="text-xs text-slate-600 mb-3">{desc}</p>
+      <p className="text-xs text-white/50 mb-3">{desc}</p>
 
       {status === 'success' ? (
         <div className="flex items-center gap-2 px-4 py-3 rounded text-xs font-accent text-pc-gold"
@@ -44,7 +44,7 @@ export function FooterNewsletter({ title, desc, placeholder, successMsg }: Props
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder={placeholder}
-            className="flex-1 bg-white/[0.04] px-4 py-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:bg-white/[0.07] transition-colors"
+            className="flex-1 bg-white/[0.08] px-4 py-3 text-xs text-white placeholder:text-white/40 focus:outline-none focus:bg-white/[0.12] transition-colors"
           />
           <button
             type="submit"

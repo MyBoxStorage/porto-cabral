@@ -38,7 +38,7 @@ export async function Footer() {
                 Porto Cabral <span className="text-pc-gold">BC</span>
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-slate-500">{t('tagline')}</p>
+            <p className="text-sm leading-relaxed text-white/60">{t('tagline')}</p>
             <div className="flex gap-3 pt-1">
               {['Ig', 'Fb', 'Wa'].map(s => (
                 <span key={s}
@@ -60,7 +60,7 @@ export async function Footer() {
               {navLinks.map(({ href, label }) => (
                 <li key={href}>
                   <Link href={href}
-                    className="text-sm text-slate-500 hover:text-pc-gold transition-colors flex items-center gap-2 group">
+                    className="text-sm text-white/60 hover:text-pc-gold transition-colors flex items-center gap-2 group">
                     <span className="w-3 h-px bg-pc-gold/0 group-hover:bg-pc-gold/60 transition-all duration-200" />
                     {label}
                   </Link>
@@ -78,7 +78,7 @@ export async function Footer() {
             <ul className="space-y-3 text-sm">
               {hours.map(({ d, h, closed }) => (
                 <li key={d} className="flex justify-between items-baseline gap-4">
-                  <span className="text-slate-500">{d}</span>
+                  <span className="text-white/60">{d}</span>
                   <span className={closed ? 'text-pc-gold/70 italic' : 'text-white'}>{h}</span>
                 </li>
               ))}
@@ -93,7 +93,7 @@ export async function Footer() {
             </div>
             <div className="flex items-start gap-2 text-sm">
               <span className="text-pc-gold mt-0.5 flex-shrink-0"><IconOnda size={13} strokeWidth={1.5} /></span>
-              <p className="text-slate-500 leading-relaxed">Molhe da Barra Sul<br />Balneário Camboriú, SC</p>
+              <p className="text-white/60 leading-relaxed">Molhe da Barra Sul<br />Balneário Camboriú, SC</p>
             </div>
             {/* Newsletter — client component com feedback */}
             <FooterNewsletter
@@ -108,12 +108,12 @@ export async function Footer() {
         {/* ── Bottom bar ── */}
         <div className="mt-16 pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
           style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <p className="font-accent text-[11px] md:text-[10px] tracking-[0.2em] uppercase text-slate-600">
+          <p className="font-accent text-[11px] md:text-[10px] tracking-[0.2em] uppercase text-white/40">
             © {new Date().getFullYear()} Porto Cabral BC · {t('copyright')}
           </p>
           <div className="flex items-center gap-4 text-pc-gold/25">
             <IconAncora size={14} strokeWidth={1.5} />
-            <span className="font-accent text-[10px] tracking-[0.3em] uppercase text-slate-700">
+            <span className="font-accent text-[10px] tracking-[0.3em] uppercase text-white/35">
               Gastronomia Flutuante
             </span>
             <IconOnda size={14} strokeWidth={1.5} />
