@@ -22,7 +22,6 @@ const HERO_FB: HeroData = {
 
 /* ─────────────────────────────────────────────
    Hook: pausa/retoma video baseado em visibilidade
-   Threshold baixo (0.1) para o hero que ocupa 100vh
 ───────────────────────────────────────────── */
 function useVideoVisibility(threshold = 0.1) {
   const ref = useRef<HTMLVideoElement>(null)
@@ -43,8 +42,7 @@ function useVideoVisibility(threshold = 0.1) {
 }
 
 /* ─────────────────────────────────────────────
-   VideoItem — carrega apenas quando liberado pelo pai
-   'unlocked' = pai ja carregou o video anterior
+   VideoItem
 ───────────────────────────────────────────── */
 function VideoItem({
   src,
@@ -60,7 +58,6 @@ function VideoItem({
   const ref = useVideoVisibility(0.1)
   const [preload, setPreload] = useState<string>(eager ? 'auto' : 'none')
 
-  // Quando desbloqueado pelo pai, libera o preload
   useEffect(() => {
     if (unlocked && !eager) setPreload('metadata')
   }, [unlocked, eager])
@@ -76,7 +73,6 @@ function VideoItem({
       muted
       loop
       playsInline
-      // eager = autoPlay no HTML garante inicio imediato independente do observer
       autoPlay={eager}
       preload={preload}
       onCanPlay={handleCanPlay}
@@ -100,16 +96,20 @@ export function HeroSection() {
   const locale = useLocale()
   const [isMobile, setIsMobile] = useState(false)
 
-  // Controle de sequenciamento: video 2 so carrega apos video 1 estar pronto
-  // video 3 so carrega apos video 2 estar pronto
-  // Fallback: desbloqueia apos 3s mesmo sem canplay (conexao lenta)
+  // true quando o video 1 ja tem dados suficientes para tocar sem travar
+  const [videoReady, setVideoReady] = useState(false)
+
+  // Sequenciamento: v2 e v3 so carregam depois do anterior
   const [v2Unlocked, setV2Unlocked] = useState(false)
   const [v3Unlocked, setV3Unlocked] = useState(false)
 
+  // Fallback timeout — desbloqueia mesmo sem canplay (conexao lenta)
   useEffect(() => {
     const t2 = setTimeout(() => setV2Unlocked(true), 3000)
     const t3 = setTimeout(() => setV3Unlocked(true), 5000)
-    return () => { clearTimeout(t2); clearTimeout(t3) }
+    // Fallback para mostrar o video mesmo se canplay demorar muito
+    const tReady = setTimeout(() => setVideoReady(true), 4000)
+    return () => { clearTimeout(t2); clearTimeout(t3); clearTimeout(tReady) }
   }, [])
 
   useEffect(() => {
@@ -129,15 +129,53 @@ export function HeroSection() {
 
   const desktopVideos = [d1, d2, d3].filter(Boolean)
 
+  const handleV1Ready = useCallback(() => {
+    setVideoReady(true)
+    setV2Unlocked(true)
+  }, [])
+
   return (
     <section
       className="relative w-full overflow-hidden flex items-center justify-center"
       style={{ height: '100dvh' }}
     >
-      {/* Camada de vídeo */}
-      <div className="absolute inset-0 z-0">
+      {/* ── CAPA: fundo azul escuro mostrado enquanto o video nao esta pronto ── */}
+      {/* Faz fade out quando videoReady = true */}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background: 'linear-gradient(135deg,#001432 0%,#002451 50%,#0a1a35 100%)',
+          opacity: videoReady ? 0 : 1,
+          transition: 'opacity 0.8s ease',
+          pointerEvents: 'none',
+        }}
+      >
+        {/* Pontilhado sutil na capa */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: 'radial-gradient(rgba(212,168,67,0.06) 1px,transparent 1px)',
+          backgroundSize: '28px 28px',
+        }} />
+        {/* Glows laterais */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage:
+            'radial-gradient(ellipse at 20% 50%,rgba(0,116,191,0.25) 0%,transparent 55%),' +
+            'radial-gradient(ellipse at 80% 50%,rgba(0,116,191,0.25) 0%,transparent 55%)',
+        }} />
+      </div>
+
+      {/* ── CAMADA DE VÍDEO ── */}
+      {/* Faz fade in quando videoReady = true */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          opacity: videoReady ? 1 : 0,
+          transition: 'opacity 0.8s ease',
+        }}
+      >
         {isMobile ? (
-          <VideoItem src={mob} eager />
+          <VideoItem src={mob} eager onReady={handleV1Ready} />
         ) : (
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {desktopVideos.map((src, i) => (
@@ -147,7 +185,7 @@ export function HeroSection() {
                     src={src}
                     eager
                     unlocked
-                    onReady={() => setV2Unlocked(true)}
+                    onReady={handleV1Ready}
                   />
                 )}
                 {i === 1 && (
@@ -169,7 +207,7 @@ export function HeroSection() {
         )}
       </div>
 
-      {/* Overlay */}
+      {/* Overlay de gradiente sobre o vídeo */}
       <div
         className="absolute inset-0 z-10"
         style={{

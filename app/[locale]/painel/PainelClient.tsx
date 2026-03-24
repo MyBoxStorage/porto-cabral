@@ -918,6 +918,62 @@ function EditLocation() {
   )
 }
 
+/* ─── Sobre ──────────────────────── */
+type SobreContent = {
+  hero_eyebrow:string; hero_title:string; section_title:string
+  p1:string; p2:string; p3:string
+  quote:string; quote_author:string; image_url:string
+  feat_1_title:string; feat_1_desc:string
+  feat_2_title:string; feat_2_desc:string
+  feat_3_title:string; feat_3_desc:string
+}
+function EditSobre() {
+  const {data,update,save,saving,dirty,toast,clearToast} = useContent<SobreContent>('sobre')
+  if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
+  const F=(key:keyof SobreContent,label:string,rows=1)=>(
+    <div key={key}>
+      <label style={labelSt}>{label}</label>
+      {rows>1
+        ?<textarea className="pc-input" rows={rows} style={{...inp,resize:'vertical'}} value={data[key]??''} onChange={e=>update(p=>({...p,[key]:e.target.value}))}/>
+        :<input className="pc-input" style={inp} value={data[key]??''} onChange={e=>update(p=>({...p,[key]:e.target.value}))}/>}
+    </div>
+  )
+  return (
+    <EdCard toast={toast} onClearToast={clearToast}>
+      <SectionHeader title="Página Sobre" onSave={save} saving={saving} dirty={dirty}/>
+      <div style={{display:'grid',gap:'1.25rem'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+          {F('hero_eyebrow','Eyebrow do Hero (ex: Since 1998)')}
+          {F('hero_title','Título do Hero')}
+        </div>
+        {F('section_title','Título da Seção Principal')}
+        {F('p1','Parágrafo 1',3)}
+        {F('p2','Parágrafo 2',3)}
+        {F('p3','Parágrafo 3',3)}
+        {F('quote','Citação do Fundador',3)}
+        {F('quote_author','Autor da Citação (ex: — Edson Cabral, Fundador)')}
+        {/* Upload da foto principal */}
+        <ImageUploader
+          label="Foto Principal da Página Sobre"
+          value={data.image_url??''}
+          onChange={url=>update(p=>({...p,image_url:url}))}
+        />
+        <div style={{borderTop:'1px solid rgba(212,168,67,0.12)',paddingTop:'1.25rem'}}>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Cards de Destaque</p>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+            {F('feat_1_title','Card 1 — Título')}
+            {F('feat_1_desc','Card 1 — Descrição')}
+            {F('feat_2_title','Card 2 — Título')}
+            {F('feat_2_desc','Card 2 — Descrição')}
+            {F('feat_3_title','Card 3 — Título')}
+            {F('feat_3_desc','Card 3 — Descrição')}
+          </div>
+        </div>
+      </div>
+    </EdCard>
+  )
+}
+
 /* ══ TAB: CARDÁPIO ══════════════════════════════════════════════ */
 /* tipos do cardápio completo */
 type MenuItem = {name:string;price:string;desc?:string;tag?:string}
