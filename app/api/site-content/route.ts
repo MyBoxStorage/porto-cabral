@@ -17,7 +17,10 @@ export async function GET(req: Request) {
       if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
       // Garante que value é sempre objeto (Drizzle pode retornar jsonb como string)
       const value = typeof row.value === 'string' ? JSON.parse(row.value) : row.value
-      return NextResponse.json({ key: row.key, value, updated_at: row.updated_at })
+      return NextResponse.json(
+        { key: row.key, value, updated_at: row.updated_at },
+        { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } }
+      )
     }
     const rows = await db.select().from(siteContent)
     return NextResponse.json({ content: rows })
