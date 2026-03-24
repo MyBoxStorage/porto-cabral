@@ -6,49 +6,37 @@ import { useSiteContent } from '@/lib/useSiteContent'
 type HeroData = {
   video_desktop_1?: string
   video_desktop_2?: string
-  video_desktop_3?: string
-  video_mobile?: string
-  video_mobile_2?: string
   [key: string]: string | undefined
 }
 
+/* ── URLs hardcoded — browser começa download ANTES de qualquer fetch ── */
+const DEFAULT_SRC1 = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204726/BANNER_LENTO_1_idcad3.mp4'
+const DEFAULT_SRC2 = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774204724/BANNER_LENTO_2_uzz8l5.mp4'
+
 /* ─────────────────────────────────────────────────────────────
-   VideoSlot
-   Princípio: o <video> existe no DOM desde o início com src já
-   definida. autoPlay + muted + playsInline fazem o browser
-   começar o download e tocar imediatamente sem .play() manual.
-   A capa some via onReady (loadeddata ou canplay), sem delays.
+   VideoSlot — <video> existe no DOM imediatamente com src fixa.
+   autoPlay + muted + playsInline = browser toca sem .play()
+   onReady dispara em canplay (mais rápido que loadeddata)
 ───────────────────────────────────────────────────────────── */
 function VideoSlot({ src, onReady }: { src: string; onReady?: () => void }) {
   const ref      = useRef<HTMLVideoElement>(null)
   const firedRef = useRef(false)
 
   const fire = useCallback(() => {
-    if (!firedRef.current) {
-      firedRef.current = true
-      onReady?.()
-    }
+    if (!firedRef.current) { firedRef.current = true; onReady?.() }
   }, [onReady])
 
   useEffect(() => {
     const el = ref.current
-    if (!el || !src) return
-
-    // canplay dispara antes de loadeddata — usa o mais rápido
+    if (!el) return
     el.addEventListener('canplay',    fire, { once: true })
     el.addEventListener('loadeddata', fire, { once: true })
-
-    // Se já estava pronto antes do listener (cache do browser)
     if (el.readyState >= 3) fire()
-
     return () => {
       el.removeEventListener('canplay',    fire)
       el.removeEventListener('loadeddata', fire)
     }
-  }, [src, fire])
-
-  // Sem src → não renderiza nada (evita <video src="">)
-  if (!src) return null
+  }, [fire])
 
   return (
     <video
@@ -60,12 +48,9 @@ function VideoSlot({ src, onReady }: { src: string; onReady?: () => void }) {
       playsInline
       preload="auto"
       style={{
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        objectPosition: 'center',
-        filter: 'brightness(0.55)',
-        display: 'block',
+        width: '100%', height: '100%',
+        objectFit: 'cover', objectPosition: 'center',
+        filter: 'brightness(0.55)', display: 'block',
       }}
     />
   )
@@ -73,48 +58,28 @@ function VideoSlot({ src, onReady }: { src: string; onReady?: () => void }) {
 
 /* ─────────────────────────────────────────────────────────────
    HeroSection
+   Lógica de carregamento:
+   1. src1/src2 começam com DEFAULT (hardcoded) — browser baixa imediatamente
+   2. Quando useSiteContent retorna, atualiza para a URL do banco se diferente
+   3. videoReady: false só enquanto o primeiro frame não chegou
+   4. Fallback de 2s garante que a capa some mesmo em rede lenta
 ───────────────────────────────────────────────────────────── */
 export function HeroSection() {
   const t      = useTranslations('home')
   const locale = useLocale()
+  const [videoReady, setVideoReady] = useState(false)
 
-  // Na segunda visita o preloader não aparece — vídeos revelam imediatamente
-  const isReturning = typeof window !== 'undefined'
-    && !!sessionStorage.getItem('pc_preloader_shown')
-
-  const [videoReady, setVideoReady] = useState(isReturning)
-
+  /* URLs do banco — iniciam com as defaults hardcoded */
   const raw  = useSiteContent<HeroData>('hero', {})
   const data = raw ?? {}
+  const src1 = data.video_desktop_1 || DEFAULT_SRC1
+  const src2 = data.video_desktop_2 || DEFAULT_SRC2
 
-  const src1 = data.video_desktop_1 ?? ''
-  const src2 = data.video_desktop_2 ?? data.video_desktop_3 ?? ''
-
-  // Injeta <link rel="preload"> no <head> assim que as URLs chegam do banco
-  // — inicia o download paralelo ao fetch, sem esperar o React renderizar
+  /* Fallback: capa some em 2s mesmo sem canplay */
   useEffect(() => {
-    if (!src1 && !src2) return
-    const inject = (url: string) => {
-      if (!url) return
-      const id = `vpreload-${encodeURIComponent(url).slice(-20)}`
-      if (document.getElementById(id)) return
-      const link = document.createElement('link')
-      link.id   = id
-      link.rel  = 'preload'
-      link.as   = 'video'
-      link.href = url
-      document.head.appendChild(link)
-    }
-    inject(src1)
-    inject(src2)
-  }, [src1, src2])
-
-  // Fallback de segurança: 2s. Na prática loadeddata/canplay chegam bem antes.
-  useEffect(() => {
-    if (videoReady) return
     const t = setTimeout(() => setVideoReady(true), 2000)
     return () => clearTimeout(t)
-  }, [videoReady])
+  }, [])
 
   const handleReady = useCallback(() => setVideoReady(true), [])
 
@@ -123,33 +88,18 @@ export function HeroSection() {
       className="relative w-full overflow-hidden flex items-center justify-center"
       style={{ height: '100dvh' }}
     >
-      {/* Capa escura — some assim que canplay/loadeddata dispara */}
+      {/* Capa azul escura — some quando canplay dispara */}
       <div
         className="absolute inset-0 z-[5] pointer-events-none"
         style={{
           background: 'linear-gradient(135deg,#001432 0%,#002451 50%,#0a1a35 100%)',
-          opacity:    videoReady ? 0 : 1,
+          opacity: videoReady ? 0 : 1,
           transition: 'opacity 0.4s ease',
         }}
-      >
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'radial-gradient(rgba(212,168,67,0.06) 1px,transparent 1px)',
-          backgroundSize: '28px 28px',
-        }} />
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage:
-            'radial-gradient(ellipse at 20% 50%,rgba(0,116,191,0.25) 0%,transparent 55%),' +
-            'radial-gradient(ellipse at 80% 50%,rgba(0,116,191,0.25) 0%,transparent 55%)',
-        }} />
-      </div>
+      />
 
-      {/* 2 vídeos lado a lado — sempre visíveis no DOM para o browser baixar logo */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{ display: 'flex' }}
-      >
+      {/* 2 vídeos lado a lado — no DOM desde o primeiro render */}
+      <div className="absolute inset-0 z-0" style={{ display: 'flex' }}>
         <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
           <VideoSlot src={src1} onReady={handleReady} />
         </div>
