@@ -10,6 +10,7 @@ type HeroData = {
   video_desktop_2?: string
   video_desktop_3?: string
   video_mobile?: string
+  video_mobile_2?: string  // segundo video mobile — se preenchido mostra split screen
   [key: string]: string | undefined
 }
 
@@ -18,6 +19,7 @@ const HERO_FB: HeroData = {
   video_desktop_2: '',
   video_desktop_3: '',
   video_mobile: VIDEO_FALLBACK,
+  video_mobile_2: '',
 }
 
 /* ─────────────────────────────────────────────
@@ -122,12 +124,15 @@ export function HeroSection() {
   const raw = useSiteContent<HeroData>('hero', HERO_FB)
   const hero: HeroData = { ...HERO_FB, ...raw }
 
-  const d1  = hero.video_desktop_1 || VIDEO_FALLBACK
-  const d2  = hero.video_desktop_2 || ''
-  const d3  = hero.video_desktop_3 || ''
-  const mob = hero.video_mobile    || VIDEO_FALLBACK
+  const d1   = hero.video_desktop_1 || VIDEO_FALLBACK
+  const d2   = hero.video_desktop_2 || ''
+  const d3   = hero.video_desktop_3 || ''
+  const mob  = hero.video_mobile    || VIDEO_FALLBACK
+  const mob2 = hero.video_mobile_2  || ''
 
   const desktopVideos = [d1, d2, d3].filter(Boolean)
+  // Mobile split: 2 videos lado a lado quando mob2 estiver preenchido
+  const mobileVideos = [mob, mob2].filter(Boolean)
 
   const handleV1Ready = useCallback(() => {
     setVideoReady(true)
@@ -175,7 +180,19 @@ export function HeroSection() {
         }}
       >
         {isMobile ? (
-          <VideoItem src={mob} eager onReady={handleV1Ready} />
+          // Mobile: tela cheia se 1 video, split screen se 2
+          mobileVideos.length >= 2 ? (
+            <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+              <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
+                <VideoItem src={mobileVideos[0]} eager onReady={handleV1Ready} />
+              </div>
+              <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
+                <VideoItem src={mobileVideos[1]} unlocked={v2Unlocked} />
+              </div>
+            </div>
+          ) : (
+            <VideoItem src={mob} eager onReady={handleV1Ready} />
+          )
         ) : (
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {desktopVideos.map((src, i) => (

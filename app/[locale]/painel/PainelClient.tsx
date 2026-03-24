@@ -645,7 +645,14 @@ function EditHero() {
             <div><label style={labelSt}>🖥 Desktop — Vídeo 1 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_1??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_1:e.target.value}))}/></div>
             <div><label style={labelSt}>🖥 Desktop — Vídeo 2 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_2??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_2:e.target.value}))}/></div>
             <div><label style={labelSt}>🖥 Desktop — Vídeo 3 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_3??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_3:e.target.value}))}/></div>
-            <div><label style={labelSt}>📱 Mobile — Vídeo único (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_mobile??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_mobile:e.target.value}))}/></div>
+            <div><label style={labelSt}>📱 Mobile — Vídeo 1 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_mobile??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_mobile:e.target.value}))}/></div>
+            <div>
+              <label style={labelSt}>📱 Mobile — Vídeo 2 (opcional — ativa split screen)</label>
+              <input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_mobile_2??''} placeholder="Deixe vazio para tela cheia · Preencha para split screen" onChange={e=>update(p=>({...p,video_mobile_2:e.target.value}))}/>
+              <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.3)',letterSpacing:'.04em',marginTop:6,lineHeight:1.5}}>
+                {data.video_mobile_2 ? '✔ Split screen ativo — 2 vídeos lado a lado no mobile' : 'Vazio = 1 vídeo em tela cheia no mobile'}
+              </p>
+            </div>
           </div>
         </div>
 
