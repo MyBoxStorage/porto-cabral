@@ -217,7 +217,7 @@ const CSS = `
 /* ── HERO HEADER ── */
 .pf-hero{
   background:linear-gradient(170deg,#005fa3 0%,#0074bf 45%,#0087d9 80%,#006ab3 100%);
-  padding:calc(72px + 4rem) 1.5rem 4rem;
+  padding:calc(72px + 2.5rem) 1.5rem 2.5rem;
   text-align:center;
   position:relative;
   overflow:hidden;
@@ -230,7 +230,7 @@ const CSS = `
 }
 .pf-hero-bg-overlay{
   position:absolute;inset:0;z-index:1;
-  background:linear-gradient(170deg,rgba(0,36,81,0.72) 0%,rgba(0,60,120,0.55) 45%,rgba(0,80,140,0.6) 80%,rgba(0,36,81,0.75) 100%);
+  background:linear-gradient(170deg,rgba(0,36,81,0.52) 0%,rgba(0,60,120,0.38) 45%,rgba(0,80,140,0.42) 80%,rgba(0,36,81,0.55) 100%);
 }
 /* Pontos dourados de fundo */
 .pf-hero::before{
@@ -642,7 +642,7 @@ const CSS = `
   .pf-deck { display: none !important; }
 
   /* Hero mobile */
-  .pf-hero { padding: calc(72px + 4rem) 1.2rem 4rem; }
+  .pf-hero { padding: calc(72px + 2.5rem) 1.2rem 2.5rem; }
   .pf-hero-title { font-size: clamp(3.2rem,14vw,5rem); }
   .pf-hero-scroll { margin-top: 1.8rem; }
 

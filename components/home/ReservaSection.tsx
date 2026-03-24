@@ -80,14 +80,14 @@ export function ReservaSection() {
       {/* ── Layout principal ── */}
       <div
         ref={ref}
-        className="fade-up relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-stretch min-h-0"
+        className="fade-up relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center min-h-0"
         style={{ minHeight: bgImage ? '100%' : undefined }}
       >
 
         {/* ── Lado esquerdo: espaço da foto com título sobreposto (desktop) ──
             No mobile isso fica oculto — o fundo já aparece atrás de tudo */}
         {bgImage && (
-          <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col justify-end py-16 px-12 relative">
+          <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col justify-center py-16 px-12 relative">
             {/* Título flutuante sobre a foto */}
             <div className="space-y-4">
               <p

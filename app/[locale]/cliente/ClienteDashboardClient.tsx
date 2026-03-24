@@ -100,7 +100,7 @@ export function ClienteDashboardClient({ session }: Props) {
             o conteúdo não ficar atrás dela. ── */}
         <header style={{
           padding: '0 1.25rem',
-          paddingTop: 'max(calc(72px + env(safe-area-inset-top, 0px) + 4rem), 136px)',
+          paddingTop: 'max(calc(72px + env(safe-area-inset-top, 0px) + 2rem), 112px)',
           borderBottom: '1px solid rgba(212,168,67,0.1)',
           background: 'rgba(0,15,40,0.5)',
           backdropFilter: 'blur(20px)',
@@ -108,9 +108,9 @@ export function ClienteDashboardClient({ session }: Props) {
         }}>
           <div style={{
             maxWidth: 720, margin: '0 auto',
-            padding: '20px 0 28px',
+            padding: '12px 0 24px',
             display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between', gap: 12,
+            justifyContent: 'space-between', gap: 16,
           }}>
 
             {/* Lado esquerdo: eyebrow + nome + email */}
@@ -119,15 +119,15 @@ export function ClienteDashboardClient({ session }: Props) {
                 fontFamily: "'Josefin Sans',sans-serif",
                 fontSize: '0.58rem', fontWeight: 700,
                 letterSpacing: '0.38em', textTransform: 'uppercase',
-                color: 'rgba(212,168,67,0.65)', margin: '0 0 6px',
+                color: 'rgba(212,168,67,0.65)', margin: '0 0 10px',
               }}>
                 ✦ {header.eyebrow}
               </p>
               <h1 style={{
                 fontFamily: "'Playfair Display',serif",
-                fontSize: 'clamp(1.6rem, 7vw, 2.2rem)',
+                fontSize: 'clamp(1.8rem, 7vw, 2.4rem)',
                 fontStyle: 'italic', fontWeight: 400,
-                color: '#fff', margin: 0, lineHeight: 1.1,
+                color: '#fff', margin: '0 0 8px', lineHeight: 1.1,
               }}>
                 {header.greeting}{' '}
                 <span style={{ color: '#D4A843' }}>{firstName}</span>

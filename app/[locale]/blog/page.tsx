@@ -46,7 +46,7 @@ export default function BlogPage() {
         {bgImage && (
           <>
             <img src={bgImage} alt="" aria-hidden="true" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }} />
-            <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,rgba(0,20,50,0.78) 0%,rgba(0,36,81,0.72) 100%)' }} />
+            <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,rgba(0,20,50,0.55) 0%,rgba(0,36,81,0.48) 100%)' }} />
           </>
         )}
         {!bgImage && <div style={{ position:'absolute', inset:0, background:'#0074bf' }} />}
