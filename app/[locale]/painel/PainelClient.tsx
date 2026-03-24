@@ -919,7 +919,7 @@ function EditReserva() {
         <span style={{fontSize:20,flexShrink:0}}>📷</span>
         <div>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,0.6)',letterSpacing:'.05em',lineHeight:1.7,margin:'0 0 4px'}}>
-            Esta foto cobre <strong style={{color:GOLD}}>toda a seção "Garanta seu Lugar"</strong> da home page como background.
+            Esta foto cobre <strong style={{color:GOLD}}>toda a seção &ldquo;Garanta seu Lugar&rdquo;</strong> da home page como background.
           </p>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'.04em',lineHeight:1.6,margin:0}}>
             Recomendado: foto em formato portrait (vertical) · Alta resolução · JPG ou WEBP · Máx 2MB
