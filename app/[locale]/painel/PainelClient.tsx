@@ -808,6 +808,29 @@ function EditHistory() {
           value={data.image_url??''}
           onChange={url=>update(p=>({...p,image_url:url}))}
         />
+        {/* Vídeo de fundo */}
+        <div>
+          <label style={labelSt}>🎬 Vídeo de Fundo (URL Cloudinary .mp4)</label>
+          <input
+            className="pc-input"
+            style={{...inp,fontFamily:'monospace',fontSize:11}}
+            value={data.bg_video_url??''}
+            placeholder="https://res.cloudinary.com/.../video.mp4"
+            onChange={e=>update(p=>({...p,bg_video_url:e.target.value}))}
+          />
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'.04em',marginTop:6,lineHeight:1.5}}>
+            {data.bg_video_url
+              ? '✔ Vídeo configurado — aparece em loop no fundo da seção Nossa História'
+              : 'Cole a URL .mp4 do Cloudinary para ativar o vídeo de fundo'}
+          </p>
+          {data.bg_video_url && (
+            <button
+              onClick={()=>update(p=>({...p,bg_video_url:''}))}
+              style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'#fca5a5',background:'none',border:'none',cursor:'pointer',padding:0,marginTop:4,letterSpacing:'.06em'}}>
+              ✕ Remover vídeo
+            </button>
+          )}
+        </div>
         {F('title','Título (\\n = quebra de linha)',2)}
         {F('p1','Parágrafo 1',3)}
         {F('p2','Parágrafo 2',3)}

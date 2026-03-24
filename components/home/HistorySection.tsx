@@ -27,47 +27,71 @@ function useFadeUp() {
   return ref
 }
 
+type HistoryDataExtended = HistoryData & { bg_video_url?: string }
+
 export function HistorySection() {
   const t = useTranslations('home')
   const locale = useLocale() as Locale
   const ref = useFadeUp()
-  const data = useSiteContent<HistoryData>('history', HISTORY_FB) ?? HISTORY_FB
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const raw = useSiteContent<HistoryDataExtended>('history', HISTORY_FB)
+  const data = (raw ?? HISTORY_FB) as HistoryDataExtended
   const d = (obj: Record<string, unknown>, base: string) => localeField(obj, base, locale)
+  const bgVideo = data.bg_video_url || ''
 
-  const VIDEO_BG = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774332742/Sailboat_Training_web_optimized_light_v2_hua73y.mp4'
+  // Autoplay quando 10% visível, pause quando sai da tela
+  useEffect(() => {
+    const el = videoRef.current
+    if (!el || !bgVideo) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) el.play().catch(() => {})
+        else el.pause()
+      },
+      { threshold: 0.1 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [bgVideo])
 
   return (
     <section className="relative pt-14 md:pt-20 pb-16 md:pb-32 px-4 md:px-12 overflow-hidden">
-      {/* Vídeo de fundo — veleiros centralizados */}
-      <video
-        src={VIDEO_BG}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'center 35%',
-          filter: 'brightness(0.18) saturate(0.8)',
-          zIndex: 0,
-        }}
-      />
-      {/* Overlay suave — mantém legibilidade do texto sobre o vídeo */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(160deg, rgba(254,249,241,0.93) 0%, rgba(242,237,229,0.90) 50%, rgba(254,249,241,0.93) 100%)',
-          zIndex: 1,
-        }}
-      />
+      {/* Vídeo de fundo — puxado do banco via painel admin */}
+      {bgVideo && (
+        <>
+          <video
+            ref={videoRef}
+            src={bgVideo}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center 35%',
+              filter: 'brightness(0.18) saturate(0.8)',
+              zIndex: 0,
+            }}
+          />
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(160deg, rgba(254,249,241,0.93) 0%, rgba(242,237,229,0.90) 50%, rgba(254,249,241,0.93) 100%)',
+              zIndex: 1,
+            }}
+          />
+        </>
+      )}
+      {!bgVideo && (
+        <div style={{ position: 'absolute', inset: 0, background: 'var(--pc-surface-2, #f2ede5)', zIndex: 0 }} />
+      )}
       <div ref={ref} className="fade-up relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-24" style={{ zIndex: 2 }}>
 
         {/* Imagem
