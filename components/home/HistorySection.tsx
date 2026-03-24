@@ -39,10 +39,12 @@ export function HistorySection() {
   const d = (obj: Record<string, unknown>, base: string) => localeField(obj, base, locale)
   const bgVideo = data.bg_video_url || ''
 
-  // Autoplay quando 10% visível, pause quando sai da tela
+  // Inicia o vídeo assim que o ref estiver pronto e pausa/retoma com visibilidade
   useEffect(() => {
     const el = videoRef.current
     if (!el || !bgVideo) return
+    // Força play imediato (autoPlay nem sempre dispara em SSR/hydration)
+    el.play().catch(() => {})
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) el.play().catch(() => {})
@@ -62,6 +64,7 @@ export function HistorySection() {
           <video
             ref={videoRef}
             src={bgVideo}
+            autoPlay
             muted
             loop
             playsInline
