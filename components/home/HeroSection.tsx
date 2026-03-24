@@ -3,17 +3,6 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useSiteContent } from '@/lib/useSiteContent'
 
-/* ─────────────────────────────────────────────────────────────
-   Detecção de mobile SÍNCRONA — antes do primeiro render
-───────────────────────────────────────────────────────────── */
-function getIsMobile(): boolean {
-  if (typeof window === 'undefined') return false
-  return (
-    window.innerWidth < 768 ||
-    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent)
-  )
-}
-
 type HeroData = {
   video_desktop_1?: string
   video_desktop_2?: string
@@ -24,20 +13,23 @@ type HeroData = {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   VideoSlot — renderiza UM vídeo e nunca troca sua src.
-   A src é travada no primeiro valor não-vazio recebido.
-   Isso evita o re-render que reinicia o carregamento.
+   VideoSlot
+   - src travada no primeiro valor não-vazio (evita re-render)
+   - autoPlay + muted + playsInline no elemento já garante
+     que o browser inicia o vídeo sem precisar de .play()
+   - onReady dispara quando o primeiro frame estiver disponível
+     (evento 'loadeddata'), revelando os vídeos imediatamente
 ───────────────────────────────────────────────────────────── */
 function VideoSlot({
   src,
-  onFirstPlay,
+  onReady,
 }: {
   src: string
-  onFirstPlay?: () => void
+  onReady?: () => void
 }) {
   const ref = useRef<HTMLVideoElement>(null)
   const firedRef = useRef(false)
-  // Trava a src no primeiro valor não-vazio — nunca muda depois
+
   const lockedSrc = useRef<string>('')
   if (src && !lockedSrc.current) {
     lockedSrc.current = src
@@ -47,18 +39,19 @@ function VideoSlot({
     const el = ref.current
     if (!el) return
 
-    const tryPlay = () => {
-      el.play()
-        .then(() => {
-          if (!firedRef.current) {
-            firedRef.current = true
-            onFirstPlay?.()
-          }
-        })
-        .catch(() => setTimeout(tryPlay, 300))
+    const fire = () => {
+      if (!firedRef.current) {
+        firedRef.current = true
+        onReady?.()
+      }
     }
-    tryPlay()
 
+    // Revela assim que o primeiro frame estiver pronto
+    el.addEventListener('loadeddata', fire, { once: true })
+    // Fallback: se já carregou antes do listener
+    if (el.readyState >= 2) fire()
+
+    // Pausa quando fora da viewport (economiza bateria)
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) el.play().catch(() => {})
@@ -67,11 +60,14 @@ function VideoSlot({
       { threshold: 0.05 }
     )
     obs.observe(el)
-    return () => obs.disconnect()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // intencionalmente sem deps — monta uma vez
 
-  // Só renderiza quando tiver src travada
+    return () => {
+      el.removeEventListener('loadeddata', fire)
+      obs.disconnect()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   if (!lockedSrc.current) return null
 
   return (
@@ -97,36 +93,29 @@ function VideoSlot({
 
 /* ─────────────────────────────────────────────────────────────
    HeroSection
+   Desktop e mobile: sempre 2 vídeos lado a lado.
+   Usa video_desktop_1 e video_desktop_2 (ou video_mobile
+   e video_mobile_2 se definidos separadamente).
 ───────────────────────────────────────────────────────────── */
 export function HeroSection() {
   const t = useTranslations('home')
   const locale = useLocale()
-  const [isMobile] = useState<boolean>(getIsMobile)
   const [videoReady, setVideoReady] = useState(false)
 
-  // Revela os vídeos após 400ms no mobile, 600ms no desktop
-  // independente de qualquer evento — os vídeos já estão tocando
+  // Fallback de segurança: se loadeddata não disparar em 1s,
+  // revela de qualquer jeito para não travar a tela de loading
   useEffect(() => {
-    const delay = isMobile ? 400 : 600
-    const timer = setTimeout(() => setVideoReady(true), delay)
+    const timer = setTimeout(() => setVideoReady(true), 1000)
     return () => clearTimeout(timer)
-  }, [isMobile])
+  }, [])
 
   const raw = useSiteContent<HeroData>('hero', {})
   const data = raw ?? {}
 
-  // URLs finais — sem fallback para URL diferente
-  // Se não tem URL configurada, o slot não renderiza nada
-  const d1   = data.video_desktop_1 ?? ''
-  const d2   = data.video_desktop_2 ?? ''
-  const d3   = data.video_desktop_3 ?? ''
-  const mob  = data.video_mobile    ?? ''
-  const mob2 = data.video_mobile_2  ?? ''
+  const src1 = data.video_desktop_1 ?? ''
+  const src2 = data.video_desktop_2 ?? data.video_desktop_3 ?? ''
 
-  const desktopSrcs = [d1, d2, d3]
-  const mobileSrcs  = [mob, mob2]
-
-  const handleFirstPlay = useCallback(() => {
+  const handleReady = useCallback(() => {
     setVideoReady(true)
   }, [])
 
@@ -135,64 +124,43 @@ export function HeroSection() {
       className="relative w-full overflow-hidden flex items-center justify-center"
       style={{ height: '100dvh' }}
     >
-      {/* Capa de loading — some quando videoReady */}
+      {/* Capa de loading — some assim que o vídeo tiver o primeiro frame */}
       <div
         className="absolute inset-0 z-[5] pointer-events-none"
         style={{
           background: 'linear-gradient(135deg,#001432 0%,#002451 50%,#0a1a35 100%)',
           opacity: videoReady ? 0 : 1,
-          transition: 'opacity 0.6s ease',
+          transition: 'opacity 0.5s ease',
         }}
       >
-        <div
-          style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: 'radial-gradient(rgba(212,168,67,0.06) 1px,transparent 1px)',
-            backgroundSize: '28px 28px',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute', inset: 0,
-            backgroundImage:
-              'radial-gradient(ellipse at 20% 50%,rgba(0,116,191,0.25) 0%,transparent 55%),' +
-              'radial-gradient(ellipse at 80% 50%,rgba(0,116,191,0.25) 0%,transparent 55%)',
-          }}
-        />
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'radial-gradient(rgba(212,168,67,0.06) 1px,transparent 1px)',
+          backgroundSize: '28px 28px',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage:
+            'radial-gradient(ellipse at 20% 50%,rgba(0,116,191,0.25) 0%,transparent 55%),' +
+            'radial-gradient(ellipse at 80% 50%,rgba(0,116,191,0.25) 0%,transparent 55%)',
+        }} />
       </div>
 
-      {/* Camada de vídeo */}
+      {/* 2 vídeos lado a lado — desktop e mobile */}
       <div
         className="absolute inset-0 z-0"
         style={{
+          display: 'flex',
           opacity: videoReady ? 1 : 0,
-          transition: 'opacity 0.6s ease',
+          transition: 'opacity 0.5s ease',
         }}
       >
-        {isMobile ? (
-          /* ── MOBILE ── */
-          mobileSrcs.filter(Boolean).length >= 2 ? (
-            <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-              <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <VideoSlot src={mobileSrcs[0]} onFirstPlay={handleFirstPlay} />
-              </div>
-              <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <VideoSlot src={mobileSrcs[1]} />
-              </div>
-            </div>
-          ) : (
-            <VideoSlot src={mob} onFirstPlay={handleFirstPlay} />
-          )
-        ) : (
-          /* ── DESKTOP ── */
-          <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            {desktopSrcs.map((src, i) => (
-              <div key={i} style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <VideoSlot src={src} onFirstPlay={i === 0 ? handleFirstPlay : undefined} />
-              </div>
-            ))}
-          </div>
-        )}
+        <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
+          <VideoSlot src={src1} onReady={handleReady} />
+        </div>
+        <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
+          <VideoSlot src={src2} />
+        </div>
       </div>
 
       {/* Overlay gradiente */}
