@@ -1092,13 +1092,21 @@ export default function CardapioPage() {
   const bannersData = useSiteContent<BannersData>('page_banners', {})
   const cardapioBanner = bannersData?.cardapio || ''
 
-  // Carrega do banco — inicia com null para saber quando os dados reais chegaram
-  const menuData = useSiteContent<{ sections: Section[] } | null>('menu_full', null)
-  // Enquanto nao carregou do banco, usa SECTIONS hardcoded SEM iniciar o PageFlip
+  // Carrega do banco — fallback imediato com SECTIONS hardcoded
+  // O PageFlip inicia SEMPRE com as sections disponíveis (hardcoded ou banco)
+  const menuData = useSiteContent<{ sections: Section[] }>('menu_full', { sections: [] })
   const sections: Section[] = menuData?.sections?.length ? menuData.sections : SECTIONS
   const total = sections.length
-  // So inicia o PageFlip quando os dados definitivos estiverem prontos
-  const dataReady = menuData !== null
+  // Sempre pronto — usa SECTIONS hardcoded enquanto banco não responde
+  const dataReady = true
+
+  // Trava as sections na primeira versão não-vazia para não reinicializar o PageFlip
+  const sectionsRef = useRef<Section[]>([])
+  if (sectionsRef.current.length === 0 && sections.length > 0) {
+    sectionsRef.current = sections
+  }
+  const stableSections = sectionsRef.current.length > 0 ? sectionsRef.current : sections
+  const stableTotal = stableSections.length
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -1109,13 +1117,10 @@ export default function CardapioPage() {
 
   useEffect(() => {
     if (isMobile) return
-    // Aguarda os dados do banco chegarem antes de inicializar o PageFlip
-    if (!dataReady) return
     let pf: PF | null = null
     let cancelled = false
     async function init() {
       if (!bookRef.current) return
-      // Limpa paginas antigas antes de reinicializar
       bookRef.current.innerHTML = ''
       try {
         const { PageFlip } = await import('page-flip')
@@ -1137,10 +1142,10 @@ export default function CardapioPage() {
         }) as unknown as PF
 
         const pages: HTMLDivElement[] = []
-        sections.forEach((s, i) => {
+        stableSections.forEach((s, i) => {
           const cover = document.createElement('div')
           cover.className = 'page page-cover'
-          cover.innerHTML = coverHTML(s, i, total)
+          cover.innerHTML = coverHTML(s, i, stableTotal)
           pages.push(cover)
           const content = document.createElement('div')
           content.className = 'page'
@@ -1156,7 +1161,7 @@ export default function CardapioPage() {
     }
     init()
     return () => { cancelled = true; try { flipRef.current?.destroy?.() } catch {} }
-  }, [isMobile, dataReady, sections, total])
+  }, [isMobile, stableSections, stableTotal])
 
   function goTo(i: number) {
     setCur(i)
@@ -1195,7 +1200,7 @@ export default function CardapioPage() {
 
       <nav className="pf-tabs" aria-label="Seções do cardápio">
         <div className="pf-ti">
-          {sections.map((s, i) => (
+          {stableSections.map((s, i) => (
             <button key={s.id} className={`pf-tab${i === cur ? ' on' : ''}`} onClick={() => goTo(i)}>
               {s.title}
             </button>
@@ -1205,7 +1210,7 @@ export default function CardapioPage() {
 
       {/* MOBILE: carrossel nativo */}
       <div className="pf-mobile-carousel">
-        <MobileCarousel cur={cur} onChangeCur={setCur} sections={sections} />
+        <MobileCarousel cur={cur} onChangeCur={setCur} sections={stableSections} />
       </div>
 
       {/* DESKTOP: page-flip */}
@@ -1227,16 +1232,16 @@ export default function CardapioPage() {
         <div className="pf-nav">
           <button className="pf-btn" onClick={prev} disabled={cur === 0} aria-label="Anterior">‹</button>
           <div className="pf-nav-center">
-            <p className="pf-folio">{sections[cur]?.title} · Folio {cur + 1} de {total}</p>
+            <p className="pf-folio">{stableSections[cur]?.title} · Folio {cur + 1} de {stableTotal}</p>
             <div className="pf-dots">
-              {sections.map((_, i) => (
-                <button key={i} className={`pf-dot${i === cur ? ' on' : ''}`} onClick={() => goTo(i)} aria-label={`Ir para ${sections[i].title}`}>
+              {stableSections.map((_, i) => (
+                <button key={i} className={`pf-dot${i === cur ? ' on' : ''}`} onClick={() => goTo(i)} aria-label={`Ir para ${stableSections[i].title}`}>
                   <span className="pf-dot-inner" />
                 </button>
               ))}
             </div>
           </div>
-          <button className="pf-btn" onClick={next} disabled={cur === total - 1} aria-label="Próximo">›</button>
+          <button className="pf-btn" onClick={next} disabled={cur === stableTotal - 1} aria-label="Próximo">›</button>
         </div>
       </div>
     </div>
