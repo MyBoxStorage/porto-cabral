@@ -1,4 +1,8 @@
+'use client'
 import Image from 'next/image'
+import { useSiteContent } from '@/lib/useSiteContent'
+
+type PageBannersData = { blog?: string; cardapio?: string; sobre?: string }
 
 const posts = [
   {
@@ -28,15 +32,31 @@ const posts = [
 ]
 
 export default function BlogPage() {
+  const banners = useSiteContent<PageBannersData>('page_banners', {})
+  const bgImage = banners?.blog || ''
+
   return (
     <main className="min-h-screen bg-[#fef9f1] overflow-x-hidden">
       {/* Hero — começa no topo absoluto (por baixo da navbar transparente) */}
-      <section className="bg-[#0074bf] pt-[calc(72px+4rem)] pb-16 md:pt-[calc(72px+5rem)] md:pb-24 px-4 text-center">
-        <span className="font-accent text-[#D4A843] tracking-[0.3em] uppercase text-sm block mb-4">
-          Histórias do Porto
-        </span>
-        <h1 className="font-display text-3xl md:text-6xl text-white mb-4">Blog</h1>
-        <div className="w-24 h-1 bg-[#D4A843] mx-auto" />
+      <section
+        className="relative pt-[calc(72px+4rem)] pb-16 md:pt-[calc(72px+5rem)] md:pb-24 px-4 text-center overflow-hidden"
+        style={{ background: bgImage ? undefined : '#0074bf' }}
+      >
+        {/* Foto de fundo do banner (definida no painel admin) */}
+        {bgImage && (
+          <>
+            <img src={bgImage} alt="" aria-hidden="true" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }} />
+            <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,rgba(0,20,50,0.78) 0%,rgba(0,36,81,0.72) 100%)' }} />
+          </>
+        )}
+        {!bgImage && <div style={{ position:'absolute', inset:0, background:'#0074bf' }} />}
+        <div className="relative z-10">
+          <span className="font-accent text-[#D4A843] tracking-[0.3em] uppercase text-sm block mb-4">
+            Histórias do Porto
+          </span>
+          <h1 className="font-display text-3xl md:text-6xl text-white mb-4">Blog</h1>
+          <div className="w-24 h-1 bg-[#D4A843] mx-auto" />
+        </div>
       </section>
 
       <section className="py-12 md:py-16 px-4 md:px-6 max-w-5xl mx-auto">

@@ -60,18 +60,37 @@ const FEATURES = [
   },
 ]
 
+type PageBannersData = { sobre?: string; cardapio?: string; blog?: string }
+
 export default function SobrePage() {
   const raw  = useSiteContent<SobreData>('sobre', FB)
   const data: SobreData = { ...FB, ...raw }
+  const banners  = useSiteContent<PageBannersData>('page_banners', {})
+  const bgImage  = banners?.sobre || ''
 
   return (
     <main className="min-h-screen bg-[#fef9f1] overflow-x-hidden">
 
       {/* ── Hero ── */}
-      <section className="bg-[#0074bf] pt-[calc(72px+4rem)] pb-16 md:pt-[calc(72px+5rem)] md:pb-24 px-4 text-center relative overflow-hidden">
-        {/* pontilhado sutil */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
-          style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,1) 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
+      <section
+        className="pt-[calc(72px+4rem)] pb-16 md:pt-[calc(72px+5rem)] md:pb-24 px-4 text-center relative overflow-hidden"
+        style={{ background: bgImage ? undefined : '#0074bf' }}
+      >
+        {/* Foto de fundo do banner (definida no painel admin) */}
+        {bgImage && (
+          <>
+            <img src={bgImage} alt="" aria-hidden="true" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }} />
+            <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,rgba(0,20,50,0.78) 0%,rgba(0,36,81,0.72) 100%)' }} />
+          </>
+        )}
+        {!bgImage && (
+          <>
+            <div style={{ position:'absolute', inset:0, background:'#0074bf' }} />
+            {/* pontilhado sutil — só sem foto */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
+              style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,1) 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
+          </>
+        )}
         <div className="relative z-10">
           <span className="font-accent text-[#D4A843] tracking-[0.3em] uppercase text-sm block mb-4">
             {data.hero_eyebrow}
