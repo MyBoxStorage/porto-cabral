@@ -76,6 +76,8 @@ function VideoItem({
       muted
       loop
       playsInline
+      // eager = autoPlay no HTML garante inicio imediato independente do observer
+      autoPlay={eager}
       preload={preload}
       onCanPlay={handleCanPlay}
       style={{
@@ -100,8 +102,15 @@ export function HeroSection() {
 
   // Controle de sequenciamento: video 2 so carrega apos video 1 estar pronto
   // video 3 so carrega apos video 2 estar pronto
+  // Fallback: desbloqueia apos 3s mesmo sem canplay (conexao lenta)
   const [v2Unlocked, setV2Unlocked] = useState(false)
   const [v3Unlocked, setV3Unlocked] = useState(false)
+
+  useEffect(() => {
+    const t2 = setTimeout(() => setV2Unlocked(true), 3000)
+    const t3 = setTimeout(() => setV3Unlocked(true), 5000)
+    return () => { clearTimeout(t2); clearTimeout(t3) }
+  }, [])
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
