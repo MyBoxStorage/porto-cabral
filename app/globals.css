@@ -117,7 +117,7 @@ body { }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ── NAVBAR SCROLLED STATE ── */
+/* ── NAVBAR SCROLLED STATE (legado — logica agora no componente) ── */
 .nav-scrolled {
   background: rgba(0,95,163,0.97) !important;
   box-shadow: 0 2px 24px rgba(0,0,0,0.35);
