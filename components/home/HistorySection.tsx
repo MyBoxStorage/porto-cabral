@@ -34,9 +34,41 @@ export function HistorySection() {
   const data = useSiteContent<HistoryData>('history', HISTORY_FB) ?? HISTORY_FB
   const d = (obj: Record<string, unknown>, base: string) => localeField(obj, base, locale)
 
+  const VIDEO_BG = 'https://res.cloudinary.com/djhevgyvi/video/upload/v1774332742/Sailboat_Training_web_optimized_light_v2_hua73y.mp4'
+
   return (
-    <section className="pt-14 md:pt-20 pb-16 md:pb-32 px-4 md:px-12 overflow-hidden bg-pc-surface-2">
-      <div ref={ref} className="fade-up max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-24">
+    <section className="relative pt-14 md:pt-20 pb-16 md:pb-32 px-4 md:px-12 overflow-hidden">
+      {/* Vídeo de fundo — veleiros centralizados */}
+      <video
+        src={VIDEO_BG}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center 35%',
+          filter: 'brightness(0.18) saturate(0.8)',
+          zIndex: 0,
+        }}
+      />
+      {/* Overlay suave — mantém legibilidade do texto sobre o vídeo */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(160deg, rgba(254,249,241,0.93) 0%, rgba(242,237,229,0.90) 50%, rgba(254,249,241,0.93) 100%)',
+          zIndex: 1,
+        }}
+      />
+      <div ref={ref} className="fade-up relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-24" style={{ zIndex: 2 }}>
 
         {/* Imagem
             Mobile: largura total, ratio 4/3 (mais paisagem — menos espaço vertical)
