@@ -22,9 +22,11 @@ const HERO_FB: HeroData = {
   video_mobile_2: '',
 }
 
-/* VideoItem
-   hero=true  -> autoPlay imediato ao desbloquear, sem esperar observer
-   hero=false -> observer controla play/pause por visibilidade
+/*
+  VideoItem
+  - eager=true  → autoPlay + preload="auto" imediato (sem esperar nada)
+  - eager=false → controlado por unlocked + hero props (desktop)
+  - hero=false + unlocked via observer → desktop vídeos 2 e 3
 */
 function VideoItem({
   src,
@@ -42,7 +44,7 @@ function VideoItem({
   const ref = useRef<HTMLVideoElement>(null)
   const [preload, setPreload] = useState<string>(eager ? 'auto' : 'none')
 
-  // Ao desbloquear: hero inicia imediatamente com preload=auto + play()
+  // Desktop: ao desbloquear, hero inicia imediatamente
   useEffect(() => {
     if (!unlocked || eager) return
     const el = ref.current
@@ -55,7 +57,7 @@ function VideoItem({
     }
   }, [unlocked, eager, hero])
 
-  // Observer para pausar quando sair da viewport (economiza CPU/banda)
+  // Observer: pausa quando sai da viewport (economiza CPU/banda)
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -96,9 +98,11 @@ export function HeroSection() {
   const locale = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
+  // Desktop: controle de unlock sequencial para vídeos 2 e 3
   const [v2Unlocked, setV2Unlocked] = useState(false)
   const [v3Unlocked, setV3Unlocked] = useState(false)
 
+  // Desktop: desbloqueia vídeos 2 e 3 sequencialmente como fallback de tempo
   useEffect(() => {
     const t2 = setTimeout(() => setV2Unlocked(true), 3000)
     const t3 = setTimeout(() => setV3Unlocked(true), 5000)
@@ -125,6 +129,7 @@ export function HeroSection() {
   const desktopVideos = [d1, d2, d3].filter(Boolean)
   const mobileVideos  = [mob, mob2].filter(Boolean)
 
+  // Chamado quando o 1º vídeo está pronto para tocar
   const handleV1Ready = useCallback(() => {
     setVideoReady(true)
     setV2Unlocked(true)
@@ -165,18 +170,28 @@ export function HeroSection() {
       >
         {isMobile ? (
           mobileVideos.length >= 2 ? (
+            // Mobile com 2 vídeos: ambos eager — autoplay imediato em paralelo
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <VideoItem src={mobileVideos[0]} eager onReady={handleV1Ready} />
+                <VideoItem
+                  src={mobileVideos[0]}
+                  eager
+                  onReady={handleV1Ready}
+                />
               </div>
               <div style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
-                <VideoItem src={mobileVideos[1]} unlocked={v2Unlocked} />
+                <VideoItem
+                  src={mobileVideos[1]}
+                  eager
+                />
               </div>
             </div>
           ) : (
+            // Mobile com 1 vídeo
             <VideoItem src={mob} eager onReady={handleV1Ready} />
           )
         ) : (
+          // Desktop: unlock sequencial para economizar banda
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {desktopVideos.map((src, i) => (
               <div key={i} style={{ flex: 1, height: '100%', overflow: 'hidden' }}>
