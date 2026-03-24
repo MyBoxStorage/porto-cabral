@@ -1,11 +1,12 @@
 'use client'
 import { signOut } from 'next-auth/react'
 import type { Session } from 'next-auth'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MinhasReservas } from '@/components/cliente/MinhasReservas'
 import { MeuPerfil } from '@/components/cliente/MeuPerfil'
 import { QuizPreferencias } from '@/components/cliente/QuizPreferencias'
 import { IconLogbook, IconTripulante, IconPreferencias, IconAncora, IconLeme } from '@/components/icons'
+import { useSiteContent } from '@/lib/useSiteContent'
 
 type Tab = 'reservas' | 'perfil' | 'quiz'
 type Props = { session: Session }
@@ -18,10 +19,62 @@ const tabs: { key: Tab; label: string; Icon: React.ComponentType<{ size?: number
 
 export function ClienteDashboardClient({ session }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('reservas')
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  // Video de fundo da area do cliente — configurado no painel
+  type PageBannersData = { cliente_video?: string; cardapio?: string; sobre?: string; blog?: string }
+  const banners = useSiteContent<PageBannersData>('page_banners', {})
+  const bgVideo = banners?.cliente_video || ''
+
+  // Intersection observer para pausar/retomar o video
+  useEffect(() => {
+    const el = videoRef.current
+    if (!el || !bgVideo) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) el.play().catch(() => {})
+        else el.pause()
+      },
+      { threshold: 0.1 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [bgVideo])
 
   return (
-    <div className="min-h-screen bg-[#002451] pt-[88px] pb-16 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#002451] pt-[88px] pb-16 px-4 relative overflow-hidden">
+
+      {/* Video de fundo — autoplay loop muted */}
+      {bgVideo && (
+        <>
+          <video
+            ref={videoRef}
+            src={bgVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              zIndex: 0,
+              filter: 'brightness(0.35)',
+            }}
+          />
+          {/* Overlay gradiente para manter legibilidade */}
+          <div style={{
+            position: 'fixed', inset: 0, zIndex: 1,
+            background: 'linear-gradient(180deg,rgba(0,20,50,0.6) 0%,rgba(0,36,81,0.5) 50%,rgba(0,20,50,0.7) 100%)',
+            pointerEvents: 'none',
+          }} />
+        </>
+      )}
+      <div className="max-w-4xl mx-auto" style={{position:'relative',zIndex:2}}>
 
         {/* Header */}
         <div className="flex justify-between items-start mb-10">

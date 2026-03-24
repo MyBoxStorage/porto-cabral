@@ -553,7 +553,7 @@ function TabClientes() {
 
 /* ══ TAB: CONTEÚDO ══════════════════════════════════════════════ */
 function TabConteudo() {
-  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'|'sobre'>('hero')
+  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'|'sobre'|'banners'>('hero')
   const sections: {id:typeof section;label:string;icon:string}[] = [
     {id:'hero',    label:'Hero Banner',       icon:'▶'},
     {id:'dishes',  label:'Pratos Destaque',   icon:'◆'},
@@ -561,6 +561,7 @@ function TabConteudo() {
     {id:'videos',  label:'Film Strip',        icon:'🎬'},
     {id:'location',label:'Localização',       icon:'◉'},
     {id:'sobre',   label:'Página Sobre',      icon:'⚓'},
+    {id:'banners', label:'Banners Páginas',  icon:'🖼️'},
   ]
   return (
     <div>
@@ -588,6 +589,7 @@ function TabConteudo() {
           {section==='videos'   && <EditVideos/>}
           {section==='location' && <EditLocation/>}
         {section==='sobre'    && <EditSobre/>}
+        {section==='banners'  && <EditPageBanners/>}
         </div>
       </div>
     </div>
@@ -970,6 +972,88 @@ function EditSobre() {
             {F('feat_3_title','Card 3 — Título')}
             {F('feat_3_desc','Card 3 — Descrição')}
           </div>
+        </div>
+      </div>
+    </EdCard>
+  )
+}
+
+/* ─── Banners das Páginas ────────────── */
+type PageBannersContent = { cardapio:string; sobre:string; blog:string; cliente_video:string }
+function EditPageBanners() {
+  const {data,update,save,saving,dirty,toast,clearToast} = useContent<PageBannersContent>('page_banners')
+  if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
+  return (
+    <EdCard toast={toast} onClearToast={clearToast}>
+      <SectionHeader title="Banners das Páginas" onSave={save} saving={saving} dirty={dirty}/>
+      <div style={{background:'rgba(212,168,67,0.05)',border:'1px solid rgba(212,168,67,0.12)',borderRadius:8,padding:'0.75rem 1rem',marginBottom:'1.5rem'}}>
+        <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.45)',letterSpacing:'.05em',margin:0,lineHeight:1.7}}>
+          Banners das páginas: fotos para headers e vídeo de fundo da Área do Cliente.
+        </p>
+      </div>
+      <div style={{display:'grid',gap:'2rem'}}>
+        {/* Video da Area do Cliente */}
+        <div>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 .5rem'}}>🎬 Área do Cliente — Vídeo de Fundo</p>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'.04em',margin:'0 0 1rem',lineHeight:1.6}}>
+            URL Cloudinary .mp4 que roda em autoplay e loop no fundo da Cabine do Comandante.
+          </p>
+          <div>
+            <label style={labelSt}>URL do Vídeo (.mp4 Cloudinary)</label>
+            <input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}}
+              value={data.cliente_video??''}
+              placeholder="https://res.cloudinary.com/.../video.mp4"
+              onChange={e=>update(p=>({...p,cliente_video:e.target.value}))}/>
+          </div>
+          {data.cliente_video&&(
+            <div style={{marginTop:'0.75rem',display:'flex',alignItems:'center',gap:10}}>
+              <video src={data.cliente_video} muted playsInline preload="metadata"
+                style={{width:120,height:72,objectFit:'cover',borderRadius:8,border:'1px solid rgba(212,168,67,0.2)',flexShrink:0}}/>
+              <div>
+                <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(212,168,67,0.6)',letterSpacing:'.06em',margin:0}}>✔ Vídeo configurado</p>
+                <button onClick={()=>update(p=>({...p,cliente_video:''}))} style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'#fca5a5',background:'none',border:'none',cursor:'pointer',padding:0,marginTop:4,letterSpacing:'.06em'}}>✕ Remover</button>
+              </div>
+            </div>
+          )}
+        </div>
+        {/* Cardápio */}
+        <div>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Página Cardápio</p>
+          {data.cardapio&&(
+            <div style={{marginBottom:'1rem',borderRadius:10,overflow:'hidden',position:'relative',height:140}}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={data.cardapio} alt="Banner cardápio" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+              <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(0,0,0,0.5),transparent)'}} />
+              <button onClick={()=>update(p=>({...p,cardapio:''}))} style={{position:'absolute',top:8,right:8,background:'rgba(0,0,0,0.7)',border:'none',color:'#fff',borderRadius:6,padding:'4px 10px',cursor:'pointer',fontSize:10,fontFamily:"'Josefin Sans',sans-serif"}}>✕ Remover</button>
+            </div>
+          )}
+          <ImageUploader label="Foto de fundo do banner Cardápio" value={data.cardapio??''} onChange={url=>update(p=>({...p,cardapio:url}))}/>
+        </div>
+        {/* Sobre */}
+        <div style={{borderTop:'1px solid rgba(212,168,67,0.1)',paddingTop:'1.5rem'}}>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Página Sobre</p>
+          {data.sobre&&(
+            <div style={{marginBottom:'1rem',borderRadius:10,overflow:'hidden',position:'relative',height:140}}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={data.sobre} alt="Banner sobre" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+              <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(0,0,0,0.5),transparent)'}} />
+              <button onClick={()=>update(p=>({...p,sobre:''}))} style={{position:'absolute',top:8,right:8,background:'rgba(0,0,0,0.7)',border:'none',color:'#fff',borderRadius:6,padding:'4px 10px',cursor:'pointer',fontSize:10,fontFamily:"'Josefin Sans',sans-serif"}}>✕ Remover</button>
+            </div>
+          )}
+          <ImageUploader label="Foto de fundo do banner Sobre" value={data.sobre??''} onChange={url=>update(p=>({...p,sobre:url}))}/>
+        </div>
+        {/* Blog */}
+        <div style={{borderTop:'1px solid rgba(212,168,67,0.1)',paddingTop:'1.5rem'}}>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Página Blog</p>
+          {data.blog&&(
+            <div style={{marginBottom:'1rem',borderRadius:10,overflow:'hidden',position:'relative',height:140}}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={data.blog} alt="Banner blog" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+              <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(0,0,0,0.5),transparent)'}} />
+              <button onClick={()=>update(p=>({...p,blog:''}))} style={{position:'absolute',top:8,right:8,background:'rgba(0,0,0,0.7)',border:'none',color:'#fff',borderRadius:6,padding:'4px 10px',cursor:'pointer',fontSize:10,fontFamily:"'Josefin Sans',sans-serif"}}>✕ Remover</button>
+            </div>
+          )}
+          <ImageUploader label="Foto de fundo do banner Blog" value={data.blog??''} onChange={url=>update(p=>({...p,blog:url}))}/>
         </div>
       </div>
     </EdCard>

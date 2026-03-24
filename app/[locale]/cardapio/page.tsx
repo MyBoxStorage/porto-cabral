@@ -222,6 +222,16 @@ const CSS = `
   position:relative;
   overflow:hidden;
 }
+/* Imagem de fundo do hero quando configurada no painel */
+.pf-hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  transition:opacity .4s ease;
+}
+.pf-hero-bg-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(170deg,rgba(0,36,81,0.72) 0%,rgba(0,60,120,0.55) 45%,rgba(0,80,140,0.6) 80%,rgba(0,36,81,0.75) 100%);
+}
 /* Pontos dourados de fundo */
 .pf-hero::before{
   content:'';position:absolute;inset:0;pointer-events:none;
@@ -1077,6 +1087,11 @@ export default function CardapioPage() {
   const [ready, setReady] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  // Banner da pagina — carregado do banco
+  type BannersData = { cardapio?: string; sobre?: string; blog?: string }
+  const bannersData = useSiteContent<BannersData>('page_banners', {})
+  const cardapioBanner = bannersData?.cardapio || ''
+
   // Carrega do banco — inicia com null para saber quando os dados reais chegaram
   const menuData = useSiteContent<{ sections: Section[] } | null>('menu_full', null)
   // Enquanto nao carregou do banco, usa SECTIONS hardcoded SEM iniciar o PageFlip
@@ -1155,7 +1170,14 @@ export default function CardapioPage() {
       <style>{CSS}</style>
 
       <header className="pf-hero">
-        <div className="pf-hero-inner">
+        {/* Imagem de fundo dinamica — definida no painel admin */}
+        {cardapioBanner && (
+          <>
+            <div className="pf-hero-bg" style={{backgroundImage:`url(${cardapioBanner})`}} />
+            <div className="pf-hero-bg-overlay" />
+          </>
+        )}
+        <div className="pf-hero-inner" style={{position:'relative',zIndex:2}}>
           <p className="pf-hero-eyebrow">Porto Cabral BC · Gastronomia Flutuante</p>
           <h1 className="pf-hero-title">Cardápio</h1>
           <div className="pf-hero-rule">
