@@ -280,7 +280,10 @@ function useContent<T>(key:string) {
   const [saving,setSaving]= useState(false)
   const [toast,setToast]  = useState<{msg:string;type:'ok'|'err'}|null>(null)
   useEffect(()=>{
-    fetch(`/api/admin/content/${key}`).then(r=>r.json()).then(d=>{ if(d.value) setData(d.value) })
+    fetch(`/api/admin/content/${key}`)
+      .then(r => r.ok ? r.json() : { value: null })
+      .then(d => { setData(d.value ?? ({} as T)) })
+      .catch(() => { setData({} as T) })
   },[key])
   function update(fn:(prev:T)=>T){setData(p=>{const n=fn(p as T);setDirty(true);return n})}
   async function save(){
