@@ -547,16 +547,17 @@ function TabClientes() {
 
 /* ══ TAB: CONTEÚDO ══════════════════════════════════════════════ */
 function TabConteudo() {
-  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'|'reserva'|'sobre'|'banners'>('hero')
+  const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'|'reserva'|'sobre'|'banners'|'og_image'>('hero')
   const sections: {id:typeof section;label:string;icon:string}[] = [
-    {id:'hero',    label:'Hero Banner',      icon:'▶'},
-    {id:'dishes',  label:'Pratos Destaque',  icon:'◆'},
-    {id:'history', label:'Nossa História',   icon:'◎'},
-    {id:'videos',  label:'Film Strip',       icon:'🎬'},
-    {id:'location',label:'Localização',      icon:'◉'},
-    {id:'reserva', label:'Fundo Reserva',    icon:'📷'},
-    {id:'sobre',   label:'Página Sobre',     icon:'⚓'},
-    {id:'banners', label:'Banners Páginas',  icon:'🖼️'},
+    {id:'hero',     label:'Hero Banner',      icon:'▶'},
+    {id:'dishes',   label:'Pratos Destaque',  icon:'◆'},
+    {id:'history',  label:'Nossa História',   icon:'◎'},
+    {id:'videos',   label:'Film Strip',       icon:'🎬'},
+    {id:'location', label:'Localização',      icon:'◉'},
+    {id:'reserva',  label:'Fundo Reserva',    icon:'📷'},
+    {id:'sobre',    label:'Página Sobre',     icon:'⚓'},
+    {id:'banners',  label:'Banners Páginas',  icon:'🖼️'},
+    {id:'og_image', label:'OG Image',         icon:'🔗'},
   ]
   return (
     <div>
@@ -586,6 +587,7 @@ function TabConteudo() {
           {section==='reserva'  && <EditReserva/>}
           {section==='sobre'    && <EditSobre/>}
           {section==='banners'  && <EditPageBanners/>}
+          {section==='og_image' && <EditOgImage/>}
         </div>
       </div>
     </div>
@@ -1103,6 +1105,58 @@ function EditPageBanners() {
           )}
           <ImageUploader label="Foto de fundo do banner Blog" value={data.blog??''} onChange={url=>update(p=>({...p,blog:url}))}/>
         </div>
+      </div>
+    </EdCard>
+  )
+}
+
+/* ─── OG Image ───────────────────────── */
+function EditOgImage() {
+  const {data,update,save,saving,dirty,toast,clearToast} = useContent<Record<string,string>>('og_image')
+  if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
+  return (
+    <EdCard toast={toast} onClearToast={clearToast}>
+      <SectionHeader title="OG Image — Compartilhamento" onSave={save} saving={saving} dirty={dirty}/>
+      {/* Explicação */}
+      <div style={{background:'rgba(212,168,67,0.05)',border:'1px solid rgba(212,168,67,0.12)',borderRadius:10,padding:'1rem',marginBottom:'1.5rem',display:'flex',gap:12,alignItems:'flex-start'}}>
+        <span style={{fontSize:20,flexShrink:0}}>🔗</span>
+        <div>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,0.6)',letterSpacing:'.05em',lineHeight:1.7,margin:'0 0 4px'}}>
+            Esta imagem aparece quando o link do site é compartilhado no <strong style={{color:GOLD}}>WhatsApp, Instagram, LinkedIn, Facebook</strong> e outros.
+          </p>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'.04em',lineHeight:1.6,margin:0}}>
+            Recomendado: 1200×630px · Formato landscape (horizontal) · JPG ou WEBP · Máx 2MB
+          </p>
+        </div>
+      </div>
+      {/* Preview da imagem atual */}
+      {data.url && (
+        <div style={{marginBottom:'1.5rem',borderRadius:12,overflow:'hidden',position:'relative',aspectRatio:'1200/630'}}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={data.url} alt="OG Image atual" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center'}}/>
+          <div style={{position:'absolute',inset:0,background:'linear-gradient(180deg,transparent 60%,rgba(0,0,0,0.5) 100%)'}}/>
+          <div style={{position:'absolute',bottom:12,left:12,right:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.7)',letterSpacing:'.08em',margin:0}}>
+              ✔ Imagem configurada — preview de como aparece ao compartilhar
+            </p>
+            <button onClick={()=>update(p=>({...p,url:''}))}
+              style={{background:'rgba(0,0,0,0.7)',border:'1px solid rgba(255,255,255,0.2)',color:'#fff',borderRadius:6,padding:'5px 12px',cursor:'pointer',fontSize:10,fontFamily:"'Josefin Sans',sans-serif",whiteSpace:'nowrap'}}>
+              ✕ Remover
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Uploader */}
+      <ImageUploader
+        label="Foto OG Image (1200×630px recomendado)"
+        value={data.url??''}
+        onChange={url=>update(p=>({...p,url}))}
+      />
+      {/* Dica sobre cache */}
+      <div style={{marginTop:'1.25rem',padding:'0.75rem 1rem',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,168,67,0.1)',borderRadius:8}}>
+        <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'.05em',margin:0,lineHeight:1.7}}>
+          ✦ Após salvar, a imagem é aplicada automaticamente. Redes sociais costumam fazer cache — para forçar a atualização, use o <strong style={{color:'rgba(212,168,67,0.5)'}}>Facebook Sharing Debugger</strong> ou <strong style={{color:'rgba(212,168,67,0.5)'}}>LinkedIn Post Inspector</strong>.
+        </p>
       </div>
     </EdCard>
   )

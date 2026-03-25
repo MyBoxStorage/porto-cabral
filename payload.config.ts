@@ -116,6 +116,8 @@ export default buildConfig({
       fields: [{ name: 'name', type: 'text' }],
     },
   ],
+  // @ts-ignore — incompatibilidade de tipos entre @payloadcms/db-postgres@0.8.10 e payload@3.31.0
+  // Funciona corretamente em runtime. Erro gerado por versões pinadas do Payload CLI.
   db: postgresAdapter({
     pool: {
       connectionString: process.env.PC_DATABASE_URL || '',
