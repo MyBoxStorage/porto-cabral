@@ -1170,6 +1170,27 @@ type MenuData = {sections: MenuSection[]}
 function TabCardapio() {
   const {data,update,save,saving,dirty,toast,clearToast} = useContent<MenuData>('menu_full')
   const [openSection,setOpenSection] = useState<string|null>(null)
+  const [syncing,setSyncing] = useState(false)
+  const [syncToast,setSyncToast] = useState<{msg:string;type:'ok'|'err'}|null>(null)
+
+  async function syncFromPayload() {
+    setSyncing(true)
+    try {
+      const r = await fetch('/api/admin/sync-menu',{method:'POST'})
+      const d = await r.json()
+      if(r.ok) {
+        setSyncToast({msg:`Sincronizado: ${d.sections} seções, ${d.items} itens`,type:'ok'})
+        // Recarrega os dados na aba sem precisar de refresh
+        window.location.reload()
+      } else {
+        setSyncToast({msg:d.error??'Erro ao sincronizar',type:'err'})
+      }
+    } catch {
+      setSyncToast({msg:'Falha na conexão',type:'err'})
+    } finally {
+      setSyncing(false)
+    }
+  }
 
   if(!data) return (
     <div style={{textAlign:'center',padding:'4rem',color:'rgba(212,168,67,0.4)',
@@ -1184,6 +1205,31 @@ function TabCardapio() {
     <div>
       <SectionTitle>Cardápio — Logbook do Capitão</SectionTitle>
       {toast&&<Toast msg={toast.msg} type={toast.type} onClose={clearToast}/>}
+      {syncToast&&<Toast msg={syncToast.msg} type={syncToast.type} onClose={()=>setSyncToast(null)}/>}
+
+      {/* Painel de sincronização com o Payload CMS */}
+      <div style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,borderRadius:14,padding:'1.25rem 1.5rem',
+        border:'1px solid rgba(212,168,67,0.15)',marginBottom:'1.5rem',
+        display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,flexWrap:'wrap'}}>
+        <div>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',
+            textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 4px'}}>Payload CMS</p>
+          <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.6)',margin:0,letterSpacing:'.03em'}}>
+            Sincroniza os pratos cadastrados no Payload para o cardápio do site
+          </p>
+        </div>
+        <div style={{display:'flex',gap:10,alignItems:'center',flexShrink:0}}>
+          <a href="/pt/payload/admin/collections/menu-items" target="_blank"
+            style={{...ghostBtn,fontSize:10,padding:'8px 14px',color:GOLD,
+              borderColor:'rgba(212,168,67,0.2)',textDecoration:'none'}}>
+            ⚓ Gerenciar Pratos
+          </a>
+          <button onClick={syncFromPayload} disabled={syncing}
+            style={{...goldBtn,fontSize:10,padding:'8px 16px',opacity:syncing?0.5:1}}>
+            {syncing?'Sincronizando…':'↻ Sincronizar do Payload'}
+          </button>
+        </div>
+      </div>
 
       <div style={{display:'flex',justifyContent:'flex-end',marginBottom:'1.5rem'}}>
         <button onClick={save} disabled={saving||!dirty} className={dirty&&!saving?'pc-shimmer':''}

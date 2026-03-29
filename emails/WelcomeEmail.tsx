@@ -18,7 +18,7 @@ export type WelcomeEmailProps = {
 
 export const WelcomeEmail = ({
   name,
-  baseUrl = 'https://portocabralbc.com.br',
+  baseUrl = process.env.NEXT_PUBLIC_PC_SITE_URL ?? 'https://porto-cabral.vercel.app',
 }: WelcomeEmailProps) => (
   <Html>
     <Head />

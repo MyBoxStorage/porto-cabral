@@ -120,7 +120,7 @@ export const ReservationConfirmation = ({
   reservationTime,
   partySize,
   locale = 'pt',
-  baseUrl = 'https://portocabralbc.com.br',
+  baseUrl = process.env.NEXT_PUBLIC_PC_SITE_URL ?? 'https://porto-cabral.vercel.app',
 }: ReservationConfirmationProps) => {
   const c = copy[locale]
   return (

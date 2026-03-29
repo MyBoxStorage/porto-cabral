@@ -30,7 +30,7 @@ const menuCategoryOptions = [
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
-  serverURL: process.env.NEXT_PUBLIC_PC_SITE_URL || 'http://localhost:3000',
+  serverURL: process.env.NEXT_PUBLIC_PC_SITE_URL || 'https://porto-cabral.vercel.app',
   admin: {
     user: 'admins',
   },

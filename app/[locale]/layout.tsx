@@ -62,7 +62,7 @@ async function getOgImageUrl(): Promise<string | null> {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const meta = metaByLocale[locale] ?? metaByLocale.pt
-  const siteUrl = process.env.NEXT_PUBLIC_PC_SITE_URL ?? 'https://portocabralbc.com.br'
+  const siteUrl = process.env.NEXT_PUBLIC_PC_SITE_URL ?? 'https://porto-cabral.vercel.app'
   const ogImageUrl = await getOgImageUrl()
 
   return {
