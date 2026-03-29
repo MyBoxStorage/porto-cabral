@@ -10,6 +10,10 @@ const intlMiddleware = createIntlMiddleware({
   localeDetection: true,
 })
 
+// Regex para capturar rotas do painel com ou sem prefixo de locale
+const PAINEL_WITH_LOCALE = /^\/(pt|en|es)\/painel(\/.*)?$/
+const PAINEL_NO_LOCALE   = /^\/painel(\/.*)?$/
+
 export default auth((req) => {
   const { pathname } = req.nextUrl
 
@@ -19,8 +23,15 @@ export default auth((req) => {
     return NextResponse.redirect(new URL(`/painel${rest}`, req.nextUrl.origin))
   }
 
+  // /[locale]/painel/* -> normaliza para /painel/* sem locale
+  // Isso evita que o intlMiddleware capture essas rotas e quebre a sessao
+  if (PAINEL_WITH_LOCALE.test(pathname)) {
+    const normalized = pathname.replace(/^\/(pt|en|es)\/painel/, '/painel')
+    return NextResponse.redirect(new URL(normalized, req.nextUrl.origin))
+  }
+
   // Rotas /painel/* — gerenciadas aqui, nao passam pelo intlMiddleware
-  if (pathname.startsWith('/painel')) {
+  if (PAINEL_NO_LOCALE.test(pathname)) {
     const isPainelLogin = pathname === '/painel/login'
 
     // /painel/login e livre — nao precisa de autenticacao
@@ -33,7 +44,7 @@ export default auth((req) => {
       return NextResponse.redirect(new URL('/painel/login', req.nextUrl.origin))
     }
     if (!isAdminEmail(req.auth.user.email)) {
-      return NextResponse.redirect(new URL('/', req.nextUrl.origin))
+      return NextResponse.redirect(new URL('/painel/login', req.nextUrl.origin))
     }
 
     return NextResponse.next()

@@ -28,7 +28,7 @@ export default function PainelLoginPage() {
         return
       }
       // Navegacao completa para garantir que a sessao seja lida pelo servidor
-      window.location.href = `/${locale}/painel`
+      window.location.href = '/painel'
     } catch (err) {
       console.error('[painel-login] excecao:', err)
       setError('Erro inesperado. Tente novamente.')
