@@ -26,7 +26,6 @@
     "tailwind.config.ts",
     "migrations/**/*.ts",
     "payload-generated-schema.ts",
-    "payload-types.ts",
-    "payload.config.ts"
+    "payload-types.ts"
   ]
 }
