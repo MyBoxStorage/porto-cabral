@@ -1,7 +1,6 @@
 ﻿'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { formatDateBR, formatDateOnlyBR } from '@/lib/utils'
-import { formatDateBR, formatDateOnlyBR } from '@/lib/utils'
 
 /* ══ TYPES ══════════════════════════════════════════════════════ */
 type Reservation = {
@@ -1165,7 +1164,7 @@ function EditOgImage() {
 }
 
 /* ══ TAB: CARDÁPIO ══════════════════════════════════════════════ */
-type MenuItem = {name:string;price:string;desc?:string;tag?:string}
+type MenuItem = {name:string;price:string;desc?:string;tag?:string;photo_url?:string;long_desc?:string}
 type MenuSection = {id:string;title:string;subtitle:string;items:MenuItem[]}
 type MenuData = {sections: MenuSection[]}
 
@@ -1290,7 +1289,7 @@ function TabCardapio() {
                   renderItem={(item,ii,handle)=>(
                     <div style={{background:'rgba(255,255,255,0.03)',borderRadius:10,
                       padding:'1rem',border:'1px solid rgba(212,168,67,0.08)'}}>
-                      <div style={{display:'grid',gridTemplateColumns:'auto 2fr 1fr 2fr auto',gap:'0.75rem',alignItems:'start'}}>
+                      <div style={{display:'grid',gridTemplateColumns:'auto 2fr 1fr auto',gap:'0.75rem',alignItems:'start',marginBottom:'0.75rem'}}>
                         <div style={{paddingTop:18}}>{handle}</div>
                         <div>
                           <label style={{...labelSt,fontSize:9}}>Nome</label>
@@ -1298,25 +1297,55 @@ function TabCardapio() {
                             onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,name:e.target.value}:it)}:s)}))}/>
                         </div>
                         <div>
-                          <label style={{...labelSt,fontSize:9}}>Preço (R$)</label>
+                          <label style={{...labelSt,fontSize:9}}>Preco (R$)</label>
                           <input className="pc-input" style={{...inp,fontSize:12}} value={item.price}
                             onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,price:e.target.value}:it)}:s)}))}/>
-                        </div>
-                        <div>
-                          <label style={{...labelSt,fontSize:9}}>Descrição</label>
-                          <input className="pc-input" style={{...inp,fontSize:12}} value={item.desc??''}
-                            onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,desc:e.target.value}:it)}:s)}))}/>
                         </div>
                         <div style={{paddingTop:18}}>
                           <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.filter((_,j)=>j!==ii)}:s)}))}
                             style={{padding:'6px 10px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',
-                              background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:11,cursor:'pointer'}}>✕</button>
+                              background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:11,cursor:'pointer'}}>x</button>
+                        </div>
+                      </div>
+                      <div style={{marginBottom:'0.75rem'}}>
+                        <label style={{...labelSt,fontSize:9}}>Descricao breve (aparece no cardapio)</label>
+                        <input className="pc-input" style={{...inp,fontSize:12}} value={item.desc??''}
+                          onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,desc:e.target.value}:it)}:s)}))}/>
+                      </div>
+                      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.75rem',
+                        borderTop:'1px solid rgba(212,168,67,0.08)',paddingTop:'0.75rem'}}>
+                        <div>
+                          <p style={{...labelSt,fontSize:9,color:'rgba(212,168,67,0.75)',marginBottom:8}}>
+                            Foto do Prato (ativa modal ao clicar)
+                          </p>
+                          <ImageUploader
+                            label=""
+                            value={(item as {photo_url?:string}).photo_url??''}
+                            onChange={url=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...(it as object),photo_url:url} as typeof it:it)}:s)}))}
+                          />
+                        </div>
+                        <div>
+                          <label style={{...labelSt,fontSize:9,color:'rgba(212,168,67,0.75)'}}>
+                            Descricao longa (aparece no modal)
+                          </label>
+                          <textarea
+                            className="pc-input"
+                            rows={4}
+                            style={{...inp,fontSize:12,resize:'vertical'} as React.CSSProperties}
+                            value={(item as {long_desc?:string}).long_desc??''}
+                            placeholder="Ingredientes, modo de preparo, informacoes especiais..."
+                            onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...(it as object),long_desc:e.target.value} as typeof it:it)}:s)}))}>
+                          </textarea>
+                          {((item as {photo_url?:string}).photo_url||(item as {long_desc?:string}).long_desc) && (
+                            <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(16,185,129,0.7)',
+                              letterSpacing:'.06em',marginTop:6}}>
+                              Item clicavel — modal ativado
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
-                  )}
-                />
-                <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,i)=>i===si?{...s,items:[...(s.items??[]),{name:'',price:'',desc:''}]}:s)}))}
+                  )}                <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,i)=>i===si?{...s,items:[...(s.items??[]),{name:'',price:'',desc:''}]}:s)}))}
                   style={{...ghostBtn,width:'100%',justifyContent:'center',marginTop:10,
                     color:GOLD,borderColor:'rgba(212,168,67,0.2)',fontSize:11}}>
                   + Adicionar Item

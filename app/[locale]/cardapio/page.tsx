@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { getMenuSectionIcon } from '@/components/icons/menu-icons'
 import { useSiteContent } from '@/lib/useSiteContent'
 
-type Item = { name: string; price: string; desc?: string; tag?: 'vegano' | 'sem-lactose' | 'destaque' }
+type Item = { name: string; price: string; desc?: string; tag?: 'vegano' | 'sem-lactose' | 'destaque'; photo_url?: string; long_desc?: string }
 type Section = { id: string; title: string; subtitle: string; items: Item[] }
 
 const SECTIONS: Section[] = [
@@ -926,8 +926,240 @@ const CSS = `
     letter-spacing: .04em;
   }
 }
-`
 
+/* ══ MODAL DE PRATO ══════════════════════════════════════════════ */
+@keyframes pc-modal-in {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes pc-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.pc-dish-modal-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0, 10, 28, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  animation: pc-overlay-in 0.25s ease;
+}
+.pc-dish-modal {
+  position: relative;
+  width: 100%; max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  border: 1px solid rgba(201,168,76,0.25);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.08);
+  animation: pc-modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,168,76,0.3) transparent;
+}
+.pc-dish-modal::-webkit-scrollbar { width: 3px; }
+.pc-dish-modal::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
+.pc-dish-modal-img {
+  width: 100%; aspect-ratio: 4/3;
+  object-fit: cover; object-position: center;
+  display: block;
+  border-radius: 20px 20px 0 0;
+}
+.pc-dish-modal-img-placeholder {
+  width: 100%; aspect-ratio: 4/3;
+  background: linear-gradient(135deg, #071628 0%, #0a1f3a 100%);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 20px 20px 0 0;
+}
+.pc-dish-modal-body {
+  background: linear-gradient(180deg, #f4e8ca 0%, #fef6e4 100%);
+  padding: 1.75rem 2rem 2rem;
+  border-radius: 0 0 20px 20px;
+}
+.pc-dish-modal-eyebrow {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.52rem; font-weight: 700;
+  letter-spacing: 0.4em; text-transform: uppercase;
+  color: rgba(110,72,14,0.5);
+  margin: 0 0 0.6rem;
+}
+.pc-dish-modal-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
+  font-style: italic; font-weight: 400;
+  color: #18100a; line-height: 1.15;
+  margin: 0 0 0.5rem;
+}
+.pc-dish-modal-price {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 1rem; font-weight: 600;
+  color: #7a4500; letter-spacing: 0.04em;
+  margin: 0 0 1rem;
+}
+.pc-dish-modal-rule {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+.pc-dish-modal-rule-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(130,85,18,0.25), transparent);
+}
+.pc-dish-modal-rule-line:last-child {
+  background: linear-gradient(270deg, rgba(130,85,18,0.25), transparent);
+}
+.pc-dish-modal-rule-glyph {
+  color: rgba(130,85,18,0.4); font-size: 0.7rem;
+}
+.pc-dish-modal-short-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; font-style: italic;
+  color: rgba(52,32,6,0.6); line-height: 1.55;
+  margin: 0 0 0.75rem;
+}
+.pc-dish-modal-long-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: rgba(52,32,6,0.75); line-height: 1.7;
+  margin: 0;
+  border-top: 1px solid rgba(130,85,18,0.12);
+  padding-top: 0.75rem;
+}
+.pc-dish-modal-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(0,10,28,0.65);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: rgba(201,168,76,0.85);
+  font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+  z-index: 2;
+}
+.pc-dish-modal-close:hover {
+  background: rgba(201,168,76,0.15);
+  color: #c9a84c;
+  transform: scale(1.08);
+}
+.pc-dish-modal-footer {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.45rem; letter-spacing: 0.18em;
+  text-transform: uppercase; text-align: center;
+  color: rgba(100,65,10,0.35);
+  margin-top: 1.25rem;
+}
+
+/* ── Indicador de item clicável no DESKTOP (page-flip) ── */
+.mi.has-photo { cursor: pointer; }
+.mi.has-photo:hover .mn { color: #7a3800; }
+.mi.has-photo .mn::after {
+  content: ' ◈';
+  font-size: 0.55em;
+  color: rgba(201,168,76,0.6);
+  vertical-align: middle;
+  margin-left: 3px;
+  transition: color 0.2s;
+}
+.mi.has-photo:hover .mn::after { color: #c9a84c; }
+
+/* ── Indicador de item clicável no MOBILE ── */
+.mc-item.has-photo { cursor: pointer; }
+.mc-item.has-photo:hover { background: rgba(201,168,76,0.04); border-radius: 6px; }
+.mc-item.has-photo .mc-name::after {
+  content: ' ◈';
+  font-size: 0.55em;
+  color: rgba(201,168,76,0.55);
+  vertical-align: middle;
+  margin-left: 3px;
+}
+.mc-item.has-photo:hover .mc-name::after { color: #c9a84c; }`
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   COMPONENTE — Modal de prato
+───────────────────────────────────────────────────────────────────────────── */
+function DishModal({ item, onClose }: { item: Item; onClose: () => void }) {
+  // Fechar com ESC e bloquear scroll
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [onClose])
+
+  const tagLabel = item.tag === 'vegano' ? 'Vegano'
+    : item.tag === 'sem-lactose' ? 'Sem lactose'
+    : item.tag === 'destaque' ? '✦ Chef indica'
+    : null
+
+  return (
+    <div className="pc-dish-modal-overlay" onClick={onClose}>
+      <div className="pc-dish-modal" onClick={e => e.stopPropagation()}>
+        {/* Foto do prato */}
+        {item.photo_url ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={item.photo_url} alt={item.name} className="pc-dish-modal-img" />
+        ) : (
+          <div className="pc-dish-modal-img-placeholder">
+            <span style={{ color: 'rgba(201,168,76,0.18)', fontSize: '4rem', lineHeight: 1 }}>⚓</span>
+          </div>
+        )}
+
+        {/* Botão fechar */}
+        <button className="pc-dish-modal-close" onClick={onClose} aria-label="Fechar">✕</button>
+
+        {/* Corpo */}
+        <div className="pc-dish-modal-body">
+          {/* Eyebrow */}
+          <p className="pc-dish-modal-eyebrow">Porto Cabral BC · Gastronomia Flutuante</p>
+
+          {/* Nome */}
+          <h2 className="pc-dish-modal-name">{item.name}</h2>
+
+          {/* Tag + preço */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.85rem' }}>
+            <p className="pc-dish-modal-price" style={{ margin: 0 }}>R$&nbsp;{item.price}</p>
+            {tagLabel && (
+              <span style={{
+                fontFamily: "'Josefin Sans', sans-serif",
+                fontSize: '0.45rem', fontWeight: 700,
+                letterSpacing: '0.08em', textTransform: 'uppercase',
+                padding: '3px 10px', borderRadius: 99,
+                background: item.tag === 'vegano' ? '#d4edda'
+                  : item.tag === 'sem-lactose' ? '#d1ecf1'
+                  : 'rgba(130,85,18,0.12)',
+                color: item.tag === 'vegano' ? '#1d5e2a'
+                  : item.tag === 'sem-lactose' ? '#0c5460'
+                  : '#7a4500',
+                border: item.tag === 'destaque' ? '1px solid rgba(130,85,18,0.25)' : 'none',
+              }}>{tagLabel}</span>
+            )}
+          </div>
+
+          {/* Linha decorativa */}
+          <div className="pc-dish-modal-rule">
+            <span className="pc-dish-modal-rule-line" />
+            <span className="pc-dish-modal-rule-glyph">✦</span>
+            <span className="pc-dish-modal-rule-line" />
+          </div>
+
+          {/* Descrição breve */}
+          {item.desc && <p className="pc-dish-modal-short-desc">{item.desc}</p>}
+
+          {/* Descrição longa */}
+          {item.long_desc && <p className="pc-dish-modal-long-desc">{item.long_desc}</p>}
+
+          {/* Rodapé */}
+          <p className="pc-dish-modal-footer">
+            Os pratos servem 2 pessoas · Taxa de serviço 10% · Couvert artístico
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
 /* ─────────────────────────────────────────────────────────────────────────────
    TIPOS internos do PageFlip
 ───────────────────────────────────────────────────────────────────────────── */
@@ -945,7 +1177,7 @@ type PF = {
 /* ─────────────────────────────────────────────────────────────────────────────
    COMPONENTE MOBILE — card de seção
 ───────────────────────────────────────────────────────────────────────────── */
-function MobileCard({ section, index, isActive, total }: { section: Section; index: number; isActive: boolean; total: number }) {
+function MobileCard({ section, index, isActive, total, onOpenModal }: { section: Section; index: number; isActive: boolean; total: number; onOpenModal: (item: Item) => void }) {
   const iconSvg = getMenuSectionIcon(index, '#c9a84c', 36)
   const hasNote = section.subtitle.includes('acompanham')
 
@@ -978,8 +1210,14 @@ function MobileCard({ section, index, isActive, total }: { section: Section; ind
             : item.tag === 'sem-lactose' ? 'Sem lactose'
             : item.tag === 'destaque' ? 'Chef indica'
             : ''
+          const hasMedia = !!(item.photo_url || item.long_desc)
           return (
-            <div key={j} className={`mc-item${item.tag === 'destaque' ? ' mc-item-hl' : ''}`}>
+            <div
+              key={j}
+              className={`mc-item${item.tag === 'destaque' ? ' mc-item-hl' : ''}${hasMedia ? ' has-photo' : ''}`}
+              onClick={hasMedia ? () => onOpenModal(item) : undefined}
+              style={hasMedia ? { cursor: 'pointer' } : undefined}
+            >
               <div className="mc-row">
                 <span className="mc-name">{item.name}</span>
                 {tagClass && <span className={`mc-tag ${tagClass}`}>{tagLabel}</span>}
@@ -1004,7 +1242,7 @@ function MobileCard({ section, index, isActive, total }: { section: Section; ind
 /* ─────────────────────────────────────────────────────────────────────────────
    COMPONENTE MOBILE — carrossel completo
 ───────────────────────────────────────────────────────────────────────────── */
-function MobileCarousel({ cur, onChangeCur, sections }: { cur: number; onChangeCur: (i: number) => void; sections: Section[] }) {
+function MobileCarousel({ cur, onChangeCur, sections, onOpenModal }: { cur: number; onChangeCur: (i: number) => void; sections: Section[]; onOpenModal: (item: Item) => void }) {
   const trackRef = useRef<HTMLDivElement>(null)
   const total = sections.length
 
@@ -1051,7 +1289,7 @@ function MobileCarousel({ cur, onChangeCur, sections }: { cur: number; onChangeC
     <div className="mc-wrap">
       <div className="mc-track" ref={trackRef}>
         {sections.map((s, i) => (
-          <MobileCard key={s.id} section={s} index={i} isActive={i === cur} total={total} />
+          <MobileCard key={s.id} section={s} index={i} isActive={i === cur} total={total} onOpenModal={onOpenModal} />
         ))}
       </div>
       <div className="mc-progress">
@@ -1083,10 +1321,11 @@ export default function CardapioPage() {
   const bookRef    = useRef<HTMLDivElement>(null)
   const wrapRef    = useRef<HTMLDivElement>(null)
   const flipRef    = useRef<PF | null>(null)
-  const [cur, setCur]     = useState(0)
-  const [ready, setReady] = useState(false)
+  const [cur, setCur]       = useState(0)
+  const [ready, setReady]   = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [modalItem, setModalItem] = useState<Item | null>(null)
   // Banner da pagina — carregado do banco
   type BannersData = { cardapio?: string; sobre?: string; blog?: string }
   const bannersData = useSiteContent<BannersData>('page_banners', {})
@@ -1210,7 +1449,7 @@ export default function CardapioPage() {
 
       {/* MOBILE: carrossel nativo */}
       <div className="pf-mobile-carousel">
-        <MobileCarousel cur={cur} onChangeCur={setCur} sections={stableSections} />
+        <MobileCarousel cur={cur} onChangeCur={setCur} sections={stableSections} onOpenModal={setModalItem} />
       </div>
 
       {/* DESKTOP: page-flip */}
