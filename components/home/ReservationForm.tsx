@@ -25,6 +25,9 @@ export function ReservationForm() {
   const [error, setError] = useState<string | null>(null)
   const [shake, setShake] = useState(false)
 
+  // Locale do input de data: PT e ES usam dd/mm/yyyy, EN usa mm/dd/yyyy
+  const dateLang = locale === 'en' ? 'en-US' : 'pt-BR'
+
   function set(key: keyof FormData, value: string | number | boolean) {
     setForm((f) => ({ ...f, [key]: value }))
   }
@@ -115,7 +118,7 @@ export function ReservationForm() {
         />
       </div>
 
-      {/* Email — largura total no mobile para facilitar digitação */}
+      {/* Email */}
       <div className="sm:col-span-2 space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('email')} *</label>
         <input
@@ -141,12 +144,13 @@ export function ReservationForm() {
         </select>
       </div>
 
-      {/* Data */}
+      {/* Data — lang força o formato dd/mm/yyyy para PT/ES e mm/dd/yyyy para EN */}
       <div className="space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('date')} *</label>
         <input
           required
           type="date"
+          lang={dateLang}
           value={form.reservation_date}
           onChange={e => set('reservation_date', e.target.value)}
           min={new Date().toISOString().split('T')[0]}
@@ -168,7 +172,7 @@ export function ReservationForm() {
         </select>
       </div>
 
-      {/* Observações — largura total sempre */}
+      {/* Observações */}
       <div className="sm:col-span-2 space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('observations')}</label>
         <textarea
