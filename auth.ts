@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import Google from 'next-auth/providers/google'
 import { createClient } from '@supabase/supabase-js'
 
 import { sendBcEvent } from '@/lib/bcconnect'
@@ -11,14 +10,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // Sem adapter — usa JWT session (cookie criptografado, sem tabelas no banco)
   session: { strategy: 'jwt' },
   providers: [
-    ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
-      ? [
-          Google({
-            clientId: process.env.AUTH_GOOGLE_ID,
-            clientSecret: process.env.AUTH_GOOGLE_SECRET,
-          }),
-        ]
-      : []),
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },

@@ -1,5 +1,7 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { formatDateBR, formatDateOnlyBR } from '@/lib/utils'
+import { formatDateBR, formatDateOnlyBR } from '@/lib/utils'
 
 /* ══ TYPES ══════════════════════════════════════════════════════ */
 type Reservation = {
@@ -338,7 +340,7 @@ function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
             <div key={r.id} style={{padding:'.55rem 0',borderBottom:'1px solid rgba(212,168,67,0.08)',display:'flex',justifyContent:'space-between',alignItems:'center',gap:12}}>
               <div style={{minWidth:0}}>
                 <p style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD,margin:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.name}</p>
-                <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,.35)',letterSpacing:'.05em',margin:'.2rem 0 0'}}>{r.reservation_date} · {r.reservation_time} · {r.party_size} pax</p>
+                <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,.35)',letterSpacing:'.05em',margin:'.2rem 0 0'}}>{formatDateBR(r.reservation_date)} · {r.reservation_time} · {r.party_size} pax</p>
               </div>
               <Badge status={r.status}/>
             </div>
@@ -415,7 +417,7 @@ function TabReservas() {
               {rows.map(r=>(
                 <tr key={r.id} className="pc-row" style={{borderBottom:'1px solid rgba(212,168,67,0.06)',cursor:'pointer',transition:'background .15s'}} onClick={()=>setSelected(r)}>
                   <td style={{padding:'12px 16px',fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD}}>{r.name}</td>
-                  <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.7)',letterSpacing:'.04em'}}>{r.reservation_date}</td>
+                  <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.7)',letterSpacing:'.04em'}}>{formatDateBR(r.reservation_date)}</td>
                   <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.7)',letterSpacing:'.04em'}}>{r.reservation_time}</td>
                   <td style={{padding:'12px 16px',textAlign:'center',fontFamily:"'Playfair Display',serif",fontSize:16,color:GOLD}}>{r.party_size}</td>
                   <td style={{padding:'12px 16px'}}><Badge status={r.status}/></td>
@@ -452,7 +454,7 @@ function TabReservas() {
             </div>
             <GoldRule/>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',margin:'1.25rem 0',position:'relative'}}>
-              {[['Data',selected.reservation_date],['Horário',selected.reservation_time],
+              {[['Data',formatDateBR(selected.reservation_date)],['Horário',selected.reservation_time],
                 ['Pessoas',String(selected.party_size)],['Ocasião',selected.occasion_type??'—'],
                 ['Email',selected.email],['WhatsApp',selected.whatsapp],
                 ['Opt-in LGPD',selected.optin_accepted?'✅ Aceito':'❌ Não'],
@@ -533,7 +535,7 @@ function TabClientes() {
                   <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.55)'}}>{c.whatsapp??'—'}</td>
                   <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.45)'}}>{c.city_of_origin??'—'}</td>
                   <td style={{padding:'12px 16px',textAlign:'center',fontSize:14}}>{c.optin_accepted?'✅':'❌'}</td>
-                  <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(212,168,67,0.45)',letterSpacing:'.05em'}}>{new Date(c.created_at).toLocaleDateString('pt-BR')}</td>
+                  <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(212,168,67,0.45)',letterSpacing:'.05em'}}>{formatDateOnlyBR(c.created_at)}</td>
                 </tr>
               ))}
               {filtered.length===0&&<tr><td colSpan={6} style={{textAlign:'center',padding:'4rem',color:'rgba(212,168,67,0.35)',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.15em'}}>Nenhum cliente encontrado</td></tr>}

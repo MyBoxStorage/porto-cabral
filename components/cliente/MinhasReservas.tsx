@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { formatDateLong } from '@/lib/utils'
 
 type Locale = 'pt' | 'en' | 'es'
 
@@ -56,17 +57,6 @@ const STATUS_COLORS: Record<string, { dot: string; text: string; bg: string }> =
   no_show:   { dot: '#6b7280', text: '#9ca3af', bg: 'rgba(107,114,128,0.08)' },
 }
 
-function formatDate(dateStr: string, locale: Locale): string {
-  try {
-    const [y, m, d] = dateStr.split('-').map(Number)
-    const date = new Date(y, m - 1, d)
-    const localeMap: Record<Locale, string> = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }
-    return date.toLocaleDateString(localeMap[locale], { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })
-  } catch {
-    return dateStr
-  }
-}
-
 type Props = { locale: Locale }
 
 export function MinhasReservas({ locale }: Props) {
@@ -103,7 +93,6 @@ export function MinhasReservas({ locale }: Props) {
 
   if (reservas.length === 0) return (
     <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-      {/* Ícone decorativo */}
       <div style={{ fontSize: '2.5rem', marginBottom: '1rem', opacity: 0.25 }}>⚓</div>
       <p style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: '1.1rem', color: '#fff', margin: '0 0 8px' }}>{L.empty}</p>
       <p style={{ fontFamily: "'Josefin Sans',sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.05em', margin: '0 0 1.5rem' }}>{L.empty_sub}</p>
@@ -140,7 +129,6 @@ export function MinhasReservas({ locale }: Props) {
               transition: 'border-color 0.2s',
             }}
           >
-            {/* Linha superior: data + status */}
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
               <div style={{ minWidth: 0 }}>
                 <p style={{
@@ -148,7 +136,7 @@ export function MinhasReservas({ locale }: Props) {
                   fontSize: 'clamp(0.95rem, 3.5vw, 1.05rem)',
                   color: '#fff', margin: 0, lineHeight: 1.3,
                 }}>
-                  {formatDate(r.reservation_date, locale)}
+                  {formatDateLong(r.reservation_date, locale)}
                 </p>
                 <p style={{
                   fontFamily: "'Josefin Sans',sans-serif",
@@ -160,7 +148,6 @@ export function MinhasReservas({ locale }: Props) {
                 </p>
               </div>
 
-              {/* Badge de status */}
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0,
                 background: cfg.bg,
@@ -182,7 +169,6 @@ export function MinhasReservas({ locale }: Props) {
               </div>
             </div>
 
-            {/* Linha de ouro decorativa */}
             <div style={{
               height: 1,
               background: 'linear-gradient(90deg,rgba(212,168,67,0.2),transparent)',
