@@ -1345,7 +1345,8 @@ function TabCardapio() {
                         </div>
                       </div>
                     </div>
-                  )}                <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,i)=>i===si?{...s,items:[...(s.items??[]),{name:'',price:'',desc:''}]}:s)}))}
+                  )}
+                <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,i)=>i===si?{...s,items:[...(s.items??[]),{name:'',price:'',desc:''}]}:s)}))}
                   style={{...ghostBtn,width:'100%',justifyContent:'center',marginTop:10,
                     color:GOLD,borderColor:'rgba(212,168,67,0.2)',fontSize:11}}>
                   + Adicionar Item

@@ -1483,6 +1483,7 @@ export default function CardapioPage() {
           <button className="pf-btn" onClick={next} disabled={cur === stableTotal - 1} aria-label="Próximo">›</button>
         </div>
       </div>
+      {modalItem && <DishModal item={modalItem} onClose={() => setModalItem(null)} />}
     </div>
   )
 }
