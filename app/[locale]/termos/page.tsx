@@ -1,4 +1,4 @@
-import { getLocale } from 'next-intl/server'
+﻿import { getLocale } from 'next-intl/server'
 import Link from 'next/link'
 
 export default async function TermosPage() {
@@ -26,7 +26,7 @@ export default async function TermosPage() {
             <h2 className="font-display text-xl text-pc-navy mb-3">1. Aceitação dos Termos</h2>
             <p>
               Ao criar uma conta ou utilizar os serviços do Porto Cabral BC, você concorda com estes Termos de Uso.
-              A área exclusiva "Cabine do Comandante" é destinada a clientes que desejam gerenciar reservas e preferências.
+              A área exclusiva &ldquo;Cabine do Comandante&rdquo; é destinada a clientes que desejam gerenciar reservas e preferências.
             </p>
           </section>
 

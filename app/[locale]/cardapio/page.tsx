@@ -1335,9 +1335,9 @@ export default function CardapioPage() {
   // O PageFlip inicia SEMPRE com as sections disponíveis (hardcoded ou banco)
   const menuData = useSiteContent<{ sections: Section[] }>('menu_full', { sections: [] })
   const sections: Section[] = menuData?.sections?.length ? menuData.sections : SECTIONS
-  const total = sections.length
+  const _total = sections.length
   // Sempre pronto — usa SECTIONS hardcoded enquanto banco não responde
-  const dataReady = true
+  // dataReady removido — sempre true
 
   // Trava as sections na primeira versão não-vazia para não reinicializar o PageFlip
   const sectionsRef = useRef<Section[]>([])
