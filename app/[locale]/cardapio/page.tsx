@@ -947,85 +947,116 @@ const CSS = `
   padding: 1.5rem;
   animation: pc-overlay-in 0.25s ease;
 }
+/* ── Layout: foto à esquerda em portrait, info à direita ── */
 .pc-dish-modal {
   position: relative;
-  width: 100%; max-width: 540px;
+  width: 100%; max-width: 860px;
   max-height: 90vh;
-  overflow-y: auto;
   border-radius: 20px;
   border: 1px solid rgba(201,168,76,0.25);
   box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.08);
   animation: pc-modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex;
+  overflow: hidden;
+}
+/* Coluna da foto — largura fixa em portrait */
+.pc-dish-modal-col-img {
+  flex: 0 0 340px;
+  position: relative;
+  background: #071628;
+}
+.pc-dish-modal-img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
+}
+.pc-dish-modal-img-placeholder {
+  width: 100%; height: 100%;
+  min-height: 400px;
+  background: linear-gradient(135deg, #071628 0%, #0a1f3a 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+/* Coluna das informações — scrollável */
+.pc-dish-modal-col-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #f4e8ca 0%, #fef6e4 100%);
+  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(201,168,76,0.3) transparent;
 }
-.pc-dish-modal::-webkit-scrollbar { width: 3px; }
-.pc-dish-modal::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
-.pc-dish-modal-img {
-  width: 100%; aspect-ratio: 4/3;
-  object-fit: cover; object-position: center;
-  display: block;
-  border-radius: 20px 20px 0 0;
-}
-.pc-dish-modal-img-placeholder {
-  width: 100%; aspect-ratio: 4/3;
-  background: linear-gradient(135deg, #071628 0%, #0a1f3a 100%);
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 20px 20px 0 0;
-}
+.pc-dish-modal-col-info::-webkit-scrollbar { width: 3px; }
+.pc-dish-modal-col-info::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
 .pc-dish-modal-body {
-  background: linear-gradient(180deg, #f4e8ca 0%, #fef6e4 100%);
-  padding: 1.75rem 2rem 2rem;
-  border-radius: 0 0 20px 20px;
+  flex: 1;
+  padding: 2.25rem 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 .pc-dish-modal-eyebrow {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.52rem; font-weight: 700;
+  font-size: 0.48rem; font-weight: 700;
   letter-spacing: 0.4em; text-transform: uppercase;
-  color: rgba(110,72,14,0.5);
-  margin: 0 0 0.6rem;
+  color: rgba(110,72,14,0.45);
+  margin: 0 0 0.75rem;
 }
 .pc-dish-modal-name {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.4rem, 4vw, 1.8rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-style: italic; font-weight: 400;
-  color: #18100a; line-height: 1.15;
-  margin: 0 0 0.5rem;
+  color: #18100a; line-height: 1.1;
+  margin: 0 0 0.75rem;
+}
+.pc-dish-modal-meta {
+  display: flex; align-items: center; gap: 0.85rem;
+  flex-wrap: wrap; margin-bottom: 1.25rem;
 }
 .pc-dish-modal-price {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 1rem; font-weight: 600;
+  font-size: 1.1rem; font-weight: 600;
   color: #7a4500; letter-spacing: 0.04em;
-  margin: 0 0 1rem;
+  margin: 0;
 }
 .pc-dish-modal-rule {
   display: flex; align-items: center; gap: 0.75rem;
-  margin: 0 0 1rem;
+  margin: 0 0 1.25rem;
 }
 .pc-dish-modal-rule-line {
   flex: 1; height: 1px;
-  background: linear-gradient(90deg, rgba(130,85,18,0.25), transparent);
+  background: linear-gradient(90deg, rgba(130,85,18,0.2), transparent);
 }
 .pc-dish-modal-rule-line:last-child {
-  background: linear-gradient(270deg, rgba(130,85,18,0.25), transparent);
+  background: linear-gradient(270deg, rgba(130,85,18,0.2), transparent);
 }
 .pc-dish-modal-rule-glyph {
-  color: rgba(130,85,18,0.4); font-size: 0.7rem;
+  color: rgba(130,85,18,0.35); font-size: 0.7rem;
 }
 .pc-dish-modal-short-desc {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem; font-style: italic;
-  color: rgba(52,32,6,0.6); line-height: 1.55;
-  margin: 0 0 0.75rem;
+  font-size: 1.08rem; font-style: italic;
+  color: rgba(52,32,6,0.62); line-height: 1.6;
+  margin: 0 0 1rem;
 }
 .pc-dish-modal-long-desc {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 0.95rem;
-  color: rgba(52,32,6,0.75); line-height: 1.7;
+  font-size: 1rem;
+  color: rgba(52,32,6,0.78); line-height: 1.75;
   margin: 0;
   border-top: 1px solid rgba(130,85,18,0.12);
-  padding-top: 0.75rem;
+  padding-top: 1rem;
 }
+/* Footer fixo na base da coluna de info */
+.pc-dish-modal-footer {
+  flex-shrink: 0;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.43rem; letter-spacing: 0.18em;
+  text-transform: uppercase; text-align: center;
+  color: rgba(100,65,10,0.32);
+  padding: 1rem 2rem 1.25rem;
+  border-top: 1px solid rgba(130,85,18,0.1);
+}
+/* Botão fechar — canto superior direito do modal inteiro */
 .pc-dish-modal-close {
   position: absolute; top: 14px; right: 14px;
   width: 38px; height: 38px; border-radius: 50%;
@@ -1043,12 +1074,27 @@ const CSS = `
   color: #c9a84c;
   transform: scale(1.08);
 }
-.pc-dish-modal-footer {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.45rem; letter-spacing: 0.18em;
-  text-transform: uppercase; text-align: center;
-  color: rgba(100,65,10,0.35);
-  margin-top: 1.25rem;
+/* Mobile: empilha verticalmente */
+@media (max-width: 640px) {
+  .pc-dish-modal {
+    flex-direction: column;
+    max-width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201,168,76,0.3) transparent;
+  }
+  .pc-dish-modal-col-img {
+    flex: 0 0 auto;
+    height: 52vw;
+    min-height: 200px;
+  }
+  .pc-dish-modal-col-info {
+    overflow-y: visible;
+  }
+  .pc-dish-modal-body {
+    padding: 1.5rem 1.4rem 1rem;
+  }
 }
 
 /* ── Indicador de item clicável no DESKTOP (page-flip) ── */
@@ -1099,65 +1145,58 @@ function DishModal({ item, onClose }: { item: Item; onClose: () => void }) {
   return (
     <div className="pc-dish-modal-overlay" onClick={onClose}>
       <div className="pc-dish-modal" onClick={e => e.stopPropagation()}>
-        {/* Foto do prato */}
-        {item.photo_url ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={item.photo_url} alt={item.name} className="pc-dish-modal-img" />
-        ) : (
-          <div className="pc-dish-modal-img-placeholder">
-            <span style={{ color: 'rgba(201,168,76,0.18)', fontSize: '4rem', lineHeight: 1 }}>⚓</span>
-          </div>
-        )}
 
-        {/* Botão fechar */}
+        {/* Botão fechar — canto superior direito */}
         <button className="pc-dish-modal-close" onClick={onClose} aria-label="Fechar">✕</button>
 
-        {/* Corpo */}
-        <div className="pc-dish-modal-body">
-          {/* Eyebrow */}
-          <p className="pc-dish-modal-eyebrow">Porto Cabral BC · Gastronomia Flutuante</p>
-
-          {/* Nome */}
-          <h2 className="pc-dish-modal-name">{item.name}</h2>
-
-          {/* Tag + preço */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.85rem' }}>
-            <p className="pc-dish-modal-price" style={{ margin: 0 }}>R$&nbsp;{item.price}</p>
-            {tagLabel && (
-              <span style={{
-                fontFamily: "'Josefin Sans', sans-serif",
-                fontSize: '0.45rem', fontWeight: 700,
-                letterSpacing: '0.08em', textTransform: 'uppercase',
-                padding: '3px 10px', borderRadius: 99,
-                background: item.tag === 'vegano' ? '#d4edda'
-                  : item.tag === 'sem-lactose' ? '#d1ecf1'
-                  : 'rgba(130,85,18,0.12)',
-                color: item.tag === 'vegano' ? '#1d5e2a'
-                  : item.tag === 'sem-lactose' ? '#0c5460'
-                  : '#7a4500',
-                border: item.tag === 'destaque' ? '1px solid rgba(130,85,18,0.25)' : 'none',
-              }}>{tagLabel}</span>
-            )}
-          </div>
-
-          {/* Linha decorativa */}
-          <div className="pc-dish-modal-rule">
-            <span className="pc-dish-modal-rule-line" />
-            <span className="pc-dish-modal-rule-glyph">✦</span>
-            <span className="pc-dish-modal-rule-line" />
-          </div>
-
-          {/* Descrição breve */}
-          {item.desc && <p className="pc-dish-modal-short-desc">{item.desc}</p>}
-
-          {/* Descrição longa */}
-          {item.long_desc && <p className="pc-dish-modal-long-desc">{item.long_desc}</p>}
-
-          {/* Rodapé */}
-          <p className="pc-dish-modal-footer">
-            Os pratos servem 2 pessoas · Taxa de serviço 10% · Couvert artístico
-          </p>
+        {/* Coluna esquerda: foto em portrait */}
+        <div className="pc-dish-modal-col-img">
+          {item.photo_url ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={item.photo_url} alt={item.name} className="pc-dish-modal-img" />
+          ) : (
+            <div className="pc-dish-modal-img-placeholder">
+              <span style={{ color: 'rgba(201,168,76,0.18)', fontSize: '4rem', lineHeight: 1 }}>⚓</span>
+            </div>
+          )}
         </div>
+
+        {/* Coluna direita: informações + footer fixo */}
+        <div className="pc-dish-modal-col-info">
+          <div className="pc-dish-modal-body">
+            <p className="pc-dish-modal-eyebrow">Porto Cabral BC · Gastronomia Flutuante</p>
+            <h2 className="pc-dish-modal-name">{item.name}</h2>
+            <div className="pc-dish-modal-meta">
+              <p className="pc-dish-modal-price">R$&nbsp;{item.price}</p>
+              {tagLabel && (
+                <span style={{
+                  fontFamily: "'Josefin Sans', sans-serif",
+                  fontSize: '0.45rem', fontWeight: 700,
+                  letterSpacing: '0.08em', textTransform: 'uppercase',
+                  padding: '3px 10px', borderRadius: 99,
+                  background: item.tag === 'vegano' ? '#d4edda'
+                    : item.tag === 'sem-lactose' ? '#d1ecf1'
+                    : 'rgba(130,85,18,0.12)',
+                  color: item.tag === 'vegano' ? '#1d5e2a'
+                    : item.tag === 'sem-lactose' ? '#0c5460'
+                    : '#7a4500',
+                  border: item.tag === 'destaque' ? '1px solid rgba(130,85,18,0.25)' : 'none',
+                }}>{tagLabel}</span>
+              )}
+            </div>
+            <div className="pc-dish-modal-rule">
+              <span className="pc-dish-modal-rule-line" />
+              <span className="pc-dish-modal-rule-glyph">✦</span>
+              <span className="pc-dish-modal-rule-line" />
+            </div>
+            {item.desc && <p className="pc-dish-modal-short-desc">{item.desc}</p>}
+            {item.long_desc && <p className="pc-dish-modal-long-desc">{item.long_desc}</p>}
+          </div>
+          <div className="pc-dish-modal-footer">
+            Os pratos servem 2 pessoas · Taxa de serviço 10% · Couvert artístico
+          </div>
+        </div>
+
       </div>
     </div>
   )
