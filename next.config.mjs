@@ -16,16 +16,59 @@ if (process.env.PC_NEXTAUTH_SECRET && !process.env.AUTH_SECRET) {
   process.env.AUTH_SECRET = process.env.PC_NEXTAUTH_SECRET
 }
 
+// ---------------------------------------------------------------------------
+// Headers de segurança aplicados a TODAS as rotas (páginas + API).
+// A rota /api/* recebe headers adicionais via vercel.json.
+// ---------------------------------------------------------------------------
+const securityHeaders = [
+  // Bloqueia clickjacking em todas as páginas
+  { key: 'X-Frame-Options', value: 'DENY' },
+  // Impede MIME sniffing — crítico para /api/img/* que serve binários
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  // Não enviar Referer em cross-origin
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  // Desabilitar features de browser não utilizadas
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+  // HSTS: força HTTPS por 2 anos — só ativo em produção (Vercel já serve HTTPS)
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=63072000; includeSubDomains; preload',
+  },
+  // CSP: permite scripts do próprio domínio + inline necessário para Next.js.
+  // 'unsafe-eval' é necessário para o Next.js em desenvolvimento; em produção
+  // pode ser removido se não houver uso de eval() em código de terceiros.
+  {
+    key: 'Content-Security-Policy',
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline'",
+      "font-src 'self' data:",
+      "img-src 'self' data: blob: https://*.supabase.co https://res.cloudinary.com https://maps.googleapis.com https://maps.gstatic.com",
+      "connect-src 'self' https://*.supabase.co https://bc-connect-api-v2.fly.dev https://*.upstash.io wss://*.supabase.co",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join('; '),
+  },
+]
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async headers() {
+    return [
+      {
+        // Aplica a todas as rotas
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+    ]
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      // Alias @payload-config exigido pelo @payloadcms/next@3.31.0
       '@payload-config': resolve(__dirname, 'payload.config.ts'),
-      // Alias @/ necessário porque o withPayload pode sobrescrever a resolução
-      // do tsconfig paths em algumas versões
       '@': resolve(__dirname),
     }
     return config
@@ -39,16 +82,16 @@ const nextConfig = {
 }
 
 // Encadeamento: withPayload(withNextIntl(nextConfig))
-// withSentryConfig envolve tudo por fora — não interfere no Payload nem no NextIntl
+// withSentryConfig envolve tudo por fora
 export default withSentryConfig(
   withPayload(withNextIntl(nextConfig)),
   {
-    org: process.env.SENTRY_ORG,
-    project: process.env.SENTRY_PROJECT,
-    silent: true,
-    tunnelRoute: undefined,
+    org:           process.env.SENTRY_ORG,
+    project:       process.env.SENTRY_PROJECT,
+    silent:        true,
+    tunnelRoute:   undefined,
     disableLogger: true,
     hideSourceMaps: true,
-    telemetry: false,
-  }
+    telemetry:     false,
+  },
 )

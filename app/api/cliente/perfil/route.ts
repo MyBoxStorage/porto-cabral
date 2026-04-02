@@ -6,6 +6,39 @@ import { auth } from '@/auth'
 import { getDb } from '@/lib/db'
 import { customers } from '@/lib/db/schema'
 
+export async function GET() {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 })
+  }
+
+  try {
+    const db = getDb()
+    const [row] = await db
+      .select({
+        name: customers.name,
+        email: customers.email,
+        whatsapp: customers.whatsapp,
+        birth_date: customers.birth_date,
+        city_of_origin: customers.city_of_origin,
+        allergies: customers.allergies,
+        special_notes: customers.special_notes,
+      })
+      .from(customers)
+      .where(eq(customers.auth_user_id, session.user.id))
+      .limit(1)
+
+    if (!row) {
+      return NextResponse.json({ error: 'Perfil não encontrado.' }, { status: 404 })
+    }
+
+    return NextResponse.json({ perfil: row })
+  } catch (e) {
+    console.error('[cliente/perfil GET]', e)
+    return NextResponse.json({ error: 'Erro ao carregar perfil.' }, { status: 500 })
+  }
+}
+
 export const dynamic = 'force-dynamic'
 
 const PerfilSchema = z.object({

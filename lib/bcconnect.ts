@@ -1,7 +1,9 @@
-const BC_WEBHOOK_URL =
-  process.env.BC_CONNECT_WEBHOOK_URL ?? 'https://bc-connect-api-v2.fly.dev'
-const BC_API_KEY = process.env.BC_CONNECT_API_KEY ?? ''
-const BC_PARTNER_ID = process.env.BC_CONNECT_PARTNER_ID ?? ''
+// URL e chave sem fallback: se não configurados, sendBcEvent retorna sem fazer nada.
+// Isso evita que ambientes de preview/dev enviem dados para o CRM de produção
+// por engano quando a variável BC_CONNECT_WEBHOOK_URL não está definida.
+const BC_WEBHOOK_URL = process.env.BC_CONNECT_WEBHOOK_URL
+const BC_API_KEY     = process.env.BC_CONNECT_API_KEY ?? ''
+const BC_PARTNER_ID  = process.env.BC_CONNECT_PARTNER_ID ?? ''
 
 export type BcEventType =
   | 'SIGNUP'
@@ -34,7 +36,8 @@ export interface BcWebhookPayload {
 }
 
 export async function sendBcEvent(payload: BcWebhookPayload): Promise<void> {
-  if (!BC_API_KEY) return
+  // Sai silenciosamente se qualquer configuração essencial estiver ausente
+  if (!BC_API_KEY || !BC_WEBHOOK_URL || !BC_PARTNER_ID) return
   try {
     await fetch(`${BC_WEBHOOK_URL}/api/webhook/partner/${BC_PARTNER_ID}`, {
       method: 'POST',

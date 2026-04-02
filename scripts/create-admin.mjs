@@ -4,11 +4,16 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const SUPABASE_URL = 'https://zoigiwmgddweiaagtdcv.supabase.co'
-const SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvaWdpd21nZGR3ZWlhYWd0ZGN2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDIwMjcyNywiZXhwIjoyMDg5Nzc4NzI3fQ.9htQ8uJ8UfLH2Y3LqdxAwcwElLfEn9H1_lfNncGoWBY'
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL_PC
+const SERVICE_KEY  = process.env.PC_SUPABASE_SERVICE_ROLE_KEY
 
-const EMAIL    = 'admin@admin.com.br'
-const PASSWORD = '123456789'
+const EMAIL    = process.env.ADMIN_EMAIL    // ex: admin@portocabralbc.com.br
+const PASSWORD = process.env.ADMIN_PASSWORD // senha forte, min 16 chars
+
+if (!SUPABASE_URL || !SERVICE_KEY || !EMAIL || !PASSWORD) {
+  console.error('Defina as variáveis: NEXT_PUBLIC_SUPABASE_URL_PC, PC_SUPABASE_SERVICE_ROLE_KEY, ADMIN_EMAIL, ADMIN_PASSWORD')
+  process.exit(1)
+}
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
 

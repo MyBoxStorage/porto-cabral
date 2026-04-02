@@ -16,9 +16,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ key: st
     const value = typeof row.value === 'string' ? JSON.parse(row.value) : row.value
     return NextResponse.json({ key: row.key, value, updated_at: row.updated_at })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
-    console.error('[content GET]', msg)
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('[content GET]', e instanceof Error ? e.message : e)
+    return NextResponse.json({ error: 'Erro interno.' }, { status: 500 })
   }
 }
 

@@ -60,10 +60,13 @@ type Section = {
 }
 
 export async function POST(req: Request) {
-  // Permite chamada interna sem sessão (ex: hook do Payload) com chave secreta,
-  // OU chamada autenticada do painel admin
+  // Permite chamada interna sem sessão (ex: hook do Payload) com chave dedicada,
+  // OU chamada autenticada do painel admin.
+  // SEGURANÇA: usa SYNC_MENU_SECRET separado do PAYLOAD_SECRET para evitar que
+  // o comprometimento da chave do Payload expanda a superfície de ataque.
   const internalKey = req.headers.get('x-sync-key')
-  const isInternal = internalKey === process.env.PAYLOAD_SECRET
+  const syncSecret  = process.env.SYNC_MENU_SECRET
+  const isInternal  = syncSecret ? internalKey === syncSecret : false
 
   if (!isInternal) {
     const authError = await requireAdmin()
@@ -150,9 +153,6 @@ export async function POST(req: Request) {
     })
   } catch (e) {
     console.error('[sync-menu]', e)
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : 'Erro interno' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro interno ao sincronizar cardápio.' }, { status: 500 })
   }
 }

@@ -1,8 +1,10 @@
 import urllib.request
 import json
 
-SUPABASE_URL = 'https://zoigiwmgddweiaagtdcv.supabase.co'
-SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvaWdpd21nZGR3ZWlhYWd0ZGN2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDIwMjcyNywiZXhwIjoyMDg5Nzc4NzI3fQ.9htQ8uJ8UfLH2Y3LqdxAwcwElLfEn9H1_lfNncGoWBY'
+import os
+
+SUPABASE_URL = os.environ['NEXT_PUBLIC_SUPABASE_URL_PC']
+SERVICE_KEY  = os.environ['PC_SUPABASE_SERVICE_ROLE_KEY']
 
 sqls = [
     "ALTER TABLE customers ADD COLUMN IF NOT EXISTS optin_parceiros boolean DEFAULT false",

@@ -3,17 +3,14 @@ import { NextResponse } from 'next/server'
 
 import { getDb } from '@/lib/db'
 import { googleReviewsCache } from '@/lib/db/schema'
-import { rateLimitReviews } from '@/lib/ratelimit'
+import { getClientIp, rateLimitReviews } from '@/lib/ratelimit'
 
 export const dynamic = 'force-dynamic'
 
 type PlaceReview = { rating?: number; text?: string; author_name?: string }
 
 export async function GET(req: Request) {
-  const ip =
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    req.headers.get('x-real-ip') ??
-    'anonymous'
+  const ip = getClientIp(req.headers)
 
   const rl = await rateLimitReviews(ip)
   if (!rl.success) {
