@@ -28,7 +28,7 @@ export function ClienteDashboardClient({ session }: Props) {
   const rawLocale = useLocale()
   const locale: Locale = (rawLocale as Locale) || 'pt'
 
-  const [activeTab, setActiveTab] = useState<Tab>('reservas')
+  const [activeTab, setActiveTab] = useState<Tab>('quiz')
   const videoRef = useRef<HTMLVideoElement>(null)
 
   type PageBannersData = { cliente_video?: string }
