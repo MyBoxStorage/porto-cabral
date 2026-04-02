@@ -1339,10 +1339,20 @@ export default function CardapioPage() {
   // Sempre pronto — usa SECTIONS hardcoded enquanto banco não responde
   // dataReady removido — sempre true
 
-  // Trava as sections na primeira versão não-vazia para não reinicializar o PageFlip
+  // sectionsRef: trava estrutura do PageFlip. Propaga photo_url/long_desc quando banco responder.
   const sectionsRef = useRef<Section[]>([])
+  const photosAppliedRef = useRef(false)
   if (sectionsRef.current.length === 0 && sections.length > 0) {
     sectionsRef.current = sections
+  }
+  const hasPhotosFromDB = sections.some(s => s.items && s.items.some(it => it.photo_url || it.long_desc))
+  if (hasPhotosFromDB && !photosAppliedRef.current) {
+    photosAppliedRef.current = true
+    sectionsRef.current = sectionsRef.current.map(sec => {
+      const dbSec = sections.find(s => s.id === sec.id)
+      if (!dbSec) return sec
+      return { ...sec, items: sec.items.map(item => { const dbItem = dbSec.items.find(it => it.name === item.name); if (!dbItem || (!dbItem.photo_url && !dbItem.long_desc)) return item; return { ...item, photo_url: dbItem.photo_url, long_desc: dbItem.long_desc } }) }
+    })
   }
   const stableSections = sectionsRef.current.length > 0 ? sectionsRef.current : sections
   const stableTotal = stableSections.length
