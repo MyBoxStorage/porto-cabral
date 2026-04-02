@@ -1410,24 +1410,39 @@ export default function CardapioPage() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  // Handler de clique do desktop: detecta .mi[data-item-name] e abre modal se o item tem foto/long_desc
+  // Handler de clique do desktop: detecta .mi[data-item-name] e abre modal se o item tem foto/long_desc.
+  // Intercepta mousedown + click com capture:true para bloquear o PageFlip antes que ele inicie o gesto.
   useEffect(() => {
     if (isMobile) return
     const book = bookRef.current
     if (!book) return
-    const handler = (e: MouseEvent) => {
+
+    const blockIfItem = (e: MouseEvent) => {
       const target = (e.target as HTMLElement).closest('.mi[data-item-name]') as HTMLElement | null
       if (!target) return
-      const itemName = target.getAttribute('data-item-name')
-      if (!itemName) return
-      const liveItem = liveItemsRef.current.get(itemName)
+      const liveItem = liveItemsRef.current.get(target.getAttribute('data-item-name') ?? '')
+      if (!liveItem) return
+      // Para o mousedown: impede que o PageFlip registre o início do gesto de virar
+      e.stopPropagation()
+    }
+
+    const handleClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('.mi[data-item-name]') as HTMLElement | null
+      if (!target) return
+      const liveItem = liveItemsRef.current.get(target.getAttribute('data-item-name') ?? '')
       if (!liveItem) return
       e.stopPropagation()
       e.preventDefault()
       setModalItem(liveItem)
     }
-    book.addEventListener('click', handler)
-    return () => book.removeEventListener('click', handler)
+
+    // capture:true garante que nosso handler roda ANTES dos listeners do PageFlip
+    book.addEventListener('mousedown', blockIfItem, { capture: true })
+    book.addEventListener('click', handleClick, { capture: true })
+    return () => {
+      book.removeEventListener('mousedown', blockIfItem, { capture: true })
+      book.removeEventListener('click', handleClick, { capture: true })
+    }
   }, [isMobile])
 
   // Quando o banco responder com itens com foto, marca as classes has-photo no DOM do PageFlip
