@@ -174,7 +174,9 @@ function contentHTML(s: Section) {
       : ''
     const desc = item.desc ? `<div class="md">${item.desc}</div>` : ''
     const isHighlight = item.tag === 'destaque'
-    return `<div class="mi${isHighlight ? ' mh' : ''}">
+    // data-item-name: usado pelo handler de clique do desktop para buscar dados atualizados do banco
+    const safeName = item.name.replace(/"/g, '&quot;')
+    return `<div class="mi${isHighlight ? ' mh' : ''}" data-item-name="${safeName}">
       <div class="mr">
         <span class="mn">${item.name}</span>${tag}
         <span class="mdots"></span>
@@ -1339,23 +1341,28 @@ export default function CardapioPage() {
   // Sempre pronto — usa SECTIONS hardcoded enquanto banco não responde
   // dataReady removido — sempre true
 
-  // sectionsRef: trava estrutura do PageFlip. Propaga photo_url/long_desc quando banco responder.
+  // sectionsRef: trava a ESTRUTURA do PageFlip (nomes, preços, subtítulos).
+  // Nunca muda após a primeira inicialização — evita re-render do PageFlip.
   const sectionsRef = useRef<Section[]>([])
-  const photosAppliedRef = useRef(false)
   if (sectionsRef.current.length === 0 && sections.length > 0) {
     sectionsRef.current = sections
   }
-  const hasPhotosFromDB = sections.some(s => s.items && s.items.some(it => it.photo_url || it.long_desc))
-  if (hasPhotosFromDB && !photosAppliedRef.current) {
-    photosAppliedRef.current = true
-    sectionsRef.current = sectionsRef.current.map(sec => {
-      const dbSec = sections.find(s => s.id === sec.id)
-      if (!dbSec) return sec
-      return { ...sec, items: sec.items.map(item => { const dbItem = dbSec.items.find(it => it.name === item.name); if (!dbItem || (!dbItem.photo_url && !dbItem.long_desc)) return item; return { ...item, photo_url: dbItem.photo_url, long_desc: dbItem.long_desc } }) }
-    })
-  }
   const stableSections = sectionsRef.current.length > 0 ? sectionsRef.current : sections
   const stableTotal = stableSections.length
+
+  // liveItemsRef: referência SEMPRE atualizada com os dados do banco (photo_url, long_desc).
+  // Usada pelo handler de clique do desktop SEM re-inicializar o PageFlip.
+  const liveItemsRef = useRef<Map<string, Item>>(new Map())
+  // Atualiza o liveItemsRef toda vez que o banco responder com dados completos
+  if (sections.length > 0) {
+    sections.forEach(sec => {
+      sec.items.forEach(item => {
+        if (item.photo_url || item.long_desc) {
+          liveItemsRef.current.set(item.name, item)
+        }
+      })
+    })
+  }
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -1363,6 +1370,39 @@ export default function CardapioPage() {
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
+
+  // Handler de clique do desktop: detecta .mi[data-item-name] e abre modal se o item tem foto/long_desc
+  useEffect(() => {
+    if (isMobile) return
+    const book = bookRef.current
+    if (!book) return
+    const handler = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('.mi[data-item-name]') as HTMLElement | null
+      if (!target) return
+      const itemName = target.getAttribute('data-item-name')
+      if (!itemName) return
+      const liveItem = liveItemsRef.current.get(itemName)
+      if (!liveItem) return
+      setModalItem(liveItem)
+    }
+    book.addEventListener('click', handler)
+    return () => book.removeEventListener('click', handler)
+  }, [isMobile])
+
+  // Quando o banco responder com itens com foto, marca as classes has-photo no DOM do PageFlip
+  useEffect(() => {
+    if (isMobile || !ready) return
+    const book = bookRef.current
+    if (!book || liveItemsRef.current.size === 0) return
+    liveItemsRef.current.forEach((_, name) => {
+      const safeName = name.replace(/"/g, '&quot;')
+      const el = book.querySelector(`.mi[data-item-name="${safeName}"]`) as HTMLElement | null
+      if (el && !el.classList.contains('has-photo')) {
+        el.classList.add('has-photo')
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobile, ready, menuData])
 
   useEffect(() => {
     if (isMobile) return
@@ -1457,9 +1497,9 @@ export default function CardapioPage() {
         </div>
       </nav>
 
-      {/* MOBILE: carrossel nativo */}
+      {/* MOBILE: carrossel nativo — usa 'sections' do banco (com photo_url/long_desc) */}
       <div className="pf-mobile-carousel">
-        <MobileCarousel cur={cur} onChangeCur={setCur} sections={stableSections} onOpenModal={setModalItem} />
+        <MobileCarousel cur={cur} onChangeCur={setCur} sections={sections} onOpenModal={setModalItem} />
       </div>
 
       {/* DESKTOP: page-flip */}
