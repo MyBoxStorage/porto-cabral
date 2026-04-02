@@ -1383,6 +1383,8 @@ export default function CardapioPage() {
       if (!itemName) return
       const liveItem = liveItemsRef.current.get(itemName)
       if (!liveItem) return
+      e.stopPropagation()
+      e.preventDefault()
       setModalItem(liveItem)
     }
     book.addEventListener('click', handler)
