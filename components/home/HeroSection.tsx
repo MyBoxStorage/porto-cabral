@@ -75,9 +75,9 @@ export function HeroSection() {
   const src1 = data.video_desktop_1 || DEFAULT_SRC1
   const src2 = data.video_desktop_2 || DEFAULT_SRC2
 
-  /* Fallback: capa some em 2s mesmo sem canplay */
+  /* Fallback: capa some em 1.5s mesmo sem canplay — evita tela branca prolongada */
   useEffect(() => {
-    const t = setTimeout(() => setVideoReady(true), 2000)
+    const t = setTimeout(() => setVideoReady(true), 1500)
     return () => clearTimeout(t)
   }, [])
 

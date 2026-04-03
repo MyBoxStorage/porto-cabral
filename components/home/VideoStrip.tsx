@@ -27,6 +27,12 @@ function VideoCard({ item, w, h, onOpen }: { item: VideoItem; w: number; h: numb
   const [ready, setReady]     = useState(false)
   const [hovered, setHovered] = useState(false)
 
+  // Fallback: remove spinner após 3s mesmo sem canplay (rede lenta ou CSP residual)
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 3000)
+    return () => clearTimeout(t)
+  }, [])
+
   // Play apenas quando o card está visível na tela
   useEffect(() => {
     const video = videoRef.current
