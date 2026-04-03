@@ -92,9 +92,10 @@ export async function POST(req: Request) {
     metadata: {
       preferences: [
         ...(data.occasion_type ? [{ category: 'OCCASION', value: data.occasion_type }] : []),
-        { category: 'FOOD', value: data.food_preferences.join(',') },
-        { category: 'DRINK', value: data.drink_preferences.join(',') },
+        ...(data.food_preferences.length > 0 ? [{ category: 'FOOD', value: data.food_preferences.join(',') }] : []),
+        ...(data.drink_preferences.length > 0 ? [{ category: 'DRINK', value: data.drink_preferences.join(',') }] : []),
         { category: 'GROUP_SIZE', value: data.group_size },
+        { category: 'VISIT_FREQUENCY', value: data.visit_frequency },
       ],
     },
   })

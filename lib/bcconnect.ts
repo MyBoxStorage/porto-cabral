@@ -11,6 +11,12 @@ export type BcEventType =
   | 'PREFERENCE_UPDATE'
   | 'TICKET_PURCHASE'
   | 'LOGIN'
+  | 'CHECK_IN'
+  | 'CHECK_OUT'
+  | 'EVENT_ATTENDANCE'
+  | 'REFERRAL'
+  | 'REVIEW_SUBMITTED'
+  | 'LOYALTY_REWARD'
 
 export interface BcLeadPayload {
   email: string
@@ -39,7 +45,7 @@ export async function sendBcEvent(payload: BcWebhookPayload): Promise<void> {
   // Sai silenciosamente se qualquer configuração essencial estiver ausente
   if (!BC_API_KEY || !BC_WEBHOOK_URL || !BC_PARTNER_ID) return
   try {
-    await fetch(`${BC_WEBHOOK_URL}/api/webhook/partner/${BC_PARTNER_ID}`, {
+    const res = await fetch(`${BC_WEBHOOK_URL}/api/webhook/partner/${BC_PARTNER_ID}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -48,6 +54,9 @@ export async function sendBcEvent(payload: BcWebhookPayload): Promise<void> {
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(5000),
     })
+    if (!res.ok) {
+      console.warn(`[BC Connect] HTTP ${res.status} para evento ${payload.eventType}`)
+    }
   } catch (err) {
     console.warn('[BC Connect] Falha silenciosa:', err)
   }
