@@ -3,8 +3,21 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
 import { auth } from '@/auth'
+import { sendBcEvent } from '@/lib/bcconnect'
 import { getDb } from '@/lib/db'
 import { customers } from '@/lib/db/schema'
+
+/** Calcula a idade em anos a partir de uma data no formato YYYY-MM-DD.
+ * Retorna undefined se a data for inválida ou resultar em idade negativa. */
+function calcAge(birthDate: string): number | undefined {
+  const dob = new Date(birthDate)
+  if (isNaN(dob.getTime())) return undefined
+  const today = new Date()
+  let age = today.getFullYear() - dob.getFullYear()
+  const m = today.getMonth() - dob.getMonth()
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--
+  return age >= 0 ? age : undefined
+}
 
 export async function GET() {
   const session = await auth()
@@ -56,7 +69,7 @@ const PerfilSchema = z.object({
 
 export async function PUT(req: Request) {
   const session = await auth()
-  if (!session?.user?.id) {
+  if (!session?.user?.id || !session.user.email) {
     return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 })
   }
 
@@ -86,9 +99,30 @@ export async function PUT(req: Request) {
         updated_at: new Date(),
       })
       .where(eq(customers.auth_user_id, session.user.id))
-    return NextResponse.json({ success: true })
   } catch (e) {
     console.error('[cliente/perfil]', e)
     return NextResponse.json({ error: 'Não foi possível atualizar o perfil.' }, { status: 500 })
   }
+
+  // Enriquece o lead no BC Connect com os campos de perfil atualizados.
+  // Só envia os campos que foram efetivamente alterados pelo usuário.
+  // city_of_origin alimenta o score PA (Poder Aquisitivo) pelo segmento geográfico.
+  const ageForBc = patch.birth_date != null ? calcAge(patch.birth_date) : undefined
+  void sendBcEvent({
+    eventType:  'PREFERENCE_UPDATE',
+    occurredAt: new Date().toISOString(),
+    lead: {
+      email: session.user.email.toLowerCase(),
+      ...(patch.name !== undefined ? { name: patch.name } : {}),
+      ...(patch.whatsapp !== undefined
+        ? { phone: patch.whatsapp.replace(/\D/g, '') }
+        : {}),
+      ...(patch.city_of_origin !== undefined
+        ? { cityOfOrigin: patch.city_of_origin }
+        : {}),
+      ...(ageForBc !== undefined ? { age: ageForBc } : {}),
+    },
+  })
+
+  return NextResponse.json({ success: true })
 }

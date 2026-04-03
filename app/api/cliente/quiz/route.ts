@@ -91,7 +91,7 @@ export async function POST(req: Request) {
     lead: { email: session.user.email.toLowerCase() },
     metadata: {
       preferences: [
-        { category: 'OCCASION', value: data.occasion_type ?? '' },
+        ...(data.occasion_type ? [{ category: 'OCCASION', value: data.occasion_type }] : []),
         { category: 'FOOD', value: data.food_preferences.join(',') },
         { category: 'DRINK', value: data.drink_preferences.join(',') },
         { category: 'GROUP_SIZE', value: data.group_size },
