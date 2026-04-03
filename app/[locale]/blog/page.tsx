@@ -1,5 +1,7 @@
 'use client'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { useSiteContent } from '@/lib/useSiteContent'
 
 type PageBannersData = { blog?: string; cardapio?: string; sobre?: string }
@@ -34,15 +36,16 @@ const posts = [
 export default function BlogPage() {
   const banners = useSiteContent<PageBannersData>('page_banners', {})
   const bgImage = banners?.blog || ''
+  const params = useParams()
+  const locale = (params?.locale as string) || 'pt'
 
   return (
     <main className="min-h-screen bg-[#fef9f1] overflow-x-hidden">
-      {/* Hero — começa no topo absoluto (por baixo da navbar transparente) */}
+      {/* Hero */}
       <section
         className="relative pt-[calc(72px+4rem)] pb-16 md:pt-[calc(72px+5rem)] md:pb-24 px-4 text-center overflow-hidden"
         style={{ background: bgImage ? undefined : '#0074bf' }}
       >
-        {/* Foto de fundo do banner (definida no painel admin) */}
         {bgImage && (
           <>
             <img src={bgImage} alt="" aria-hidden="true" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'center' }} />
@@ -63,7 +66,7 @@ export default function BlogPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {posts.map((post) => (
             <article key={post.slug}
-              className="bg-white rounded-xl overflow-hidden shadow-sm border border-[#f2ede5] hover:border-[#D4A843]/30 hover:shadow-md transition-all group cursor-pointer">
+              className="bg-white rounded-xl overflow-hidden shadow-sm border border-[#f2ede5] hover:border-[#D4A843]/30 hover:shadow-md transition-all group">
               <div className="relative h-48 overflow-hidden">
                 <Image
                   src={post.image}
@@ -87,9 +90,12 @@ export default function BlogPage() {
                   <time className="text-xs text-slate-400">
                     {new Date(post.date).toLocaleDateString('pt-BR')}
                   </time>
-                  <span className="text-[#D4A843] text-sm font-accent uppercase tracking-wide hover:underline">
-                    Ler mais →
-                  </span>
+                  <Link
+                    href={`/${locale}/blog/${post.slug}`}
+                    className="text-xs font-accent text-[#D4A843] hover:text-[#b8922e] tracking-widest uppercase transition-colors"
+                  >
+                    Ler Mais →
+                  </Link>
                 </div>
               </div>
             </article>
