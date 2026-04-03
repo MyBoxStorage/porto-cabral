@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 
 type FormData = {
@@ -24,6 +24,16 @@ export function ReservationForm() {
   const [reservationId, setReservationId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [shake, setShake] = useState(false)
+  const dateInputRef = useRef<HTMLInputElement>(null)
+
+  // Força o formato dd/mm/yyyy para PT e ES via atributo lang no elemento raiz do input.
+  // O Chrome ignora lang na página e usa o locale do SO — a única forma confiável
+  // é setar o atributo diretamente no elemento após o mount.
+  useEffect(() => {
+    const el = dateInputRef.current
+    if (!el) return
+    el.setAttribute('lang', locale === 'en' ? 'en-US' : 'pt-BR')
+  }, [locale])
 
   // Locale do input de data: PT e ES usam dd/mm/yyyy, EN usa mm/dd/yyyy
   const dateLang = locale === 'en' ? 'en-US' : 'pt-BR'
@@ -148,6 +158,7 @@ export function ReservationForm() {
       <div className="space-y-1.5">
         <label className="text-xs font-accent uppercase tracking-widest text-slate-500">{t('date')} *</label>
         <input
+          ref={dateInputRef}
           required
           type="date"
           lang={dateLang}
