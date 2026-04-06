@@ -38,6 +38,7 @@ type PayloadItem = {
   description: string | null
   price: number | null
   price_note: string | null
+  photo_url: string | null  // URL da foto vinda do JOIN com media
   featured: boolean | null
   available: boolean | null
   vegan: boolean | null
@@ -50,6 +51,7 @@ type SectionItem = {
   price: string
   desc?: string
   tag?: 'vegano' | 'sem-lactose' | 'destaque'
+  photo_url?: string
 }
 
 type Section = {
@@ -77,13 +79,15 @@ export async function POST(req: Request) {
     const db = getDb()
 
     // Lê menu_items diretamente do banco (tabela gerada pelo Payload — slug com _ )
-    // Com postgres-js, db.execute retorna Row[] diretamente
+    // LEFT JOIN com media para trazer a URL da foto de cada prato
     const rows = await db.execute(
-      sql`SELECT id, name, category, description, price, price_note,
-               featured, available, vegan, lactose_free, sort_order
-          FROM menu_items
-          WHERE available = true
-          ORDER BY sort_order ASC NULLS LAST, name ASC`
+      sql`SELECT mi.id, mi.name, mi.category, mi.description, mi.price, mi.price_note,
+               mi.featured, mi.available, mi.vegan, mi.lactose_free, mi.sort_order,
+               m.url as photo_url
+          FROM menu_items mi
+          LEFT JOIN media m ON mi.photo_id = m.id
+          WHERE mi.available = true
+          ORDER BY mi.sort_order ASC NULLS LAST, mi.name ASC`
     ) as unknown as PayloadItem[]
 
     // Agrupa por section id usando CATEGORY_MAP
@@ -118,6 +122,7 @@ export async function POST(req: Request) {
         price: priceStr,
         ...(row.description ? { desc: row.description } : {}),
         ...(tag ? { tag } : {}),
+        ...(row.photo_url ? { photo_url: row.photo_url } : {}),
       })
     }
 

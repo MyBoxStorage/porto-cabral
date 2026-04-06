@@ -10,7 +10,7 @@ const posts = [
   {
     slug: 'experiencia-flutuante',
     title: 'A Experiência Flutuante de Jantar Sobre o Mar',
-    date: '2025-03-10',
+    date: '2026-03-10',
     category: 'Experiências',
     excerpt: 'Descubra como é jantar sobre as águas cristalinas da Barra Sul, com o pôr do sol tingindo o horizonte de dourado.',
     image: 'https://res.cloudinary.com/djhevgyvi/image/upload/v1774314820/EXPERIENCIA_lqnygf.jpg',
@@ -18,7 +18,7 @@ const posts = [
   {
     slug: 'frutos-do-mar-frescos',
     title: 'Da Rede à Mesa: Nossos Frutos do Mar',
-    date: '2025-02-28',
+    date: '2026-02-28',
     category: 'Gastronomia',
     excerpt: 'Conheça os fornecedores locais que garantem que cada prato chegue à sua mesa com a máxima frescura e sabor.',
     image: 'https://res.cloudinary.com/djhevgyvi/image/upload/v1774314820/GASTRONOMIA_gspshf.jpg',
@@ -26,7 +26,7 @@ const posts = [
   {
     slug: 'carta-de-vinhos-2025',
     title: 'Nova Carta de Vinhos 2025',
-    date: '2025-02-14',
+    date: '2026-02-14',
     category: 'Vinhos',
     excerpt: 'Nossa sommelière selecionou rótulos exclusivos de Portugal, França e Argentina para harmonizar perfeitamente com o menu.',
     image: 'https://res.cloudinary.com/djhevgyvi/image/upload/v1774314822/VINHOS_cfut07.jpg',

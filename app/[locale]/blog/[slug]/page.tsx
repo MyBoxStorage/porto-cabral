@@ -14,7 +14,7 @@ const posts: Record<string, {
 }> = {
   'experiencia-flutuante': {
     title: 'A Experiência Flutuante de Jantar Sobre o Mar',
-    date: '2025-03-10',
+    date: '2026-03-10',
     category: 'Experiências',
     image: 'https://res.cloudinary.com/djhevgyvi/image/upload/v1774314820/EXPERIENCIA_lqnygf.jpg',
     body: [
@@ -38,7 +38,7 @@ const posts: Record<string, {
 
   'frutos-do-mar-frescos': {
     title: 'Da Rede à Mesa: Nossos Frutos do Mar',
-    date: '2025-02-28',
+    date: '2026-02-28',
     category: 'Gastronomia',
     image: 'https://res.cloudinary.com/djhevgyvi/image/upload/v1774314820/GASTRONOMIA_gspshf.jpg',
     body: [
@@ -62,7 +62,7 @@ const posts: Record<string, {
 
   'carta-de-vinhos-2025': {
     title: 'Nova Carta de Vinhos 2025',
-    date: '2025-02-14',
+    date: '2026-02-14',
     category: 'Vinhos',
     image: 'https://res.cloudinary.com/djhevgyvi/image/upload/v1774314822/VINHOS_cfut07.jpg',
     body: [
