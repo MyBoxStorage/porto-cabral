@@ -88,11 +88,13 @@ export async function POST(req: Request) {
     )
   }
 
+  // optinAccepted reflete o checkbox do BC Connect (optin_parceiros — opcional),
+  // NÃO os termos de uso (optin_accepted — obrigatório). Ver guia-integracao-parceiros.md.
   void sendBcEvent({
     eventType:     'SIGNUP',
     occurredAt:    new Date().toISOString(),
     lead:          { email: emailLower, name, phone: whatsapp.replace(/\D/g, '') },
-    optinAccepted: optin_accepted,
+    optinAccepted: optin_parceiros,
   })
 
   const resend = getResend()

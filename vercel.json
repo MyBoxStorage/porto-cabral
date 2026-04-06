@@ -4,6 +4,12 @@
   "functions": {
     "app/api/**": {
       "maxDuration": 30
+    },
+    "app/(payload)/**": {
+      "maxDuration": 60
+    },
+    "app/painel/**": {
+      "maxDuration": 60
     }
   },
   "headers": [

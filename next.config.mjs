@@ -35,13 +35,12 @@ const securityHeaders = [
     value: 'max-age=63072000; includeSubDomains; preload',
   },
   // CSP: permite scripts do próprio domínio + inline necessário para Next.js.
-  // 'unsafe-eval' é necessário para o Next.js em desenvolvimento; em produção
-  // pode ser removido se não houver uso de eval() em código de terceiros.
+  // 'unsafe-eval' foi removido — não necessário em produção com Next.js 15.
   {
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://bc-connect-api-v2.fly.dev",
+      "script-src 'self' 'unsafe-inline' https://bc-connect-api-v2.fly.dev",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' data: https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://*.supabase.co https://res.cloudinary.com https://maps.googleapis.com https://maps.gstatic.com",

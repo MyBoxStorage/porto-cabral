@@ -8,6 +8,16 @@ import { fileURLToPath } from 'url'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+// ---------------------------------------------------------------------------
+// Validação crítica em runtime — impede boot com secret vazio
+// ---------------------------------------------------------------------------
+if (!process.env.PAYLOAD_SECRET) {
+  throw new Error(
+    '[payload.config] PAYLOAD_SECRET não está definido. ' +
+    'Configure esta variável de ambiente no Vercel antes de fazer deploy.'
+  )
+}
+
 const menuCategoryOptions = [
   'entradas-quentes',
   'entradas-frias',
@@ -29,16 +39,37 @@ const menuCategoryOptions = [
 }))
 
 export default buildConfig({
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET,
   serverURL: process.env.NEXT_PUBLIC_PC_SITE_URL || 'https://porto-cabral.vercel.app',
   admin: {
     user: 'admins',
   },
   editor: lexicalEditor(),
+  // GraphQL não é utilizado neste projeto — desabilitar reduz bundle e surface de ataque
+  graphQL: {
+    disable: true,
+  },
   collections: [
     {
       slug: 'menu-items',
       labels: { singular: 'Prato', plural: 'Pratos' },
+      hooks: {
+        afterChange: [
+          async () => {
+            const secret = process.env.SYNC_MENU_SECRET
+            const siteUrl = process.env.NEXT_PUBLIC_PC_SITE_URL || 'https://porto-cabral.vercel.app'
+            if (!secret) return
+            try {
+              await fetch(`${siteUrl}/api/admin/sync-menu`, {
+                method: 'POST',
+                headers: { 'x-sync-key': secret },
+              })
+            } catch {
+              // falha silenciosa — não bloqueia o save
+            }
+          },
+        ],
+      },
       fields: [
         { name: 'name', type: 'text', required: true },
         { name: 'name_en', type: 'text' },

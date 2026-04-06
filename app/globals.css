@@ -38,10 +38,17 @@ body { }
   html, body { overflow-y: auto !important; touch-action: pan-y; }
 }
 
-/* ── FONTS ── */
-.font-display { font-family: 'Playfair Display', Georgia, serif; }
-.font-accent  { font-family: 'Josefin Sans', sans-serif; }
-.font-body    { font-family: 'Inter', sans-serif; }
+/* ── FONTS ──
+   As fontes são carregadas via next/font/google (sem request externo).
+   As CSS variables --font-playfair, --font-inter e --font-josefin são
+   injetadas no <html> pelo layout. Os utilitários Tailwind (font-display,
+   font-accent, font-body) e os estilos inline nos componentes continuam
+   funcionando porque as famílias de fonte são as mesmas — apenas a forma
+   de carregamento mudou (de <link> externo para @font-face inline).
+   ────────────────────────────────────────────────────────────────────── */
+.font-display { font-family: var(--font-playfair, 'Playfair Display', Georgia, serif); }
+.font-accent  { font-family: var(--font-josefin, 'Josefin Sans', sans-serif); }
+.font-body    { font-family: var(--font-inter, Inter, sans-serif); }
 
 /* ── SHIMMER BUTTON ── */
 .shimmer {
@@ -84,7 +91,7 @@ body { }
 
 /* ── SECTION EYEBROW ── */
 .eyebrow {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: var(--font-josefin, 'Josefin Sans', sans-serif);
   font-size: 0.6rem;
   letter-spacing: 0.35em;
   text-transform: uppercase;

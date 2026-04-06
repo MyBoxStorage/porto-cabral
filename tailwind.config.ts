@@ -22,9 +22,11 @@ const config: Config = {
         'pc-muted':      '#43474f',
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
-        accent:  ['"Josefin Sans"', 'sans-serif'],
-        body:    ['Inter', 'sans-serif'],
+        // Referenciam as CSS variables injetadas pelo next/font/google no layout.
+        // O fallback garante que funcione mesmo antes da hidratação.
+        display: ['var(--font-playfair)', '"Playfair Display"', 'Georgia', 'serif'],
+        accent:  ['var(--font-josefin)', '"Josefin Sans"', 'sans-serif'],
+        body:    ['var(--font-inter)', 'Inter', 'sans-serif'],
       },
     },
   },
