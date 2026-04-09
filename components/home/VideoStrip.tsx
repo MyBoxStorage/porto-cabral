@@ -26,31 +26,44 @@ function VideoCard({ item, w, h, onOpen }: { item: VideoItem; w: number; h: numb
   const wrapRef   = useRef<HTMLDivElement>(null)
   const [ready, setReady]     = useState(false)
   const [hovered, setHovered] = useState(false)
-  // Ref para persistir estado "já ficou pronto" entre re-mounts do React Strict Mode (dev)
+  // active=true: card já entrou no viewport ao menos uma vez → src liberado
+  const [active, setActive]   = useState(false)
   const readyRef = useRef(false)
 
-  // Fallback: 800ms é suficiente para rede ok. readyRef evita o reset no double-mount do Strict Mode.
+  // Spinner fallback: só começa contagem depois que o src foi liberado (active)
   useEffect(() => {
+    if (!active) return
     if (readyRef.current) { setReady(true); return }
-    const t = setTimeout(() => { readyRef.current = true; setReady(true) }, 800)
+    const t = setTimeout(() => { readyRef.current = true; setReady(true) }, 1000)
     return () => clearTimeout(t)
-  }, [])
+  }, [active])
 
-  // Play apenas quando o card está visível na tela
+  // Quando active vira true (src acabou de ser setado), inicia play assim que possível
   useEffect(() => {
+    if (!active) return
     const video = videoRef.current
-    const wrap  = wrapRef.current
-    if (!video || !wrap) return
+    if (!video) return
+    const tryPlay = () => video.play().catch(() => {})
+    if (video.readyState >= 2) { tryPlay() }
+    else { video.addEventListener('canplay', tryPlay, { once: true }) }
+    return () => video.removeEventListener('canplay', tryPlay)
+  }, [active])
 
+  // IntersectionObserver: libera src ao entrar no viewport, pausa ao sair
+  useEffect(() => {
+    const wrap = wrapRef.current
+    if (!wrap) return
     const observer = new IntersectionObserver(
       ([entry]) => {
+        const video = videoRef.current
         if (entry.isIntersecting) {
-          video.play().catch(() => {})
+          setActive(true) // libera src — React re-renderiza com src={item.url}
+          video?.play().catch(() => {}) // funciona se já estava active antes
         } else {
-          video.pause()
+          video?.pause()
         }
       },
-      { threshold: 0.1 } // 10% visível já é suficiente — evita delay nos cards das bordas
+      { threshold: 0.1 }
     )
     observer.observe(wrap)
     return () => observer.disconnect()
@@ -71,8 +84,8 @@ function VideoCard({ item, w, h, onOpen }: { item: VideoItem; w: number; h: numb
       onMouseLeave={() => setHovered(false)}
       onClick={onOpen}
     >
-      <video ref={videoRef} src={item.url} autoPlay muted loop playsInline preload="metadata"
-        onCanPlay={() => { readyRef.current = true; setReady(true) }}
+      <video ref={videoRef} src={active ? item.url : undefined} muted loop playsInline
+        onCanPlay={() => { readyRef.current = true; setReady(true); videoRef.current?.play().catch(() => {}) }}
         style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'center',display:'block',
           transition:'filter 0.3s ease', filter: hovered ? 'brightness(0.45)' : 'brightness(0.72)' }}
       />
