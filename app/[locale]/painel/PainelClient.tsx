@@ -639,11 +639,13 @@ function EditHero() {
             </p>
           </div>
           <div style={{display:'grid',gap:'1rem'}}>
-            <div><label style={labelSt}>🖥 Vídeo 1 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_1??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_1:e.target.value}))}/></div>
-            <div><label style={labelSt}>🖥 Vídeo 2 (URL Cloudinary .mp4)</label><input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_desktop_2??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_desktop_2:e.target.value}))}/></div>
             <div>
-              <label style={labelSt}>🖥 Vídeo 2 — lado direito (URL Cloudinary .mp4)</label>
-              <input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}} value={data.video_mobile_2??''} placeholder="https://res.cloudinary.com/..." onChange={e=>update(p=>({...p,video_mobile_2:e.target.value}))}/>
+              <label style={labelSt}>🖥 Vídeo 1 — lado esquerdo</label>
+              <VideoUploader value={data.video_desktop_1??''} onChange={url=>update(p=>({...p,video_desktop_1:url}))}/>
+            </div>
+            <div>
+              <label style={labelSt}>🖥 Vídeo 2 — lado direito (desktop e mobile)</label>
+              <VideoUploader value={data.video_desktop_2??''} onChange={url=>update(p=>({...p,video_desktop_2:url,video_mobile_2:url}))}/>
               <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.3)',letterSpacing:'.04em',marginTop:6,lineHeight:1.5}}>
                 Usado como vídeo do lado direito tanto no desktop quanto no mobile
               </p>
