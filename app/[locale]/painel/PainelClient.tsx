@@ -857,29 +857,29 @@ function VideoUploader({ value, onChange }: { value: string; onChange: (url: str
     e.target.value = '' // permite re-selecionar o mesmo arquivo
     setErr(''); setFilename(file.name); setUploading(true); setProgress(0)
     try {
-      // 1. Obtém URL de upload assinada do nosso servidor
-      const res = await fetch('/api/admin/upload-video', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename: file.name, mimeType: file.type || 'video/mp4' }),
-      })
-      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Erro ao obter URL') }
-      const { signedUrl, publicUrl } = await res.json()
+      // Upload via servidor (multipart/form-data) com barra de progresso
+      const formData = new FormData()
+      formData.append('file', file)
 
-      // 2. Upload direto browser → Supabase (sem passar pelo servidor)
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest()
         xhr.upload.onprogress = (ev) => {
           if (ev.lengthComputable) setProgress(Math.round(ev.loaded / ev.total * 100))
         }
-        xhr.onload  = () => xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error(`HTTP ${xhr.status}`))
+        xhr.onload = async () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const data = JSON.parse(xhr.responseText)
+            if (data.publicUrl) { onChange(data.publicUrl); resolve() }
+            else reject(new Error(data.error || 'Resposta inválida'))
+          } else {
+            const data = JSON.parse(xhr.responseText).catch?.(() => ({})) ?? {}
+            reject(new Error(data.error || `HTTP ${xhr.status}`))
+          }
+        }
         xhr.onerror = () => reject(new Error('Falha de rede durante o upload'))
-        xhr.open('PUT', signedUrl)
-        xhr.setRequestHeader('Content-Type', file.type || 'video/mp4')
-        xhr.send(file)
+        xhr.open('POST', '/api/admin/upload-video')
+        xhr.send(formData)
       })
-
-      onChange(publicUrl)
     } catch (ex: unknown) {
       setErr(ex instanceof Error ? ex.message : 'Erro no upload')
     } finally {
