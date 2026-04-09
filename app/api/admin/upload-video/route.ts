@@ -10,6 +10,18 @@ export const dynamic = 'force-dynamic'
 const BUCKET       = 'pc-videos'
 const ALLOWED_MIME = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska']
 
+async function ensureBucket(supabase: ReturnType<typeof createSupabaseAdminClient>) {
+  // Tenta criar — ignora qualquer erro (bucket já existe = Duplicate, ou sem permissão)
+  await supabase.storage.createBucket(BUCKET, {
+    public:           true,
+    fileSizeLimit:    500 * 1024 * 1024,
+    allowedMimeTypes: ALLOWED_MIME,
+  })
+  // Confirma que o bucket está acessível independente do resultado acima
+  const { data: buckets } = await supabase.storage.listBuckets()
+  return buckets?.some(b => b.name === BUCKET) ?? false
+}
+
 export async function POST(req: Request) {
   try {
     const authError = await requireAdmin()
@@ -29,26 +41,15 @@ export async function POST(req: Request) {
       )
     }
 
-    // Valida variáveis de ambiente antes de criar o cliente
-    if (!process.env.PC_SUPABASE_SERVICE_ROLE_KEY) {
-      console.error('[upload-video] PC_SUPABASE_SERVICE_ROLE_KEY não definida no ambiente')
-      return NextResponse.json(
-        { error: 'Configuração de servidor incompleta. Adicione PC_SUPABASE_SERVICE_ROLE_KEY nas variáveis de ambiente do Vercel.' },
-        { status: 500 },
-      )
-    }
-
     const supabase = createSupabaseAdminClient()
 
-    // Cria o bucket se não existir (ignora erro "already exists")
-    const { error: bucketErr } = await supabase.storage.createBucket(BUCKET, {
-      public:           true,
-      fileSizeLimit:    500 * 1024 * 1024,
-      allowedMimeTypes: ALLOWED_MIME,
-    })
-    if (bucketErr && !bucketErr.message.includes('already exists')) {
-      console.error('[upload-video] createBucket:', bucketErr.message)
-      // Não aborta — bucket pode já existir com mensagem diferente
+    // Garante que o bucket existe antes de tentar criar URL assinada
+    const bucketOk = await ensureBucket(supabase)
+    if (!bucketOk) {
+      return NextResponse.json(
+        { error: 'Bucket "pc-videos" não encontrado. Crie-o em Supabase → Storage → New bucket (nome: pc-videos, Public: ✓).' },
+        { status: 500 },
+      )
     }
 
     // Gera path único
@@ -64,12 +65,11 @@ export async function POST(req: Request) {
     if (signErr || !data) {
       console.error('[upload-video] createSignedUploadUrl:', signErr?.message)
       return NextResponse.json(
-        { error: `Não foi possível gerar URL de upload: ${signErr?.message ?? 'resposta vazia'}` },
+        { error: `Erro ao gerar URL de upload: ${signErr?.message ?? 'resposta vazia'}` },
         { status: 500 },
       )
     }
 
-    // URL pública final (CDN Supabase / Cloudflare)
     const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(path)
 
     return NextResponse.json({ signedUrl: data.signedUrl, publicUrl })
