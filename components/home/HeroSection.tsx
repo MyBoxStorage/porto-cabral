@@ -29,6 +29,8 @@ function VideoSlot({ src, onReady }: { src: string; onReady?: () => void }) {
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    // Força play via JS — autoPlay nem sempre dispara após SSR/hydration no Next.js
+    el.play().catch(() => {})
     el.addEventListener('canplay',    fire, { once: true })
     el.addEventListener('loadeddata', fire, { once: true })
     if (el.readyState >= 3) fire()
