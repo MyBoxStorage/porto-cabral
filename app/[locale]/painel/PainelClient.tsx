@@ -844,6 +844,110 @@ function EditHistory() {
   )
 }
 
+/* ─── VideoUploader ────────────────── */
+function VideoUploader({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [uploading, setUploading] = useState(false)
+  const [progress, setProgress]   = useState(0)
+  const [err, setErr]             = useState('')
+  const [filename, setFilename]   = useState('')
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    e.target.value = '' // permite re-selecionar o mesmo arquivo
+    setErr(''); setFilename(file.name); setUploading(true); setProgress(0)
+    try {
+      // 1. Obtém URL de upload assinada do nosso servidor
+      const res = await fetch('/api/admin/upload-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, mimeType: file.type || 'video/mp4' }),
+      })
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Erro ao obter URL') }
+      const { signedUrl, publicUrl } = await res.json()
+
+      // 2. Upload direto browser → Supabase (sem passar pelo servidor)
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.upload.onprogress = (ev) => {
+          if (ev.lengthComputable) setProgress(Math.round(ev.loaded / ev.total * 100))
+        }
+        xhr.onload  = () => xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error(`HTTP ${xhr.status}`))
+        xhr.onerror = () => reject(new Error('Falha de rede durante o upload'))
+        xhr.open('PUT', signedUrl)
+        xhr.setRequestHeader('Content-Type', file.type || 'video/mp4')
+        xhr.send(file)
+      })
+
+      onChange(publicUrl)
+    } catch (ex: unknown) {
+      setErr(ex instanceof Error ? ex.message : 'Erro no upload')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:8}}>
+      {/* Preview do vídeo atual */}
+      {value && !uploading && (
+        <div style={{position:'relative',borderRadius:10,overflow:'hidden',background:'#000',lineHeight:0}}>
+          <video src={value} muted playsInline preload="metadata"
+            style={{width:'100%',maxHeight:140,objectFit:'cover',display:'block',opacity:0.9}}/>
+          <button onClick={()=>{ onChange(''); setFilename('') }}
+            style={{position:'absolute',top:6,right:6,width:22,height:22,borderRadius:'50%',
+              background:'rgba(0,0,0,0.75)',border:'1px solid rgba(255,255,255,0.2)',
+              color:'#fff',fontSize:11,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            ✕
+          </button>
+          <div style={{position:'absolute',bottom:6,left:8,right:8,
+            fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(212,168,67,0.7)',
+            letterSpacing:'.06em',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
+            ✔ {filename || value.split('/').pop()}
+          </div>
+        </div>
+      )}
+
+      {/* Barra de progresso durante upload */}
+      {uploading && (
+        <div style={{background:'rgba(255,255,255,0.06)',borderRadius:8,padding:'12px 14px',border:'1px solid rgba(212,168,67,0.15)'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+            <span style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,0.6)',letterSpacing:'.05em',
+              overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'70%'}}>
+              ⏳ {filename}
+            </span>
+            <span style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:11,fontWeight:700,color:GOLD}}>{progress}%</span>
+          </div>
+          <div style={{height:5,borderRadius:3,background:'rgba(212,168,67,0.12)',overflow:'hidden'}}>
+            <div style={{height:'100%',borderRadius:3,background:`linear-gradient(90deg,${GOLD},${GOLD2})`,
+              width:`${progress}%`,transition:'width 0.25s ease'}}/>
+          </div>
+        </div>
+      )}
+
+      {/* Botão de upload */}
+      {!uploading && (
+        <label style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+          padding:'10px 16px',borderRadius:8,cursor:'pointer',
+          border:'1px solid rgba(212,168,67,0.3)',background:'rgba(212,168,67,0.08)',
+          color:GOLD,fontFamily:"'Josefin Sans',sans-serif",fontSize:10,
+          fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',
+          transition:'all .15s',userSelect:'none'}}>
+          <span style={{fontSize:14}}>↑</span>
+          {value ? 'Substituir Vídeo' : 'Fazer Upload do Vídeo'}
+          <input type="file" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo"
+            style={{display:'none'}} onChange={handleFile}/>
+        </label>
+      )}
+      <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(255,255,255,0.25)',
+        letterSpacing:'.04em',margin:0,lineHeight:1.5}}>
+        MP4, WebM ou MOV · Máx 500MB · Salvo no Supabase Storage (CDN)
+      </p>
+      {err && <p style={{color:'#fca5a5',fontSize:10,margin:0,fontFamily:"'Josefin Sans',sans-serif"}}>⚠️ {err}</p>}
+    </div>
+  )
+}
+
 /* ─── Videos (Film Strip) ─────────── */
 type VideoItem = { url:string; label_pt?:string }
 type VideosContent = { eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; title_pt:string; title_en:string; title_es:string; items:VideoItem[] }
@@ -863,7 +967,7 @@ function EditVideos() {
       <div style={{background:'rgba(212,168,67,0.06)',border:'1px solid rgba(212,168,67,0.15)',borderRadius:10,padding:'1rem',marginBottom:'1.5rem',display:'flex',gap:12,alignItems:'flex-start'}}>
         <span style={{fontSize:18,flexShrink:0}}>🎬</span>
         <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,0.5)',letterSpacing:'.05em',lineHeight:1.7,margin:0}}>
-          Cole o link direto do vídeo no Cloudinary (ex: <strong style={{color:GOLD}}>https://res.cloudinary.com/.../video.mp4</strong>). Cada vídeo adicionado aparece automaticamente no carrossel da home.
+          Faça upload do vídeo diretamente do seu computador. O arquivo vai para o <strong style={{color:GOLD}}>Supabase Storage (CDN)</strong> sem passar pelo servidor. Máx 500MB por vídeo.
         </p>
       </div>
       <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:'1rem'}}>
@@ -877,29 +981,20 @@ function EditVideos() {
                 {i<items.length-1&&<button onClick={()=>{const a=[...items];[a[i],a[i+1]]=[a[i+1],a[i]];update(p=>({...p,items:a}))}}
                   style={{padding:'3px 8px',borderRadius:5,border:'1px solid rgba(212,168,67,0.2)',background:'transparent',color:GOLD,fontSize:11,cursor:'pointer'}}>↓</button>}
                 <button onClick={()=>update(p=>({...p,items:p.items.filter((_,j)=>j!==i)}))}
-                  style={{padding:'4px 10px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:10,cursor:'pointer'}}>✕</button>
+                  style={{padding:'4px 10px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:10,cursor:'pointer'}}>✕ Remover</button>
               </div>
             </div>
-            <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:'0.75rem'}}>
-              <div>
-                <label style={labelSt}>URL do Vídeo (Cloudinary .mp4)</label>
-                <input className="pc-input" style={{...inp,fontFamily:'monospace',fontSize:11}}
-                  value={item.url??''} placeholder="https://res.cloudinary.com/..."
-                  onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,url:e.target.value}:it)}))}/>
-              </div>
+            <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:'0.75rem',alignItems:'start'}}>
+              <VideoUploader
+                value={item.url??''}
+                onChange={url=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,url}:it)}))}
+              />
               <div>
                 <label style={labelSt}>Label (opcional)</label>
                 <input className="pc-input" style={inp} value={item.label_pt??''} placeholder="ex: Ambiente, Pratos..."
                   onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,label_pt:e.target.value}:it)}))}/>
               </div>
             </div>
-            {item.url&&(
-              <div style={{marginTop:'.75rem',display:'flex',alignItems:'center',gap:10}}>
-                <video src={item.url} muted playsInline preload="metadata"
-                  style={{width:72,height:72,objectFit:'cover',borderRadius:8,border:'1px solid rgba(212,168,67,0.2)',flexShrink:0}}/>
-                <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,color:'rgba(212,168,67,0.45)',letterSpacing:'.06em',margin:0,wordBreak:'break-all'}}>✔ URL configurada</p>
-              </div>
-            )}
           </div>
         ))}
       </div>
