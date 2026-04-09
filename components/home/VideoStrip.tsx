@@ -26,10 +26,13 @@ function VideoCard({ item, w, h, onOpen }: { item: VideoItem; w: number; h: numb
   const wrapRef   = useRef<HTMLDivElement>(null)
   const [ready, setReady]     = useState(false)
   const [hovered, setHovered] = useState(false)
+  // Ref para persistir estado "já ficou pronto" entre re-mounts do React Strict Mode (dev)
+  const readyRef = useRef(false)
 
-  // Fallback: remove spinner após 3s mesmo sem canplay (rede lenta ou CSP residual)
+  // Fallback: 800ms é suficiente para rede ok. readyRef evita o reset no double-mount do Strict Mode.
   useEffect(() => {
-    const t = setTimeout(() => setReady(true), 3000)
+    if (readyRef.current) { setReady(true); return }
+    const t = setTimeout(() => { readyRef.current = true; setReady(true) }, 800)
     return () => clearTimeout(t)
   }, [])
 
@@ -47,7 +50,7 @@ function VideoCard({ item, w, h, onOpen }: { item: VideoItem; w: number; h: numb
           video.pause()
         }
       },
-      { threshold: 0.3 } // pelo menos 30% visível para tocar
+      { threshold: 0.1 } // 10% visível já é suficiente — evita delay nos cards das bordas
     )
     observer.observe(wrap)
     return () => observer.disconnect()
@@ -68,8 +71,8 @@ function VideoCard({ item, w, h, onOpen }: { item: VideoItem; w: number; h: numb
       onMouseLeave={() => setHovered(false)}
       onClick={onOpen}
     >
-      <video ref={videoRef} src={item.url} autoPlay muted loop playsInline
-        onCanPlay={() => setReady(true)}
+      <video ref={videoRef} src={item.url} autoPlay muted loop playsInline preload="metadata"
+        onCanPlay={() => { readyRef.current = true; setReady(true) }}
         style={{ width:'100%',height:'100%',objectFit:'cover',objectPosition:'center',display:'block',
           transition:'filter 0.3s ease', filter: hovered ? 'brightness(0.45)' : 'brightness(0.72)' }}
       />
