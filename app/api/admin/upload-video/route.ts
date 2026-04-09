@@ -1,15 +1,12 @@
-// POST /api/admin/upload-video
-// Faz upload via REST API do Supabase Storage diretamente (sem SDK).
-// O SDK usa JWT signing que falha neste projeto — a API REST aceita o Bearer token diretamente.
+// POST /api/admin/upload-video — usa SDK Supabase com sb_secret_ key via createClient
 import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/adminAuth'
+import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
 
-const BUCKET      = 'pc-videos'
-const MAX_MB      = 50
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL_PC!
-const SERVICE_KEY  = process.env.PC_SUPABASE_SERVICE_ROLE_KEY!
+const BUCKET       = 'pc-videos'
+const MAX_MB       = 50
 const ALLOWED_MIME = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo']
 
 export async function POST(req: Request) {
@@ -28,58 +25,50 @@ export async function POST(req: Request) {
     }
 
     if (!ALLOWED_MIME.includes(file.type)) {
-      return NextResponse.json(
-        { error: `Formato não permitido: ${file.type}. Use MP4, WebM ou MOV.` },
-        { status: 400 },
-      )
+      return NextResponse.json({ error: `Formato não permitido: ${file.type}` }, { status: 400 })
     }
 
     if (file.size > MAX_MB * 1024 * 1024) {
-      return NextResponse.json(
-        { error: `Arquivo muito grande. Máximo ${MAX_MB}MB.` },
-        { status: 400 },
-      )
+      return NextResponse.json({ error: `Máximo ${MAX_MB}MB.` }, { status: 400 })
     }
 
-    if (!SUPABASE_URL || !SERVICE_KEY) {
-      return NextResponse.json({ error: 'Variáveis de ambiente do Supabase não configuradas.' }, { status: 500 })
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL_PC
+    const key = process.env.PC_SUPABASE_SERVICE_ROLE_KEY
+
+    if (!url || !key) {
+      return NextResponse.json({ error: 'Env SUPABASE não configurada.' }, { status: 500 })
     }
 
-    // Gera path único
+    // Cria cliente com a sb_secret_ key — o SDK envia os headers corretos internamente
+    const supabase = createClient(url, key, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+
     const ext  = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4'
     const safe = file.name.replace(/\.[^.]+$/, '').replace(/[^a-z0-9_-]/gi, '_').slice(0, 40)
     const path = `${Date.now()}_${safe}.${ext}`
 
-    // Upload via REST API direta — sem SDK, sem JWT signing
     const bytes = await file.arrayBuffer()
-    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`
 
-    const uploadRes = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SERVICE_KEY}`,
-        'Content-Type': file.type,
-        'x-upsert': 'false',
-        'Cache-Control': '31536000',
-      },
-      body: bytes,
-    })
+    const { error: uploadErr } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, bytes, {
+        contentType: file.type,
+        cacheControl: '31536000',
+        upsert: false,
+      })
 
-    if (!uploadRes.ok) {
-      const errBody = await uploadRes.text()
-      console.error('[upload-video] REST error:', uploadRes.status, errBody)
-      return NextResponse.json(
-        { error: `Supabase Storage retornou ${uploadRes.status}: ${errBody}` },
-        { status: 500 },
-      )
+    if (uploadErr) {
+      console.error('[upload-video]', uploadErr.message)
+      return NextResponse.json({ error: uploadErr.message }, { status: 500 })
     }
 
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`
+    const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(path)
     return NextResponse.json({ publicUrl })
 
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
-    console.error('[upload-video] erro inesperado:', msg)
-    return NextResponse.json({ error: `Erro interno: ${msg}` }, { status: 500 })
+    console.error('[upload-video]', msg)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
