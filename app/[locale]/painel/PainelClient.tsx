@@ -866,14 +866,16 @@ function VideoUploader({ value, onChange }: { value: string; onChange: (url: str
         xhr.upload.onprogress = (ev) => {
           if (ev.lengthComputable) setProgress(Math.round(ev.loaded / ev.total * 100))
         }
-        xhr.onload = async () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
+        xhr.onload = () => {
+          try {
             const data = JSON.parse(xhr.responseText)
-            if (data.publicUrl) { onChange(data.publicUrl); resolve() }
-            else reject(new Error(data.error || 'Resposta inválida'))
-          } else {
-            const data = JSON.parse(xhr.responseText).catch?.(() => ({})) ?? {}
-            reject(new Error(data.error || `HTTP ${xhr.status}`))
+            if (xhr.status >= 200 && xhr.status < 300 && data.publicUrl) {
+              onChange(data.publicUrl); resolve()
+            } else {
+              reject(new Error(data.error || `HTTP ${xhr.status}`))
+            }
+          } catch {
+            reject(new Error(`HTTP ${xhr.status}`))
           }
         }
         xhr.onerror = () => reject(new Error('Falha de rede durante o upload'))

@@ -1,18 +1,16 @@
 // POST /api/admin/upload-video
-// Recebe o vídeo no body e faz upload direto para o Supabase Storage via Admin client.
-// Usa conexão de service role sem depender de JWT signing para URLs assinadas.
+// Faz upload via REST API do Supabase Storage diretamente (sem SDK).
+// O SDK usa JWT signing que falha neste projeto — a API REST aceita o Bearer token diretamente.
 import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/adminAuth'
-import { createSupabaseAdminClient } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
-// Aumenta o limite de body do Next.js para 100MB
-export const config = { api: { bodyParser: { sizeLimit: '100mb' } } }
-
-const BUCKET       = 'pc-videos'
+const BUCKET      = 'pc-videos'
+const MAX_MB      = 50
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL_PC!
+const SERVICE_KEY  = process.env.PC_SUPABASE_SERVICE_ROLE_KEY!
 const ALLOWED_MIME = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo']
-const MAX_MB       = 100
 
 export async function POST(req: Request) {
   try {
@@ -43,40 +41,40 @@ export async function POST(req: Request) {
       )
     }
 
-    const supabase = createSupabaseAdminClient()
-
-    // Cria bucket se não existir (ignora erro se já existe)
-    await supabase.storage.createBucket(BUCKET, {
-      public: true,
-      fileSizeLimit: MAX_MB * 1024 * 1024,
-      allowedMimeTypes: ALLOWED_MIME,
-    }).catch(() => {})
+    if (!SUPABASE_URL || !SERVICE_KEY) {
+      return NextResponse.json({ error: 'Variáveis de ambiente do Supabase não configuradas.' }, { status: 500 })
+    }
 
     // Gera path único
     const ext  = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4'
     const safe = file.name.replace(/\.[^.]+$/, '').replace(/[^a-z0-9_-]/gi, '_').slice(0, 40)
     const path = `${Date.now()}_${safe}.${ext}`
 
-    // Upload direto via Admin client — não usa JWT signing
-    const arrayBuffer = await file.arrayBuffer()
-    const { error: uploadErr } = await supabase.storage
-      .from(BUCKET)
-      .upload(path, arrayBuffer, {
-        contentType: file.type,
-        cacheControl: '31536000', // 1 ano de cache no CDN
-        upsert: false,
-      })
+    // Upload via REST API direta — sem SDK, sem JWT signing
+    const bytes = await file.arrayBuffer()
+    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`
 
-    if (uploadErr) {
-      console.error('[upload-video] upload error:', uploadErr.message)
+    const uploadRes = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SERVICE_KEY}`,
+        'Content-Type': file.type,
+        'x-upsert': 'false',
+        'Cache-Control': '31536000',
+      },
+      body: bytes,
+    })
+
+    if (!uploadRes.ok) {
+      const errBody = await uploadRes.text()
+      console.error('[upload-video] REST error:', uploadRes.status, errBody)
       return NextResponse.json(
-        { error: `Erro no upload: ${uploadErr.message}` },
+        { error: `Supabase Storage retornou ${uploadRes.status}: ${errBody}` },
         { status: 500 },
       )
     }
 
-    const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(path)
-
+    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`
     return NextResponse.json({ publicUrl })
 
   } catch (e: unknown) {
