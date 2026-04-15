@@ -23,6 +23,9 @@ type Stats = {
 }
 type DishItem   = { title_pt:string; title_en:string; title_es:string; desc_pt:string; desc_en:string; desc_es:string; image_url?:string }
 
+/* ══ TEMESA INTEGRATION ═════════════════════════════════════════ */
+const TEMESA_DASHBOARD_URL = 'https://unique-sfogliatella-a00c01.netlify.app/dashboard/reservas'
+
 /* ══ DESIGN TOKENS ═══════════════════════════════════════════════ */
 const NAVY   = '#002451'
 const NAVY2  = '#0d2040'
@@ -350,7 +353,94 @@ function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
   )
 }
 
-/* ══ TAB: RESERVAS ══════════════════════════════════════════════ */
+/* ══ TAB: RESERVAS EXTERNAS (TeMesa) ════════════════════════════ */
+function TabReservasExternal() {
+  return (
+    <div>
+      <SectionTitle>Gestão de Reservas</SectionTitle>
+      <div style={{
+        background: `linear-gradient(135deg,${NAVY} 0%,${NAVY2} 100%)`,
+        borderRadius: 20,
+        padding: '3rem 2.5rem',
+        border: '1px solid rgba(212,168,67,0.2)',
+        position: 'relative',
+        overflow: 'hidden',
+        textAlign: 'center',
+      }}>
+        {/* Dot pattern */}
+        <div style={{position:'absolute',inset:0,opacity:.04,
+          backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,
+          backgroundSize:'18px 18px',pointerEvents:'none'}}/>
+        {/* Gold accent top */}
+        <div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',
+          width:120,height:3,background:`linear-gradient(90deg,transparent,${GOLD},transparent)`,
+          borderRadius:'0 0 4px 4px'}}/>
+
+        <div style={{position:'relative'}}>
+          {/* Icon */}
+          <div style={{
+            width: 72, height: 72, borderRadius: 18,
+            background: 'rgba(212,168,67,0.1)',
+            border: `1px solid rgba(212,168,67,0.3)`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 1.75rem',
+            fontSize: 32,
+          }}>🍽️</div>
+
+          {/* Title */}
+          <p style={{
+            fontFamily: "'Josefin Sans',sans-serif", fontSize: 9, fontWeight: 700,
+            letterSpacing: '.22em', textTransform: 'uppercase',
+            color: 'rgba(212,168,67,0.6)', margin: '0 0 10px',
+          }}>Parceiro TeMesa</p>
+          <h2 style={{
+            fontFamily: "'Playfair Display',serif", fontStyle: 'italic',
+            fontSize: 28, color: GOLD, margin: '0 0 1rem', lineHeight: 1.2,
+          }}>Reservas gerenciadas pelo TeMesa</h2>
+          <GoldRule/>
+
+          {/* Description */}
+          <p style={{
+            fontFamily: "'Josefin Sans',sans-serif", fontSize: 13,
+            color: 'rgba(255,255,255,.55)', letterSpacing: '.03em',
+            lineHeight: 1.8, margin: '1.5rem auto', maxWidth: 480,
+          }}>
+            As reservas do <strong style={{color: GOLD}}>Porto Cabral BC</strong> agora são
+            gerenciadas diretamente no painel TeMesa — confirmar chegadas, atualizar
+            status, visualizar histórico e gerenciar mesas.
+          </p>
+
+          {/* CTA button */}
+          <a
+            href={TEMESA_DASHBOARD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              ...goldBtn,
+              fontSize: 13, padding: '14px 36px',
+              borderRadius: 12, textDecoration: 'none',
+              display: 'inline-flex', margin: '0 auto',
+              boxShadow: '0 8px 32px rgba(212,168,67,0.25)',
+            }}
+          >
+            <span style={{fontSize: 16}}>↗</span>
+            Abrir Painel TeMesa
+          </a>
+
+          {/* URL hint */}
+          <p style={{
+            fontFamily: "'Josefin Sans',sans-serif", fontSize: 10,
+            color: 'rgba(212,168,67,0.35)', letterSpacing: '.06em',
+            marginTop: '1.5rem',
+            wordBreak: 'break-all',
+          }}>{TEMESA_DASHBOARD_URL}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ══ TAB: RESERVAS (legado — mantido para histórico) ═════════════ */
 function TabReservas() {
   const [rows,setRows]         = useState<Reservation[]>([])
   const [loading,setLoading]   = useState(true)
@@ -1565,7 +1655,7 @@ export function PainelClient() {
           </div>
           <nav>
             {TABS.map(t=>(
-              <button key={t.id} onClick={()=>setTab(t.id)} className="pc-tab-btn" style={{
+              <button key={t.id} onClick={()=>{ if(t.id==='reservas'){ window.open(TEMESA_DASHBOARD_URL,'_blank','noopener,noreferrer') } setTab(t.id) }} className="pc-tab-btn" style={{
                 display:'flex',alignItems:'center',gap:10,width:'100%',textAlign:'left',
                 padding:'11px 20px',border:'none',cursor:'pointer',
                 fontFamily:"'Josefin Sans',sans-serif",fontSize:11,fontWeight:tab===t.id?700:400,
@@ -1593,7 +1683,7 @@ export function PainelClient() {
 
         <main style={{flex:1,padding:'2.5rem',overflowX:'auto',minWidth:0,background:CREAM}}>
           {tab==='dashboard' && <TabDashboard stats={stats} loading={statsLoading}/>}
-          {tab==='reservas'  && <TabReservas/>}
+          {tab==='reservas'  && <TabReservasExternal/>}
           {tab==='clientes'  && <TabClientes/>}
           {tab==='conteudo'  && <TabConteudo/>}
           {tab==='cardapio'  && <TabCardapio/>}

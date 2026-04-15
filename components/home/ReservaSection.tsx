@@ -1,7 +1,7 @@
 'use client'
 import { useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { ReservationForm } from '@/components/home/ReservationForm'
+import { TeMesaWidget } from '@/components/home/TeMesaWidget'
 import { IconAncora } from '@/components/icons'
 import { useSiteContent } from '@/lib/useSiteContent'
 
@@ -58,7 +58,7 @@ export function ReservaSection() {
               objectPosition: 'center',
             }}
           />
-          {/* Overlay gradiente — garante legibilidade do formulário */}
+          {/* Overlay gradiente — garante legibilidade do widget */}
           <div
             style={{
               position: 'absolute',
@@ -83,12 +83,9 @@ export function ReservaSection() {
         className="fade-up relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center min-h-0"
         style={{ minHeight: bgImage ? '100%' : undefined }}
       >
-
-        {/* ── Lado esquerdo: espaço da foto com título sobreposto (desktop) ──
-            No mobile isso fica oculto — o fundo já aparece atrás de tudo */}
+        {/* ── Lado esquerdo: título sobreposto à foto (desktop) ── */}
         {bgImage && (
           <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col justify-center py-16 px-12 relative">
-            {/* Título flutuante sobre a foto */}
             <div className="space-y-4">
               <p
                 className="font-accent uppercase tracking-[0.4em] text-[10px]"
@@ -113,7 +110,7 @@ export function ReservaSection() {
           </div>
         )}
 
-        {/* ── Lado direito (ou centro sem foto): formulário ── */}
+        {/* ── Lado direito (ou centro sem foto): widget TeMesa ── */}
         <div
           className={`
             relative z-10 w-full
@@ -145,8 +142,8 @@ export function ReservaSection() {
             />
           </div>
 
-          {/* Formulário */}
-          <ReservationForm />
+          {/* Widget TeMesa */}
+          <TeMesaWidget />
         </div>
       </div>
     </section>
