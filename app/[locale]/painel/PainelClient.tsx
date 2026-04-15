@@ -504,7 +504,7 @@ function TabReservas() {
             <thead><tr>{['Hóspede','Data','Hora','Pax','Status','Contato',''].map(h=><th key={h} style={thSt}>{h}</th>)}</tr></thead>
             <tbody>
               {rows.map(r=>(
-                <tr key={r.id} className="pc-row" style={{borderBottom:'1px solid rgba(212,168,67,0.06)',cursor:'pointer',transition:'background .15s'}} onClick={()=>setSelected(r)}>
+                <tr key={r.id} className="pc-row" style={{borderBottom:'1px solid rgba(212,168,67,0.06)',cursor:'pointer',transition:'background .15s'}} onClick={()=>window.open(TEMESA_DASHBOARD_URL,'_blank','noopener,noreferrer')}>
                   <td style={{padding:'12px 16px',fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:14,color:GOLD}}>{r.name}</td>
                   <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.7)',letterSpacing:'.04em'}}>{formatDateBR(r.reservation_date)}</td>
                   <td style={{padding:'12px 16px',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.7)',letterSpacing:'.04em'}}>{r.reservation_time}</td>
@@ -1655,7 +1655,7 @@ export function PainelClient() {
           </div>
           <nav>
             {TABS.map(t=>(
-              <button key={t.id} onClick={()=>{ if(t.id==='reservas'){ window.open(TEMESA_DASHBOARD_URL,'_blank','noopener,noreferrer') } setTab(t.id) }} className="pc-tab-btn" style={{
+              <button key={t.id} onClick={()=>setTab(t.id)} className="pc-tab-btn" style={{
                 display:'flex',alignItems:'center',gap:10,width:'100%',textAlign:'left',
                 padding:'11px 20px',border:'none',cursor:'pointer',
                 fontFamily:"'Josefin Sans',sans-serif",fontSize:11,fontWeight:tab===t.id?700:400,
@@ -1683,7 +1683,7 @@ export function PainelClient() {
 
         <main style={{flex:1,padding:'2.5rem',overflowX:'auto',minWidth:0,background:CREAM}}>
           {tab==='dashboard' && <TabDashboard stats={stats} loading={statsLoading}/>}
-          {tab==='reservas'  && <TabReservasExternal/>}
+          {tab==='reservas'  && <TabReservas/>}
           {tab==='clientes'  && <TabClientes/>}
           {tab==='conteudo'  && <TabConteudo/>}
           {tab==='cardapio'  && <TabCardapio/>}
