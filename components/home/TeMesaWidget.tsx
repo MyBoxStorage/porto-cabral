@@ -11,7 +11,7 @@
 
 import { useState } from 'react'
 
-const TEMESA_BASE = 'https://unique-sfogliatella-a00c01.netlify.app'
+const TEMESA_BASE = 'https://temesa.vercel.app'
 const TEMESA_SLUG = 'porto-cabral-bc'
 const WIDGET_URL  = `${TEMESA_BASE}/r/${TEMESA_SLUG}`
 
