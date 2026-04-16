@@ -46,7 +46,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https://*.supabase.co https://res.cloudinary.com https://maps.googleapis.com https://maps.gstatic.com",
       "media-src 'self' blob: https://res.cloudinary.com https://*.supabase.co",
       "connect-src 'self' https://*.supabase.co https://bc-connect-api-v2.fly.dev https://*.upstash.io wss://*.supabase.co https://res.cloudinary.com",
-      "frame-src https://www.google.com https://maps.google.com https://temesa.vercel.app",
+      "frame-src 'self' https://www.google.com https://maps.google.com https://temesa.vercel.app https://*.clerk.accounts.dev https://*.clerk.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
