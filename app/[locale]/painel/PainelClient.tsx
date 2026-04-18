@@ -2,6 +2,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { formatDateBR, formatDateOnlyBR } from '@/lib/utils'
 
+/* ══ HOOK: useIsMobile ══════════════════════════════════════════ */
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < breakpoint)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [breakpoint])
+  return isMobile
+}
+
 /* ══ TYPES ══════════════════════════════════════════════════════ */
 type Reservation = {
   id: string; name: string; email: string; whatsapp: string
@@ -84,6 +96,7 @@ function SortableList<T>({ items, onReorder, renderItem }: {
   const overIdx  = useRef<number | null>(null)
   const [dragging, setDragging] = useState<number | null>(null)
   const [over,     setOver]     = useState<number | null>(null)
+  const isMobile = useIsMobile()
 
   function onDragStart(i: number) { dragIdx.current = i; setDragging(i) }
   function onDragEnter(i: number) { overIdx.current = i; setOver(i) }
@@ -105,7 +118,7 @@ function SortableList<T>({ items, onReorder, renderItem }: {
       {items.map((item, i) => {
         const isDragging = dragging === i
         const isOver     = over === i && dragging !== null && dragging !== i
-        const handle = (
+        const handle = isMobile ? null : (
           <div
             draggable
             onDragStart={e => { e.stopPropagation(); onDragStart(i) }}
@@ -226,8 +239,9 @@ function SectionTitle({children}:{children:React.ReactNode}) {
 }
 
 function SectionHeader({title,onSave,saving,dirty}:{title:string;onSave:()=>void;saving:boolean;dirty:boolean}) {
+  const isMobile = useIsMobile()
   return (
-    <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:'1.5rem',gap:16}}>
+    <div style={{display:'flex',flexDirection:isMobile?'column':'row',alignItems:isMobile?'stretch':'flex-start',justifyContent:'space-between',marginBottom:'1.5rem',gap:16}}>
       <div>
         <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.2em',
           textTransform:'uppercase',color:`rgba(212,168,67,0.7)`,margin:'0 0 4px'}}>Editor</p>
@@ -236,7 +250,8 @@ function SectionHeader({title,onSave,saving,dirty}:{title:string;onSave:()=>void
       <button onClick={onSave} disabled={saving||!dirty} className={dirty&&!saving?'pc-shimmer':''}
         style={{...goldBtn,opacity:(saving||!dirty)?0.45:1,animation:dirty&&!saving?'shimmer 2.5s linear infinite':'none',
           background:dirty&&!saving?undefined:NAVY,color:dirty&&!saving?NAVY:'rgba(212,168,67,0.4)',
-          backgroundSize:'200% auto'}}>
+          backgroundSize:'200% auto',
+          width:isMobile?'100%':'auto',justifyContent:'center'}}>
         {saving?'Salvando…':'✦ Salvar'}
       </button>
     </div>
@@ -244,17 +259,19 @@ function SectionHeader({title,onSave,saving,dirty}:{title:string;onSave:()=>void
 }
 
 function LangTabs({lang,setLang}:{lang:string;setLang:(l:string)=>void}) {
+  const isMobile = useIsMobile()
   return (
     <div style={{display:'flex',gap:6,marginBottom:'1.25rem',padding:'4px',
       background:'rgba(0,36,81,0.06)',borderRadius:10,width:'fit-content'}}>
-      {[['pt','🇧🇷 Português'],['en','🇺🇸 English'],['es','🇪🇸 Español']].map(([l,label])=>(
+      {[['pt','🇧🇷','Português'],['en','🇺🇸','English'],['es','🇪🇸','Español']].map(([l,flag,name])=>(
         <button key={l} onClick={()=>setLang(l)} style={{
-          padding:'6px 16px',borderRadius:7,border:'none',fontSize:11,fontWeight:700,cursor:'pointer',
+          padding: isMobile ? '6px 10px' : '6px 16px',
+          borderRadius:7,border:'none',fontSize:11,fontWeight:700,cursor:'pointer',
           fontFamily:"'Josefin Sans',sans-serif",letterSpacing:'.06em',transition:'all .15s',
           background:lang===l?NAVY:'transparent',color:lang===l?GOLD:'#6b7280',
           boxShadow:lang===l?'0 2px 8px rgba(0,36,81,0.2)':'none',
         }}>
-          {label}
+          {isMobile ? flag : `${flag} ${name}`}
         </button>
       ))}
     </div>
@@ -262,9 +279,15 @@ function LangTabs({lang,setLang}:{lang:string;setLang:(l:string)=>void}) {
 }
 
 function Toast({msg,type,onClose}:{msg:string;type:'ok'|'err';onClose:()=>void}) {
+  const isMobile = useIsMobile()
   useEffect(()=>{const t=setTimeout(onClose,3500);return()=>clearTimeout(t)},[onClose])
   return (
-    <div style={{position:'fixed',bottom:28,right:28,zIndex:9999,
+    <div style={{position:'fixed',
+      bottom: isMobile ? 80 : 28,
+      left: isMobile ? 16 : 'auto',
+      right: isMobile ? 16 : 28,
+      width: isMobile ? 'calc(100% - 32px)' : 'auto',
+      zIndex:9999,
       background:type==='ok'?`linear-gradient(135deg,${NAVY},${NAVY2})`:'linear-gradient(135deg,#7f1d1d,#991b1b)',
       color:type==='ok'?GOLD:'#fca5a5',padding:'14px 22px',borderRadius:12,
       border:`1px solid ${type==='ok'?'rgba(212,168,67,0.3)':'rgba(239,68,68,0.3)'}`,
@@ -302,6 +325,7 @@ function useContent<T>(key:string) {
 
 /* ══ TAB: DASHBOARD ══════════════════════════════════════════════ */
 function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
+  const isMobile = useIsMobile()
   if(loading) return (
     <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'6rem',gap:16}}>
       <div style={{width:40,height:40,border:`3px solid rgba(212,168,67,0.2)`,borderTopColor:GOLD,borderRadius:'50%',animation:'shimmer 1s linear infinite'}}/>
@@ -312,7 +336,7 @@ function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
   return (
     <div>
       <SectionTitle>Visão Geral do Porto</SectionTitle>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(175px,1fr))',gap:'1rem',marginBottom:'2rem'}}>
+      <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(auto-fill,minmax(175px,1fr))',gap:'1rem',marginBottom:'2rem'}}>
         <StatCard label="Total Reservas"  value={stats.total_reservations}  color={GOLD}/>
         <StatCard label="Hoje"            value={stats.today_reservations}   color="#10b981" sub="reservas para hoje"/>
         <StatCard label="Pendentes"       value={stats.pending_reservations}  color="#f59e0b" sub="aguardando confirmação"/>
@@ -320,7 +344,7 @@ function TabDashboard({stats,loading}:{stats:Stats|null;loading:boolean}) {
         <StatCard label="Clientes"        value={stats.total_customers}       color="#8b5cf6"/>
         <StatCard label="Opt-in LGPD"     value={stats.optin_customers}       color="#ec4899" sub="marketing aceito"/>
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
+      <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1.5rem'}}>
         <div style={{background:`linear-gradient(135deg,${NAVY} 0%,${NAVY2} 100%)`,borderRadius:16,padding:'1.5rem',
           border:'1px solid rgba(212,168,67,0.15)',position:'relative',overflow:'hidden'}}>
           <div style={{position:'absolute',inset:0,opacity:.03,backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none'}}/>
@@ -449,6 +473,7 @@ function TabReservas() {
   const [date,setDate]         = useState('')
   const [selected,setSelected] = useState<Reservation|null>(null)
   const [saving,setSaving]     = useState(false)
+  const isMobile               = useIsMobile()
 
   const load = useCallback(async()=>{
     setLoading(true)
@@ -498,6 +523,28 @@ function TabReservas() {
 
       {loading?(
         <div style={{textAlign:'center',padding:'4rem',color:'rgba(212,168,67,0.4)',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.15em'}}>Navegando…</div>
+      ):isMobile?(
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {rows.map(r=>(
+            <div key={r.id} style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,borderRadius:14,padding:'1rem',border:'1px solid rgba(212,168,67,0.15)',cursor:'pointer'}} onClick={()=>window.open(TEMESA_DASHBOARD_URL,'_blank','noopener,noreferrer')}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+                <p style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:16,color:GOLD,margin:0}}>{r.name}</p>
+                <Badge status={r.status}/>
+              </div>
+              <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.55)',margin:'0 0 8px',letterSpacing:'.04em'}}>
+                {formatDateBR(r.reservation_date)} · {r.reservation_time} · {r.party_size} pax
+              </p>
+              <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                <a href={`https://wa.me/55${r.whatsapp.replace(/\D/g,'')}`} target="_blank" rel="noopener"
+                  onClick={e=>e.stopPropagation()} style={{...goldBtn,padding:'6px 14px',fontSize:10,minHeight:44,alignItems:'center'}}>
+                  📲 WA
+                </a>
+                <span style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,.4)',letterSpacing:'.02em',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.email}</span>
+              </div>
+            </div>
+          ))}
+          {rows.length===0&&<div style={{textAlign:'center',padding:'4rem',color:'rgba(212,168,67,0.35)',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.15em'}}>Nenhuma reserva encontrada</div>}
+        </div>
       ):(
         <div style={{background:`linear-gradient(135deg,${NAVY} 0%,${NAVY2} 100%)`,borderRadius:16,overflow:'hidden',border:'1px solid rgba(212,168,67,0.12)'}}>
           <table style={{width:'100%',borderCollapse:'collapse'}}>
@@ -529,10 +576,13 @@ function TabReservas() {
       )}
 
       {selected&&(
-        <div style={{position:'fixed',inset:0,background:'rgba(0,10,30,0.85)',zIndex:999,display:'flex',alignItems:'center',justifyContent:'center',padding:16,backdropFilter:'blur(4px)'}} onClick={()=>setSelected(null)}>
-          <div style={{background:`linear-gradient(160deg,${NAVY} 0%,${NAVY2} 100%)`,borderRadius:20,padding:'2rem',
-            width:'100%',maxWidth:560,boxShadow:'0 32px 80px rgba(0,0,0,0.6)',border:'1px solid rgba(212,168,67,0.2)',
-            maxHeight:'90vh',overflowY:'auto',animation:'fadeIn .2s ease'}} onClick={e=>e.stopPropagation()}>
+        <div style={{position:'fixed',inset:0,background:'rgba(0,10,30,0.85)',zIndex:999,display:'flex',alignItems:isMobile?'flex-end':'center',justifyContent:'center',padding:isMobile?0:16,backdropFilter:isMobile?'none':'blur(4px)'}} onClick={()=>setSelected(null)}>
+          <div style={{background:`linear-gradient(160deg,${NAVY} 0%,${NAVY2} 100%)`,
+            borderRadius:isMobile?'20px 20px 0 0':20,
+            padding:isMobile?'1.25rem':'2rem',
+            width:'100%',maxWidth:isMobile?'100%':560,
+            boxShadow:'0 32px 80px rgba(0,0,0,0.6)',border:'1px solid rgba(212,168,67,0.2)',
+            maxHeight:isMobile?'85vh':'90vh',overflowY:'auto',animation:'fadeIn .2s ease'}} onClick={e=>e.stopPropagation()}>
             <div style={{position:'absolute',inset:0,opacity:.03,backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none',borderRadius:20}}/>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'1.5rem',position:'relative'}}>
               <div>
@@ -542,7 +592,7 @@ function TabReservas() {
               <button onClick={()=>setSelected(null)} style={{background:'rgba(212,168,67,0.1)',border:'1px solid rgba(212,168,67,0.2)',borderRadius:8,color:GOLD,width:36,height:36,cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
             </div>
             <GoldRule/>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',margin:'1.25rem 0',position:'relative'}}>
+            <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem',margin:'1.25rem 0',position:'relative'}}>
               {[['Data',formatDateBR(selected.reservation_date)],['Horário',selected.reservation_time],
                 ['Pessoas',String(selected.party_size)],['Ocasião',selected.occasion_type??'—'],
                 ['Email',selected.email],['WhatsApp',selected.whatsapp],
@@ -586,6 +636,7 @@ function TabClientes() {
   const [rows,setRows]       = useState<Customer[]>([])
   const [loading,setLoading] = useState(true)
   const [search,setSearch]   = useState('')
+  const isMobile             = useIsMobile()
 
   useEffect(()=>{
     fetch('/api/admin/clientes').then(r=>r.json()).then(d=>{setRows(d.customers??[]);setLoading(false)})
@@ -612,6 +663,24 @@ function TabClientes() {
       </div>
       {loading?(
         <div style={{textAlign:'center',padding:'4rem',color:'rgba(212,168,67,0.4)',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.15em'}}>Navegando…</div>
+      ):isMobile?(
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {filtered.map(c=>(
+            <div key={c.id} style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,borderRadius:14,padding:'1rem',border:'1px solid rgba(212,168,67,0.15)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:6}}>
+                <p style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:16,color:GOLD,margin:0}}>{c.name}</p>
+                <span style={{fontSize:16}}>{c.optin_accepted?'✅':'❌'}</span>
+              </div>
+              <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.6)',margin:'0 0 4px',letterSpacing:'.02em'}}>{c.email}</p>
+              <div style={{display:'flex',gap:12,fontFamily:"'Josefin Sans',sans-serif",fontSize:10,color:'rgba(255,255,255,.4)',letterSpacing:'.04em'}}>
+                {c.whatsapp&&<span>📱 {c.whatsapp}</span>}
+                {c.city_of_origin&&<span>📍 {c.city_of_origin}</span>}
+                <span style={{marginLeft:'auto'}}>{formatDateOnlyBR(c.created_at)}</span>
+              </div>
+            </div>
+          ))}
+          {filtered.length===0&&<div style={{textAlign:'center',padding:'4rem',color:'rgba(212,168,67,0.35)',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.15em'}}>Nenhum cliente encontrado</div>}
+        </div>
       ):(
         <div style={{background:`linear-gradient(135deg,${NAVY} 0%,${NAVY2} 100%)`,borderRadius:16,overflow:'hidden',border:'1px solid rgba(212,168,67,0.12)'}}>
           <table style={{width:'100%',borderCollapse:'collapse'}}>
@@ -639,6 +708,7 @@ function TabClientes() {
 /* ══ TAB: CONTEÚDO ══════════════════════════════════════════════ */
 function TabConteudo() {
   const [section,setSection] = useState<'hero'|'dishes'|'history'|'videos'|'location'|'reserva'|'sobre'|'banners'|'og_image'>('hero')
+  const isMobile = useIsMobile()
   const sections: {id:typeof section;label:string;icon:string}[] = [
     {id:'hero',     label:'Hero Banner',      icon:'▶'},
     {id:'dishes',   label:'Pratos Destaque',  icon:'◆'},
@@ -653,22 +723,31 @@ function TabConteudo() {
   return (
     <div>
       <SectionTitle>Editor de Conteúdo</SectionTitle>
-      <div style={{display:'flex',gap:'1.5rem'}}>
-        <aside style={{width:180,flexShrink:0}}>
-          <div style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,borderRadius:14,overflow:'hidden',border:'1px solid rgba(212,168,67,0.15)'}}>
-            {sections.map(s=>(
-              <button key={s.id} onClick={()=>setSection(s.id)} className="pc-tab-btn" style={{
-                display:'block',width:'100%',textAlign:'left',padding:'12px 16px',border:'none',cursor:'pointer',
-                fontFamily:"'Josefin Sans',sans-serif",fontSize:11,fontWeight:section===s.id?700:400,letterSpacing:'.06em',
-                background:section===s.id?'rgba(212,168,67,0.12)':'transparent',
-                color:section===s.id?GOLD:'rgba(255,255,255,.55)',
-                borderLeft:`3px solid ${section===s.id?GOLD:'transparent'}`,transition:'all .15s',
-              }}>
-                <span style={{marginRight:8,opacity:.7}}>{s.icon}</span>{s.label}
-              </button>
-            ))}
+      <div style={{display:'flex',flexDirection:isMobile?'column':'row',gap:'1.5rem'}}>
+        {isMobile ? (
+          <div style={{marginBottom:'0.5rem'}}>
+            <select value={section} onChange={e=>setSection(e.target.value as typeof section)}
+              className="pc-input" style={{...inp,width:'100%',fontSize:13}}>
+              {sections.map(s=><option key={s.id} value={s.id}>{s.icon} {s.label}</option>)}
+            </select>
           </div>
-        </aside>
+        ) : (
+          <aside style={{width:180,flexShrink:0}}>
+            <div style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,borderRadius:14,overflow:'hidden',border:'1px solid rgba(212,168,67,0.15)'}}>
+              {sections.map(s=>(
+                <button key={s.id} onClick={()=>setSection(s.id)} className="pc-tab-btn" style={{
+                  display:'block',width:'100%',textAlign:'left',padding:'12px 16px',border:'none',cursor:'pointer',
+                  fontFamily:"'Josefin Sans',sans-serif",fontSize:11,fontWeight:section===s.id?700:400,letterSpacing:'.06em',
+                  background:section===s.id?'rgba(212,168,67,0.12)':'transparent',
+                  color:section===s.id?GOLD:'rgba(255,255,255,.55)',
+                  borderLeft:`3px solid ${section===s.id?GOLD:'transparent'}`,transition:'all .15s',
+                }}>
+                  <span style={{marginRight:8,opacity:.7}}>{s.icon}</span>{s.label}
+                </button>
+              ))}
+            </div>
+          </aside>
+        )}
         <div style={{flex:1,minWidth:0}}>
           {section==='hero'     && <EditHero/>}
           {section==='dishes'   && <EditDishes/>}
@@ -703,6 +782,7 @@ function EdCard({children,toast,onClearToast}:{children:React.ReactNode;toast:{m
 function EditHero() {
   const {data,update,save,saving,dirty,toast,clearToast} = useContent<Record<string,string>>('hero')
   const [lang,setLang] = useState('pt')
+  const isMobile = useIsMobile()
   if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
   return (
     <EdCard toast={toast} onClearToast={clearToast}>
@@ -717,7 +797,7 @@ function EditHero() {
           <label style={labelSt}>Tagline principal (use \n para quebra de linha)</label>
           <textarea className="pc-input" rows={3} style={{...inp,resize:'vertical'}} value={data[`tagline_${lang}`]??''} onChange={e=>update(p=>({...p,[`tagline_${lang}`]:e.target.value}))}/>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+        <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem'}}>
           <div><label style={labelSt}>Botão principal — Reserva</label><input className="pc-input" style={inp} value={data[`cta_reserva_${lang}`]??''} onChange={e=>update(p=>({...p,[`cta_reserva_${lang}`]:e.target.value}))}/></div>
           <div><label style={labelSt}>Botão secundário — Cardápio</label><input className="pc-input" style={inp} value={data[`cta_cardapio_${lang}`]??''} onChange={e=>update(p=>({...p,[`cta_cardapio_${lang}`]:e.target.value}))}/></div>
         </div>
@@ -835,6 +915,7 @@ type DishesContent = {section_title_pt:string;section_title_en:string;section_ti
 function EditDishes() {
   const {data,update,save,saving,dirty,toast,clearToast} = useContent<DishesContent>('dishes')
   const [lang,setLang] = useState('pt')
+  const isMobile = useIsMobile()
   if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
   return (
     <EdCard toast={toast} onClearToast={clearToast}>
@@ -866,7 +947,7 @@ function EditDishes() {
                 onChange={url=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,image_url:url}:it)}))}
               />
             </div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+            <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem'}}>
               <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`title_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`title_${lang}`]:e.target.value}:it)}))}/></div>
               <div><label style={labelSt}>Descrição ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(item as Record<string,unknown>)[`desc_${lang}`] as string??''} onChange={e=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,[`desc_${lang}`]:e.target.value}:it)}))}/></div>
             </div>
@@ -1048,13 +1129,14 @@ type VideosContent = { eyebrow_pt:string; eyebrow_en:string; eyebrow_es:string; 
 function EditVideos() {
   const {data,update,save,saving,dirty,toast,clearToast} = useContent<VideosContent>('videos')
   const [lang,setLang] = useState('pt')
+  const isMobile = useIsMobile()
   if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
   const items = data.items ?? []
   return (
     <EdCard toast={toast} onClearToast={clearToast}>
       <SectionHeader title="Film Strip — Vídeos" onSave={save} saving={saving} dirty={dirty}/>
       <LangTabs lang={lang} setLang={setLang}/>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1.5rem'}}>
+      <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem',marginBottom:'1.5rem'}}>
         <div><label style={labelSt}>Eyebrow ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as unknown as Record<string,string>)[`eyebrow_${lang}`]??''} onChange={e=>update(p=>({...p,[`eyebrow_${lang}`]:e.target.value}))}/></div>
         <div><label style={labelSt}>Título ({lang.toUpperCase()})</label><input className="pc-input" style={inp} value={(data as unknown as Record<string,string>)[`title_${lang}`]??''} onChange={e=>update(p=>({...p,[`title_${lang}`]:e.target.value}))}/></div>
       </div>
@@ -1078,7 +1160,7 @@ function EditVideos() {
                   style={{padding:'4px 10px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:10,cursor:'pointer'}}>✕ Remover</button>
               </div>
             </div>
-            <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:'0.75rem',alignItems:'start'}}>
+            <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'2fr 1fr',gap:'0.75rem',alignItems:'start'}}>
               <VideoUploader
                 value={item.url??''}
                 onChange={url=>update(p=>({...p,items:p.items.map((it,j)=>j===i?{...it,url}:it)}))}
@@ -1178,6 +1260,7 @@ type SobreContent = {
 }
 function EditSobre() {
   const {data,update,save,saving,dirty,toast,clearToast} = useContent<SobreContent>('sobre')
+  const isMobile = useIsMobile()
   if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
   const F=(key:keyof SobreContent,label:string,rows=1)=>(
     <div key={key}>
@@ -1191,7 +1274,7 @@ function EditSobre() {
     <EdCard toast={toast} onClearToast={clearToast}>
       <SectionHeader title="Página Sobre" onSave={save} saving={saving} dirty={dirty}/>
       <div style={{display:'grid',gap:'1.25rem'}}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+        <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem'}}>
           {F('hero_eyebrow','Eyebrow do Hero (ex: Since 1998)')}
           {F('hero_title','Título do Hero')}
         </div>
@@ -1208,7 +1291,7 @@ function EditSobre() {
         />
         <div style={{borderTop:'1px solid rgba(212,168,67,0.12)',paddingTop:'1.25rem'}}>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 1rem'}}>Cards de Destaque</p>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+          <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem'}}>
             {F('feat_1_title','Card 1 — Título')}
             {F('feat_1_desc','Card 1 — Descrição')}
             {F('feat_2_title','Card 2 — Título')}
@@ -1362,6 +1445,7 @@ function TabCardapio() {
   const [openSection,setOpenSection] = useState<string|null>(null)
   const [syncing,setSyncing] = useState(false)
   const [syncToast,setSyncToast] = useState<{msg:string;type:'ok'|'err'}|null>(null)
+  const isMobile = useIsMobile()
 
   async function syncFromPayload() {
     setSyncing(true)
@@ -1400,7 +1484,8 @@ function TabCardapio() {
       {/* Painel de sincronização com o Payload CMS */}
       <div style={{background:`linear-gradient(135deg,${NAVY},${NAVY2})`,borderRadius:14,padding:'1.25rem 1.5rem',
         border:'1px solid rgba(212,168,67,0.15)',marginBottom:'1.5rem',
-        display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,flexWrap:'wrap'}}>
+        display:'flex',flexDirection:isMobile?'column':'row',alignItems:isMobile?'stretch':'center',
+        justifyContent:'space-between',gap:isMobile?12:16}}>
         <div>
           <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:9,fontWeight:700,letterSpacing:'.18em',
             textTransform:'uppercase',color:'rgba(212,168,67,0.55)',margin:'0 0 4px'}}>Payload CMS</p>
@@ -1408,14 +1493,14 @@ function TabCardapio() {
             Sincroniza os pratos cadastrados no Payload para o cardápio do site
           </p>
         </div>
-        <div style={{display:'flex',gap:10,alignItems:'center',flexShrink:0}}>
+        <div style={{display:'flex',flexDirection:isMobile?'column':'row',gap:10,alignItems:isMobile?'stretch':'center',flexShrink:0}}>
           <a href="/pt/payload/admin/collections/menu-items" target="_blank"
             style={{...ghostBtn,fontSize:10,padding:'8px 14px',color:GOLD,
-              borderColor:'rgba(212,168,67,0.2)',textDecoration:'none'}}>
+              borderColor:'rgba(212,168,67,0.2)',textDecoration:'none',justifyContent:'center'}}>
             ⚓ Gerenciar Pratos
           </a>
           <button onClick={syncFromPayload} disabled={syncing}
-            style={{...goldBtn,fontSize:10,padding:'8px 16px',opacity:syncing?0.5:1}}>
+            style={{...goldBtn,fontSize:10,padding:'8px 16px',opacity:syncing?0.5:1,justifyContent:'center'}}>
             {syncing?'Sincronizando…':'↻ Sincronizar do Payload'}
           </button>
         </div>
@@ -1458,7 +1543,7 @@ function TabCardapio() {
 
             {openSection===section.id&&(
               <div style={{padding:'0 1.25rem 1.25rem',borderTop:'1px solid rgba(212,168,67,0.08)'}}>
-                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',margin:'1rem 0 1.25rem'}}>
+                <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem',margin:'1rem 0 1.25rem'}}>
                   <div>
                     <label style={labelSt}>Título da Seção</label>
                     <input className="pc-input" style={inp} value={section.title}
@@ -1478,30 +1563,51 @@ function TabCardapio() {
                   renderItem={(item,ii,handle)=>(
                     <div style={{background:'rgba(255,255,255,0.03)',borderRadius:10,
                       padding:'1rem',border:'1px solid rgba(212,168,67,0.08)'}}>
-                      <div style={{display:'grid',gridTemplateColumns:'auto 2fr 1fr auto',gap:'0.75rem',alignItems:'start',marginBottom:'0.75rem'}}>
-                        <div style={{paddingTop:18}}>{handle}</div>
-                        <div>
-                          <label style={{...labelSt,fontSize:9}}>Nome</label>
-                          <input className="pc-input" style={{...inp,fontSize:12}} value={item.name}
-                            onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,name:e.target.value}:it)}:s)}))}/>
+                      {isMobile ? (
+                        <div style={{display:'flex',flexDirection:'column',gap:'0.75rem',marginBottom:'0.75rem'}}>
+                          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                            <div style={{paddingTop:0}}>{handle}</div>
+                            <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.filter((_,j)=>j!==ii)}:s)}))}
+                              style={{padding:'6px 10px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',
+                                background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:11,cursor:'pointer',marginLeft:'auto',minHeight:44}}>x</button>
+                          </div>
+                          <div>
+                            <label style={{...labelSt,fontSize:9}}>Nome</label>
+                            <input className="pc-input" style={{...inp,fontSize:12}} value={item.name}
+                              onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,name:e.target.value}:it)}:s)}))}/>
+                          </div>
+                          <div>
+                            <label style={{...labelSt,fontSize:9}}>Preço (R$)</label>
+                            <input className="pc-input" style={{...inp,fontSize:12}} value={item.price}
+                              onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,price:e.target.value}:it)}:s)}))}/>
+                          </div>
                         </div>
-                        <div>
-                          <label style={{...labelSt,fontSize:9}}>Preco (R$)</label>
-                          <input className="pc-input" style={{...inp,fontSize:12}} value={item.price}
-                            onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,price:e.target.value}:it)}:s)}))}/>
+                      ) : (
+                        <div style={{display:'grid',gridTemplateColumns:'auto 2fr 1fr auto',gap:'0.75rem',alignItems:'start',marginBottom:'0.75rem'}}>
+                          <div style={{paddingTop:18}}>{handle}</div>
+                          <div>
+                            <label style={{...labelSt,fontSize:9}}>Nome</label>
+                            <input className="pc-input" style={{...inp,fontSize:12}} value={item.name}
+                              onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,name:e.target.value}:it)}:s)}))}/>
+                          </div>
+                          <div>
+                            <label style={{...labelSt,fontSize:9}}>Preco (R$)</label>
+                            <input className="pc-input" style={{...inp,fontSize:12}} value={item.price}
+                              onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,price:e.target.value}:it)}:s)}))}/>
+                          </div>
+                          <div style={{paddingTop:18}}>
+                            <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.filter((_,j)=>j!==ii)}:s)}))}
+                              style={{padding:'6px 10px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',
+                                background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:11,cursor:'pointer'}}>x</button>
+                          </div>
                         </div>
-                        <div style={{paddingTop:18}}>
-                          <button onClick={()=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.filter((_,j)=>j!==ii)}:s)}))}
-                            style={{padding:'6px 10px',borderRadius:6,border:'1px solid rgba(239,68,68,0.3)',
-                              background:'rgba(239,68,68,0.08)',color:'#fca5a5',fontSize:11,cursor:'pointer'}}>x</button>
-                        </div>
-                      </div>
+                      )}
                       <div style={{marginBottom:'0.75rem'}}>
                         <label style={{...labelSt,fontSize:9}}>Descricao breve (aparece no cardapio)</label>
                         <input className="pc-input" style={{...inp,fontSize:12}} value={item.desc??''}
                           onChange={e=>update(p=>({...p,sections:p.sections.map((s,si2)=>si2===si?{...s,items:s.items.map((it,j)=>j===ii?{...it,desc:e.target.value}:it)}:s)}))}/>
                       </div>
-                      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.75rem',
+                      <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'0.75rem',
                         borderTop:'1px solid rgba(212,168,67,0.08)',paddingTop:'0.75rem'}}>
                         <div>
                           <p style={{...labelSt,fontSize:9,color:'rgba(212,168,67,0.75)',marginBottom:8}}>
@@ -1554,6 +1660,7 @@ function TabCardapio() {
 type SiteInfoContent = {phone:string;whatsapp:string;address:string;hours_lunch:string;hours_dinner:string;instagram:string;instagram_url:string;facebook_url:string;maps_url:string;email_contact:string;founded_year:string}
 function TabSite() {
   const {data,update,save,saving,dirty,toast,clearToast} = useContent<SiteInfoContent>('site_info')
+  const isMobile = useIsMobile()
   if(!data) return <div style={{color:'rgba(212,168,67,0.4)',padding:'2rem',fontFamily:"'Josefin Sans',sans-serif",fontSize:11,letterSpacing:'.1em'}}>Carregando…</div>
   const F=(key:keyof SiteInfoContent,label:string,ph='')=>(
     <div key={key}>
@@ -1569,7 +1676,7 @@ function TabSite() {
         <div style={{position:'absolute',inset:0,opacity:.03,backgroundImage:`radial-gradient(${GOLD} 1px,transparent 1px)`,backgroundSize:'18px 18px',pointerEvents:'none'}}/>
         <div style={{position:'relative'}}>
           <SectionHeader title="Informações do Restaurante" onSave={save} saving={saving} dirty={dirty}/>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.25rem'}}>
+          <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1.25rem'}}>
             {F('phone','Telefone','(47) 9 9999-9999')}
             {F('whatsapp','WhatsApp (apenas números)','4799999999')}
             {F('address','Endereço Completo')}
@@ -1596,22 +1703,33 @@ function TabSite() {
 
 /* ══ PÁGINA PRINCIPAL ════════════════════════════════════════════ */
 export function PainelClient() {
-  const [tab,setTab]         = useState('dashboard')
-  const [stats,setStats]     = useState<Stats|null>(null)
-  const [statsLoading,setSL] = useState(true)
+  const [tab,setTab]             = useState('dashboard')
+  const [stats,setStats]         = useState<Stats|null>(null)
+  const [statsLoading,setSL]     = useState(true)
+  const [sidebarOpen,setSidebarOpen] = useState(false)
+  const isMobile                 = useIsMobile()
 
   useEffect(()=>{
     fetch('/api/admin/stats').then(r=>r.json()).then(d=>{setStats(d);setSL(false)})
   },[])
 
+  // Fechar sidebar ao trocar de tab em mobile
+  function handleTabChange(id: string) {
+    setTab(id)
+    if (isMobile) setSidebarOpen(false)
+  }
+
   return (
     <div style={{minHeight:'100vh',background:CREAM,fontFamily:"'Inter',sans-serif"}}>
       <style>{G}</style>
 
+      {/* HEADER */}
       <header style={{
         background:`linear-gradient(90deg,${NAVY} 0%,${NAVY2} 100%)`,
         borderBottom:'1px solid rgba(212,168,67,0.15)',
-        padding:'0 2rem',height:64,position:'sticky',top:0,zIndex:50,
+        padding: isMobile ? '0 1rem' : '0 2rem',
+        height: isMobile ? 56 : 64,
+        position:'sticky',top:0,zIndex:50,
         display:'flex',alignItems:'center',justifyContent:'space-between',
         boxShadow:'0 4px 24px rgba(0,10,30,0.4)',
       }}>
@@ -1619,35 +1737,68 @@ export function PainelClient() {
           <div style={{width:38,height:38,borderRadius:10,background:'rgba(212,168,67,0.12)',border:'1px solid rgba(212,168,67,0.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>⚓</div>
           <div>
             <p style={{fontFamily:"'Playfair Display',serif",fontStyle:'italic',fontSize:18,color:GOLD,lineHeight:1,margin:0}}>Porto Cabral</p>
-            <p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:8,letterSpacing:'.25em',textTransform:'uppercase',color:'rgba(212,168,67,0.45)',margin:0}}>Painel Administrativo</p>
+            {!isMobile&&<p style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:8,letterSpacing:'.25em',textTransform:'uppercase',color:'rgba(212,168,67,0.45)',margin:0}}>Painel Administrativo</p>}
           </div>
         </div>
-        <div style={{display:'flex',gap:20,alignItems:'center'}}>
-          {stats&&(
-            <>
-              <div style={{display:'flex',alignItems:'center',gap:7,fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.55)'}}>
-                <span style={{width:7,height:7,borderRadius:'50%',background:'#f59e0b',display:'inline-block',animation:'pulse 2s infinite'}}/>
-                <b style={{color:'#fbbf24'}}>{stats.pending_reservations}</b> pendentes
-              </div>
-              <div style={{display:'flex',alignItems:'center',gap:7,fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.55)'}}>
-                <span style={{width:7,height:7,borderRadius:'50%',background:'#10b981',display:'inline-block'}}/>
-                <b style={{color:'#34d399'}}>{stats.today_reservations}</b> hoje
-              </div>
-            </>
-          )}
-          <div style={{width:1,height:28,background:'rgba(212,168,67,0.15)'}}/>
-          <a href="/pt" target="_blank" style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',color:'rgba(212,168,67,0.5)',textDecoration:'none',display:'flex',alignItems:'center',gap:6,transition:'color .2s'}}>
-            ← Ir ao site
-          </a>
-        </div>
+        {isMobile ? (
+          <button onClick={()=>setSidebarOpen(o=>!o)} style={{
+            width:38,height:38,borderRadius:10,background:'rgba(212,168,67,0.1)',
+            border:'1px solid rgba(212,168,67,0.25)',display:'flex',alignItems:'center',
+            justifyContent:'center',fontSize:20,color:GOLD,cursor:'pointer',
+          }}>☰</button>
+        ) : (
+          <div style={{display:'flex',gap:20,alignItems:'center'}}>
+            {stats&&(
+              <>
+                <div style={{display:'flex',alignItems:'center',gap:7,fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.55)'}}>
+                  <span style={{width:7,height:7,borderRadius:'50%',background:'#f59e0b',display:'inline-block',animation:'pulse 2s infinite'}}/>
+                  <b style={{color:'#fbbf24'}}>{stats.pending_reservations}</b> pendentes
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:7,fontFamily:"'Josefin Sans',sans-serif",fontSize:11,color:'rgba(255,255,255,.55)'}}>
+                  <span style={{width:7,height:7,borderRadius:'50%',background:'#10b981',display:'inline-block'}}/>
+                  <b style={{color:'#34d399'}}>{stats.today_reservations}</b> hoje
+                </div>
+              </>
+            )}
+            <div style={{width:1,height:28,background:'rgba(212,168,67,0.15)'}}/>
+            <a href="/pt" target="_blank" style={{fontFamily:"'Josefin Sans',sans-serif",fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',color:'rgba(212,168,67,0.5)',textDecoration:'none',display:'flex',alignItems:'center',gap:6,transition:'color .2s'}}>
+              ← Ir ao site
+            </a>
+          </div>
+        )}
       </header>
 
-      <div style={{display:'flex',minHeight:'calc(100vh - 64px)'}}>
-        <aside style={{
-          width:220,background:`linear-gradient(180deg,${NAVY} 0%,${NAVY2} 100%)`,
+      {/* OVERLAY mobile */}
+      {isMobile && sidebarOpen && (
+        <div onClick={()=>setSidebarOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',zIndex:199}}/>
+      )}
+
+      <div style={{display:'flex',minHeight: isMobile ? 'calc(100vh - 56px)' : 'calc(100vh - 64px)'}}>
+
+        {/* SIDEBAR */}
+        <aside style={isMobile ? {
+          position:'fixed',
+          left: sidebarOpen ? 0 : -260,
+          top: 56,
+          width: 260,
+          height: 'calc(100vh - 56px)',
+          background:`linear-gradient(180deg,${NAVY} 0%,${NAVY2} 100%)`,
           borderRight:'1px solid rgba(212,168,67,0.1)',
-          padding:'1.5rem 0',flexShrink:0,
-          position:'sticky',top:64,height:'calc(100vh - 64px)',overflowY:'auto',
+          padding:'1.5rem 0',
+          flexShrink:0,
+          overflowY:'auto',
+          zIndex: 200,
+          transition:'left 0.3s ease',
+        } : {
+          width:220,
+          background:`linear-gradient(180deg,${NAVY} 0%,${NAVY2} 100%)`,
+          borderRight:'1px solid rgba(212,168,67,0.1)',
+          padding:'1.5rem 0',
+          flexShrink:0,
+          position:'sticky',
+          top:64,
+          height:'calc(100vh - 64px)',
+          overflowY:'auto',
         }}>
           <div style={{padding:'0 1.25rem 1.25rem',borderBottom:'1px solid rgba(212,168,67,0.08)',marginBottom:'0.75rem'}}>
             <div style={{height:1,background:`linear-gradient(90deg,transparent,${GOLD},transparent)`,marginBottom:'1rem'}}/>
@@ -1655,9 +1806,9 @@ export function PainelClient() {
           </div>
           <nav>
             {TABS.map(t=>(
-              <button key={t.id} onClick={()=>setTab(t.id)} className="pc-tab-btn" style={{
+              <button key={t.id} onClick={()=>handleTabChange(t.id)} className="pc-tab-btn" style={{
                 display:'flex',alignItems:'center',gap:10,width:'100%',textAlign:'left',
-                padding:'11px 20px',border:'none',cursor:'pointer',
+                padding:'11px 20px',border:'none',cursor:'pointer',minHeight:44,
                 fontFamily:"'Josefin Sans',sans-serif",fontSize:11,fontWeight:tab===t.id?700:400,
                 letterSpacing:'.06em',textTransform:'uppercase',
                 background:tab===t.id?'rgba(212,168,67,0.1)':'transparent',
@@ -1681,7 +1832,7 @@ export function PainelClient() {
           </div>
         </aside>
 
-        <main style={{flex:1,padding:'2.5rem',overflowX:'auto',minWidth:0,background:CREAM}}>
+        <main style={{flex:1,padding: isMobile ? '1.25rem 1rem' : '2.5rem',overflowX: isMobile ? 'hidden' : 'auto',minWidth:0,background:CREAM}}>
           {tab==='dashboard' && <TabDashboard stats={stats} loading={statsLoading}/>}
           {tab==='reservas'  && <TabReservas/>}
           {tab==='clientes'  && <TabClientes/>}

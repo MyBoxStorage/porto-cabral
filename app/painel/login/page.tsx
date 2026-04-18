@@ -76,14 +76,18 @@ export default function PainelLoginPage() {
             <input required type="email" value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="admin@portocabralbc.com.br"
-              style={inp} />
+              autoComplete="email"
+              inputMode="email"
+              autoCapitalize="none"
+              style={{...inp, minHeight: 48}} />
           </div>
           <div>
             <label style={lbl}>Senha</label>
             <input required type="password" value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
-              style={inp} />
+              autoComplete="current-password"
+              style={{...inp, minHeight: 48}} />
           </div>
 
           {error && (
@@ -95,7 +99,7 @@ export default function PainelLoginPage() {
           )}
 
           <button type="submit" disabled={loading} style={{
-            marginTop: '0.5rem', padding: '0.85rem', borderRadius: 8,
+            marginTop: '0.5rem', padding: '1rem', borderRadius: 8,
             border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
             background: loading ? 'rgba(212,168,67,0.4)'
               : 'linear-gradient(90deg,#D4A843 0%,#FECE65 50%,#D4A843 100%)',
