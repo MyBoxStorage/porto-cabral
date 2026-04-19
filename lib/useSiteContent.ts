@@ -59,38 +59,58 @@ export function useSiteContent<T>(key: string, fallback: T): T {
   })
 
   useEffect(() => {
-    const now = Date.now()
-    const mem = memCache[key]
+    function doFetch() {
+      const now = Date.now()
+      const mem = memCache[key]
 
-    // memCache válido — busca em background para checar updated_at
-    const cachedUpdatedAt = mem && !('error' in mem) ? (mem as MemEntry).updated_at : undefined
-    const memValid = mem && !('error' in mem) && now - mem.ts < MEM_TTL
+      // memCache válido — busca em background para checar updated_at
+      const cachedUpdatedAt = mem && !('error' in mem) ? (mem as MemEntry).updated_at : undefined
+      const memValid = mem && !('error' in mem) && now - mem.ts < MEM_TTL
 
-    // Cooldown de erro
-    if (mem && 'error' in mem && now - mem.ts < ERROR_TTL) return
+      // Cooldown de erro
+      if (mem && 'error' in mem && now - mem.ts < ERROR_TTL) return
 
-    // Marca tentativa
-    if (!memValid) memCache[key] = { error: true, ts: now }
+      // Marca tentativa
+      if (!memValid) memCache[key] = { error: true, ts: now }
 
-    fetch(`/api/site-content?key=${key}`)
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
-      .then(d => {
-        if (d?.value === undefined || d?.value === null) return
-        const val = typeof d.value === 'string' ? JSON.parse(d.value) : d.value
-        const serverUpdatedAt: string | undefined = d.updated_at
+      fetch(`/api/site-content?key=${key}`)
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
+        .then(d => {
+          if (d?.value === undefined || d?.value === null) return
+          const val = typeof d.value === 'string' ? JSON.parse(d.value) : d.value
+          const serverUpdatedAt: string | undefined = d.updated_at
 
-        // Se o servidor tem dados mais novos que o cache → atualiza tudo
-        const cacheIsStale = !cachedUpdatedAt || !serverUpdatedAt || serverUpdatedAt !== cachedUpdatedAt
-        if (cacheIsStale) {
-          memCache[key] = { value: val, ts: Date.now(), updated_at: serverUpdatedAt }
-          lsSet(key, val, serverUpdatedAt)
-          setData(val as T)
-        } else if (!memValid) {
-          // Cache localStorage estava válido mas memCache expirou — restaura
-          memCache[key] = { value: val, ts: Date.now(), updated_at: serverUpdatedAt }
-        }
-      })
-      .catch(() => { memCache[key] = { error: true, ts: Date.now() } })
+          // Se o servidor tem dados mais novos que o cache → atualiza tudo
+          const cacheIsStale = !cachedUpdatedAt || !serverUpdatedAt || serverUpdatedAt !== cachedUpdatedAt
+          if (cacheIsStale) {
+            memCache[key] = { value: val, ts: Date.now(), updated_at: serverUpdatedAt }
+            lsSet(key, val, serverUpdatedAt)
+            setData(val as T)
+          } else if (!memValid) {
+            // Cache localStorage estava válido mas memCache expirou — restaura
+            memCache[key] = { value: val, ts: Date.now(), updated_at: serverUpdatedAt }
+          }
+        })
+        .catch(() => { memCache[key] = { error: true, ts: Date.now() } })
+    }
+
+    // Fetch inicial ao montar
+    doFetch()
+
+    // Re-fetch ao voltar para a aba (mobile: usuário troca abas e volta)
+    // Só re-busca se o cache tiver mais de 30s — evita requisições desnecessárias
+    function onVisibilityChange() {
+      if (document.visibilityState !== 'visible') return
+      const mem = memCache[key]
+      const age = mem && !('error' in mem) ? Date.now() - (mem as MemEntry).ts : Infinity
+      if (age > 30_000) {
+        delete memCache[key]
+        doFetch()
+      }
+    }
+
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange)
   }, [key])
 
   return data
