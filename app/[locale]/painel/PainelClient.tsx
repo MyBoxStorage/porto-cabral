@@ -317,7 +317,14 @@ function useContent<T>(key:string) {
     if(!data) return; setSaving(true)
     const r=await fetch(`/api/admin/content/${key}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({value:data})})
     setSaving(false)
-    if(r.ok){ setToast({msg:'Conteúdo salvo com sucesso',type:'ok'}); setDirty(false) }
+    if(r.ok){
+      setToast({msg:'Conteúdo salvo com sucesso',type:'ok'}); setDirty(false)
+      // Confirma do banco para garantir que o dado persiste
+      fetch(`/api/admin/content/${key}`)
+        .then(r2 => r2.ok ? r2.json() : null)
+        .then(d2 => { if(d2?.value) setData(d2.value) })
+        .catch(()=>{})
+    }
     else setToast({msg:'Erro ao salvar',type:'err'})
   }
   return {data,update,save,saving,dirty,toast,clearToast:()=>setToast(null)}

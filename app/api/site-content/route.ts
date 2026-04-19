@@ -38,7 +38,7 @@ export async function GET(req: Request) {
       { key: row.key, value, updated_at: row.updated_at },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=0, stale-while-revalidate=60',
+          'Cache-Control': 'no-store',
         },
       },
     )

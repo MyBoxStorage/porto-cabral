@@ -63,9 +63,13 @@ export function useSiteContent<T>(key: string, fallback: T): T {
       const now = Date.now()
       const mem = memCache[key]
 
-      // memCache válido — busca em background para checar updated_at
-      const cachedUpdatedAt = mem && !('error' in mem) ? (mem as MemEntry).updated_at : undefined
       const memValid = mem && !('error' in mem) && now - mem.ts < MEM_TTL
+
+      // Usa updated_at do memCache se válido, senão cai para o localStorage
+      // Isso evita que dado stale do CDN sobrescreva localStorage mais recente
+      const memUpdatedAt  = mem && !('error' in mem) ? (mem as MemEntry).updated_at : undefined
+      const lsUpdatedAt   = memUpdatedAt ?? lsGet(key)?.updated_at
+      const cachedUpdatedAt = lsUpdatedAt
 
       // Cooldown de erro
       if (mem && 'error' in mem && now - mem.ts < ERROR_TTL) return
@@ -80,14 +84,20 @@ export function useSiteContent<T>(key: string, fallback: T): T {
           const val = typeof d.value === 'string' ? JSON.parse(d.value) : d.value
           const serverUpdatedAt: string | undefined = d.updated_at
 
-          // Se o servidor tem dados mais novos que o cache → atualiza tudo
-          const cacheIsStale = !cachedUpdatedAt || !serverUpdatedAt || serverUpdatedAt !== cachedUpdatedAt
-          if (cacheIsStale) {
+          // Só atualiza se o servidor tem dado MAIS NOVO que qualquer cache local
+          // Compara com localStorage para não sobrescrever dado bom com CDN stale
+          const serverIsNewer = !serverUpdatedAt || !cachedUpdatedAt || serverUpdatedAt !== cachedUpdatedAt
+          if (serverIsNewer) {
+            // Se temos updated_at de ambos, garante que servidor é realmente mais novo
+            if (cachedUpdatedAt && serverUpdatedAt && new Date(serverUpdatedAt) < new Date(cachedUpdatedAt)) {
+              // Servidor retornou dado antigo (CDN stale) — ignora, mantém cache local
+              if (!memValid) memCache[key] = { value: lsGet(key)?.value ?? val, ts: Date.now(), updated_at: cachedUpdatedAt }
+              return
+            }
             memCache[key] = { value: val, ts: Date.now(), updated_at: serverUpdatedAt }
             lsSet(key, val, serverUpdatedAt)
             setData(val as T)
           } else if (!memValid) {
-            // Cache localStorage estava válido mas memCache expirou — restaura
             memCache[key] = { value: val, ts: Date.now(), updated_at: serverUpdatedAt }
           }
         })
