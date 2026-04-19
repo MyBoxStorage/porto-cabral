@@ -48,7 +48,6 @@ function lsSet(key: string, value: unknown, updated_at?: string) {
 /* ── Hook ── */
 export function useSiteContent<T>(key: string, fallback: T): T {
   const [data, setData] = useState<T>(() => {
-    // Inicializa com memCache ou localStorage se disponível
     const mem = memCache[key]
     if (mem && !('error' in mem) && Date.now() - mem.ts < MEM_TTL) {
       return mem.value as T
@@ -62,19 +61,14 @@ export function useSiteContent<T>(key: string, fallback: T): T {
     function doFetch() {
       const now = Date.now()
       const mem = memCache[key]
-
       const memValid = mem && !('error' in mem) && now - mem.ts < MEM_TTL
 
-      // Usa updated_at do memCache se válido, senão cai para o localStorage
-      // Isso evita que dado stale do CDN sobrescreva localStorage mais recente
-      const memUpdatedAt  = mem && !('error' in mem) ? (mem as MemEntry).updated_at : undefined
-      const lsUpdatedAt   = memUpdatedAt ?? lsGet(key)?.updated_at
-      const cachedUpdatedAt = lsUpdatedAt
+      // Melhor updated_at disponível: memCache > localStorage > undefined
+      const cachedUpdatedAt = mem && !('error' in mem)
+        ? (mem as MemEntry).updated_at
+        : lsGet(key)?.updated_at
 
-      // Cooldown de erro
       if (mem && 'error' in mem && now - mem.ts < ERROR_TTL) return
-
-      // Marca tentativa
       if (!memValid) memCache[key] = { error: true, ts: now }
 
       fetch(`/api/site-content?key=${key}`)
@@ -84,43 +78,36 @@ export function useSiteContent<T>(key: string, fallback: T): T {
           const val = typeof d.value === 'string' ? JSON.parse(d.value) : d.value
           const serverUpdatedAt: string | undefined = d.updated_at
 
-          // Só atualiza se o servidor tem dado MAIS NOVO que qualquer cache local
-          // Compara com localStorage para não sobrescrever dado bom com CDN stale
-          const serverIsNewer = !serverUpdatedAt || !cachedUpdatedAt || serverUpdatedAt !== cachedUpdatedAt
-          if (serverIsNewer) {
-            // Se temos updated_at de ambos, garante que servidor é realmente mais novo
-            if (cachedUpdatedAt && serverUpdatedAt && new Date(serverUpdatedAt) < new Date(cachedUpdatedAt)) {
-              // Servidor retornou dado antigo (CDN stale) — ignora, mantém cache local
-              if (!memValid) memCache[key] = { value: lsGet(key)?.value ?? val, ts: Date.now(), updated_at: cachedUpdatedAt }
-              return
-            }
+          // Só atualiza se o servidor tem dado mais novo que qualquer cache local.
+          // Evita que resposta CDN stale sobrescreva um cache local mais recente.
+          const shouldUpdate = !serverUpdatedAt || !cachedUpdatedAt
+            || new Date(serverUpdatedAt) >= new Date(cachedUpdatedAt)
+
+          if (shouldUpdate) {
             memCache[key] = { value: val, ts: Date.now(), updated_at: serverUpdatedAt }
             lsSet(key, val, serverUpdatedAt)
             setData(val as T)
           } else if (!memValid) {
-            memCache[key] = { value: val, ts: Date.now(), updated_at: serverUpdatedAt }
+            // Servidor tem dado antigo mas memCache expirou — restaura sem trocar UI
+            const ls = lsGet(key)
+            memCache[key] = { value: ls?.value ?? val, ts: Date.now(), updated_at: cachedUpdatedAt }
           }
         })
         .catch(() => { memCache[key] = { error: true, ts: Date.now() } })
     }
 
-    // Fetch inicial ao montar
     doFetch()
 
-    // Re-fetch ao voltar para a aba (mobile: usuário troca abas e volta)
-    // Só re-busca se o cache tiver mais de 30s — evita requisições desnecessárias
-    function onVisibilityChange() {
+    // Re-verifica ao voltar para a aba (mobile: usuário salva no painel e volta ao cardápio)
+    function onVisible() {
       if (document.visibilityState !== 'visible') return
       const mem = memCache[key]
       const age = mem && !('error' in mem) ? Date.now() - (mem as MemEntry).ts : Infinity
-      if (age > 30_000) {
-        delete memCache[key]
-        doFetch()
-      }
+      if (age > 30_000) { delete memCache[key]; doFetch() }
     }
 
-    document.addEventListener('visibilitychange', onVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', onVisibilityChange)
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
   }, [key])
 
   return data
